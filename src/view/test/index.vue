@@ -29,7 +29,7 @@
     },
     methods: {
       get(){
-          request.get("https://bird.ioliu.cn/ip",{}).then((data) => {
+          request.post("http://192.168.1.229/ems/users/login",{userName:"admin",passWord:1}).then((data) => {
             alert(JSON.stringify("get==="+JSON.stringify(data)))
           }, (error) => {
             console.log(JSON.stringify("error==="+error))
