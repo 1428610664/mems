@@ -6,85 +6,111 @@
       <tab-item @on-item-click="onTabItemClick">已结束</tab-item>
     </tab>
     <div class="search-box">
-      <search-box @query="searchQuery" placeholder="搜索消息..."></search-box>
+      <search-box @query="searchQuery" placeholder="消息搜搜"></search-box>
     </div>
-    <div class="list-wrapper">
-      <ul class="list">
-        <li class="item-wrapper-blue">
-          <div class="flex-box">
-            <div class="title ct c3">标题：</div>
-            <div class="desc">大打击到加上吉萨吉萨加上我家具撒我祭扫秒杀价哦你按季度哦年的假的骄傲你骄傲你剪刀手骄傲你的骄傲你</div>
-          </div>
-          <div class="flex-box mt">
-            <div class="title ct c3">时间：</div>
-            <div class="desc">
-              <span class="c4">2017-12-12 12:12:12</span>
-            </div>
-          </div>
-          <i class="number fz12 c">5</i>
-        </li>
-        <li class="item-wrapper-blue">
-          <div class="flex-box">
-            <div class="title ct c3">标题：</div>
-            <div class="desc">大打击到加上吉萨吉萨加上我家具撒我祭扫秒杀价哦你按季度哦年的假的骄傲你骄傲你剪刀手骄傲你的骄傲你</div>
-          </div>
-          <div class="flex-box mt">
-            <div class="title ct c3">时间：</div>
-            <div class="desc">
-              <span class="c4">2017-12-12 12:12:12</span>
-            </div>
-          </div>
-          <i class="number fz12 c">5</i>
-        </li>
-        <li class="item-wrapper-red">
-          <div class="flex-box">
-            <div class="title ct c3">标题：</div>
-            <div class="desc">大打击到加上吉萨吉萨加上我家具撒我祭扫秒杀价哦你按季度哦年的假的骄傲你骄傲你剪刀手骄傲你的骄傲你</div>
-          </div>
-          <div class="flex-box mt">
-            <div class="title ct c3">时间：</div>
-            <div class="desc">
-              <span class="c4">2017-12-12 12:12:12</span>
-            </div>
-          </div>
-          <i class="number fz12 c">5</i>
-        </li>
-      </ul>
-    </div>
-  </div>
 
+    <scroller class="list-wrapper" ref="scroll"
+              :data="content"
+              :totalCount="totalCount"
+              :pullup="true"
+              :pulldown="true"
+              :listenScroll="true"
+              @scrollToEnd="scrollToEnd"
+              @loadingStateChange="loadingStateChange"
+              @pullRefresh="pullRefresh">
+      <div  v-show="LoadingState == 1" v-for="item in content" >
+        <item-wrapper @onClick="onItemClick"  :row="item"></item-wrapper>
+      </div>
+    </scroller>
+  </div>
 </template>
 
 <script>
   import SearchBox from 'components/search-box/search-box'
+  import ItemWrapper from 'components/item-wrapper/item-wrapper'
   import {Tab, TabItem} from 'vux'
+
+  import Scroller from 'components/scroll/scroller'
+  import request from 'common/js/request'
 
   export default {
     data() {
-      return {}
+      return {
+        content: [],
+        LoadingState: 2,
+        pageNo: 1,
+        pageSize: 10,
+        totalCount: 0,
+      }
+    },
+    created() {
+      setTimeout(() => {
+        this.getList()
+      }, 800)
     },
     methods: {
       onTabItemClick(index) {
         this.$vux.toast.text(index + "", "bottom")
       },
+      onItemClick(row){
+        alert(JSON.stringify(row))
+      },
       searchQuery(v){
         console.log("搜索："+v)
+      },
+
+
+      pullRefresh() {
+        setTimeout(() => {
+          this.getList(true, true)
+        }, 800)
+      },
+      getList(isUpload, pullRefresh) {
+        if (pullRefresh) {
+          this.pageNo = 1
+          this.pageSize = 10
+        }
+        request.get("http://192.168.1.100/ems/messages", {
+          messageType: 1,
+          offset: (this.pageNo - 1) * this.pageSize,
+          limit: this.pageSize
+        }).then(data => {
+          if (data.data) {
+            this.isPullLoaded = false
+            this.totalCount = data.data.total
+            this.content = pullRefresh ? data.data.rows : this.content.concat(data.data.rows)
+          } else {
+            Toast("请求失败")
+          }
+          this.$refs.scroll.requestSuccess(data.data, isUpload, pullRefresh, this.content, this.totalCount)
+        }, error => {
+          console.log("error=======" + JSON.stringify(error))
+        })
+      },
+      scrollToEnd() {
+        if (this.content.length == 0 || this.content.length >= this.totalCount || this.isPullLoaded) {
+          return
+        }
+        this.isPullLoaded = true
+        this.pageNo++
+        this.getList(false)
+      },
+      loadingStateChange(LoadingState) {
+        this.LoadingState = LoadingState
       }
     },
     components: {
       Tab,
       TabItem,
-      SearchBox
+      SearchBox,
+      ItemWrapper,
+      Scroller
     }
   }
 
 </script>
 
 <style scoped>
-
-  .search-box{
-    padding: 5px 3%;
-  }
 
   .message-wrapper {
     position: fixed;
@@ -93,40 +119,21 @@
     left: 0;
     z-index: 15;
     width: 100%;
-    overflow: auto;
   }
 
-  .item-wrapper .number {
-    font-style: normal;
+  .search-box{
+    padding: 5px 3%;
+  }
+
+  .list-wrapper{
     position: absolute;
-    top: -7px;
-    right: -7px;
-    background: red;
-    padding: 1px 7px;
-    line-height: 18px;
-    border-radius: 20px;
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
+    top: 86px;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    overflow: hidden;
   }
 
-  .flex-box {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    line-height: 20px;
-  }
-
-  .title {
-    -webkit-flex: 0 0 40px;
-    -ms-flex: 0 0 40px;
-    flex: 0 0 40px;
-  }
-
-  .desc {
-    -webkit-flex: 1;
-    -ms-flex: 1;
-    flex: 1;
-  }
 
 
 </style>

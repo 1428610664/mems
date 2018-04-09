@@ -13,6 +13,9 @@ export default new Router({
       path: '/home',
       component: (resolve) => require(['view/home'], resolve)
     }, {
+      path: '/login',
+      component: (resolve) => require(['view/login'], resolve)
+    }, {
       path: '/message',
       component: (resolve) => require(['view/message'], resolve)
     },{

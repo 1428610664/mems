@@ -3,11 +3,11 @@
   <div class="content">
     <div class="my-head ct">
       <div class="portrait"><img v-lazy="loadImg" width="100%" height="100%"/></div>
-      <p class="name fz14"><span id="dept-dame">{{name}}</span> / <span class="c1" id="username">{{account}}</span></p>
+      <p class="name fz14 c"><span id="dept-dame">{{name}}</span> / <span class="c" id="username">{{account}}</span></p>
       <div class="big-bg" :style="bgStyle"></div>
     </div>
     <ul class="mlistbox fz16 c4">
-      <router-link to="/test" tag="li" class="mlist">
+      <router-link to="/login" tag="li" class="mlist">
         <i class="icon fz20 c1 iconfont icon-shezhi"></i>
         <span>设置</span>
         <span class="num c btnR fr fz12 hide"></span>
