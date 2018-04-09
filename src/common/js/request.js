@@ -7,7 +7,8 @@ export default {
   ajax(url, parma, type) {
     let data = Object.assign({}, commonParams, parma)
     return new Promise((resolve, reject) => {
-      axios[type](url, (type.toLowerCase() == "post" ? data : {params: data}), option)
+      axios({method: type ,url: url,request: data})
+      //axios[type](url, (type.toLowerCase() == "post" ? data : {params: data}), option)
         .then((data) => {
           resolve(data.data)
         }).catch((error) => {

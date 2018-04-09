@@ -8,29 +8,26 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/page1'
+      redirect: '/home'
     },{
-      path: '/page1',
-      component: (resolve) => require(['view/page1'], resolve)
+      path: '/home',
+      component: (resolve) => require(['view/home'], resolve)
     }, {
-      path: '/page2',
-      component: (resolve) => require(['view/page2'], resolve)
-    }, {
-      path: '/page3',
-      component: (resolve) => require(['view/page3'], resolve)
-    }, {
-      path: '/page4',
-      component: (resolve) => require(['view/page4'], resolve),
+      path: '/message',
+      component: (resolve) => require(['view/message'], resolve)
+    },{
+      path: '/me',
+      component: (resolve) => require(['view/me'], resolve),
       children: [
         {
           path: '/test',
           component: (resolve) => require(['view/test'], resolve)
+        },
+        {
+          path: '/scroll',
+          component: (resolve) => require(['view/scroll-page'], resolve)
         }
       ]
     }
   ]
 })
-Router.prototype.goBack = function() {
-  this.isBack = true
-  window.history.go(-1)
-}
