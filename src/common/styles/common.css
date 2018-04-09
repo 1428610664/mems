@@ -87,6 +87,14 @@ textarea{overflow:auto;resize:none;vertical-align:top;}
   transform: translate3d(100%, 0, 0)
 }
 
+/*状态边框样式*/
+.status-default{
+  border: 1px solid #c1c1c1;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #ec2a58;
+  line-height: 16px;
+}
 .status-danger{
   border: 1px solid #ec2a58;
   border-radius: 8px;
@@ -165,3 +173,4 @@ header .head-cont{-webkit-flex: 1;-ms-flex: 1;flex: 1;line-height: 46px;}
 .mlistbox .mlist i img{vertical-align:middle;}
 .mlistbox .mlist i.icon{left: 3%;top: 14px;width: 20px;height: 20px;line-height: 20px;}
 .mlistbox .mlist i.i_more{right: 0;}
+
