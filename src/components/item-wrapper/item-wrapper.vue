@@ -2,16 +2,16 @@
   <div class="item-wrapper-blue" @click="onItemClick">
     <div class="flex-box">
       <div class="title ct c3">标题：</div>
-      <div class="desc">大打击到加上吉萨吉萨加上我家具撒我祭扫秒杀价哦你按季度哦年的假的骄傲你骄傲你剪刀手骄傲你的骄傲你</div>
+      <div class="desc hzline2">{{row.name}}</div>
     </div>
     <div class="flex-box mt">
       <div class="title ct c3">时间：</div>
       <div class="desc">
-        <span class="c4">2017-12-12 12:12:12</span>
+        <span class="c4">{{new Date(row.sendTime.time).format("yyyy-MM-dd hh:mm:ss")}}</span>
         <span class="status-success fr">处理中</span>
       </div>
     </div>
-    <i class="number fz12 c">5</i>
+    <i class="number fz12 c" v-if="row.counts != 0? true: false ">{{row.counts > 99? "99+": row.counts}}</i>
   </div>
 </template>
 

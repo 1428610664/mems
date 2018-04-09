@@ -32,7 +32,11 @@
 <script>
 
   import hz_util from 'common/js/utils'
+  import request from 'common/js/request'
+  import {getUrl} from 'common/js/Urls'
 
+  import {mapMutations} from 'vuex'
+  import {setUserInfo, setIsLogin} from 'common/js/cache'
   export default {
     name: "index",
     data() {
@@ -50,6 +54,10 @@
       }, 20)
     },
     methods: {
+      ...mapMutations({
+        setIsLogin: 'SET_ISLOGIN',
+        setUserData: 'SET_USERDATA'
+      }),
       showpsw(e) {
         this.pswMark = !this.pswMark
       },
@@ -64,24 +72,25 @@
         }
         if (this.loginMark) return
         this.loginMark = true
-        var reqData = {userName: this.name, password: this.password, hour: 30}
-        /*this.$vux.loading.show({text: '登录中...'})
-        login(reqData).then((data) => {
-          console.log(JSON.stringify(data))
+        let reqData = {userName: this.name, passWord: this.password}
+        this.$vux.loading.show({text: '登录中...'})
+        request.post(getUrl("login"), reqData).then((data) => {
           this.loginMark = false
           this.$vux.loading.hide()
-          if(!data.Result){
-            Toast(data.Message)
+          if (!data.success) {
+            this.$vux.toast.text(data.desc, "bottom")
             return
           }
           this.password = ''
           this.setIsLogin(true)
-          this.setUserData(data.Data)
-          setToken(data.Data.Token)
-        },(error) => {
+          this.setUserData(data.data)
+
+          setIsLogin(true)
+          setUserInfo(data.data)
+        }, (error) => {
           this.loginMark = false
           this.$vux.loading.hide()
-        })*/
+        })
       }
     }
   }

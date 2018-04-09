@@ -32,15 +32,19 @@
 
   import Scroller from 'components/scroll/scroller'
   import request from 'common/js/request'
+  import {getUrl} from 'common/js/Urls'
 
   export default {
     data() {
       return {
+        selectIndex: 0,
+
         content: [],
         LoadingState: 2,
         pageNo: 1,
         pageSize: 10,
         totalCount: 0,
+        params: {name: ''}
       }
     },
     created() {
@@ -50,18 +54,19 @@
     },
     methods: {
       onTabItemClick(index) {
+        this.selectIndex = index
         this.$vux.toast.text(index + "", "bottom")
       },
       onItemClick(row){
         alert(JSON.stringify(row))
       },
       searchQuery(v){
-        console.log("搜索："+v)
+        this.params.name = v
+        this.getList(false, true)
       },
-
-
       pullRefresh() {
         setTimeout(() => {
+          this.params.name = ''
           this.getList(true, true)
         }, 800)
       },
@@ -70,11 +75,8 @@
           this.pageNo = 1
           this.pageSize = 10
         }
-        request.get("http://192.168.1.100/ems/messages", {
-          messageType: 1,
-          offset: (this.pageNo - 1) * this.pageSize,
-          limit: this.pageSize
-        }).then(data => {
+        let param = {offset: (this.pageNo - 1) * this.pageSize,limit: this.pageSize}
+        request.get(getUrl("myMessage"), Object.assign({}, this.params, param)).then(data => {
           if (data.data) {
             this.isPullLoaded = false
             this.totalCount = data.data.total

@@ -7,7 +7,7 @@
       <div class="big-bg" :style="bgStyle"></div>
     </div>
     <ul class="mlistbox fz16 c4">
-      <router-link to="/login" tag="li" class="mlist">
+      <router-link to="/test" tag="li" class="mlist">
         <i class="icon fz20 c1 iconfont icon-shezhi"></i>
         <span>设置</span>
         <span class="num c btnR fr fz12 hide"></span>
@@ -19,18 +19,20 @@
         <span class="num c btnR fr fz12 hide"></span>
         <i class="i_more iconfont icon-arrowright"></i>
       </router-link>
-      <router-link to="/scroll" tag="li" class="mlist">
+      <li class="mlist" @click="toLogin">
         <i class="icon fz20 c1 iconfont icon-caozuo_zhuxiao_tuichudenglu"></i>
         <span>注销</span>
         <span class="num c btnR fr fz12 hide"></span>
         <i class="i_more iconfont icon-arrowright"></i>
-      </router-link>
+      </li>
     </ul>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+
+  import {mapMutations} from 'vuex'
 
   export default {
     data() {
@@ -40,7 +42,23 @@
         loadImg: "http://www.qqzhi.com/uploadpic/2015-01-28/202128541.jpg",
       }
     },
-    methods: {},
+    methods: {
+      ...mapMutations({
+        setIsLogin: 'SET_ISLOGIN',
+        setUserData: 'SET_USERDATA'
+      }),
+      toLogin(){
+        let _this = this
+        this.$vux.confirm.show({
+          title: '提示',
+          content: '确认注销登录？',
+          onConfirm () {
+            _this.$vux.toast.text("退出", "bottom")
+            _this.setIsLogin(false)
+          }
+        })
+      }
+    },
     computed: {
       bgStyle() {
         return `background-image:url(${this.loadImg})`

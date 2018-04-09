@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import 'common/js/common'
 import FastClick from 'fastclick'
 import VueRouter from 'vue-router'
 import VueLazyload from 'vue-lazyload'
@@ -6,12 +7,13 @@ import App from './App'
 import store from 'store'
 import router from './router'
 import 'common/styles/common.css'
-import  { ToastPlugin } from 'vux'
-import  { LoadingPlugin } from 'vux'
+import  { ToastPlugin,ConfirmPlugin,LoadingPlugin  } from 'vux'
 
 Vue.use(VueRouter)
 Vue.use(ToastPlugin)
 Vue.use(LoadingPlugin)
+Vue.use(ConfirmPlugin)
+
 
 Vue.config.productionTip = false
 

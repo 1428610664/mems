@@ -4,6 +4,10 @@ const requestUrl = {
   login: {
     url: "/users/login",
     pre: preUrl
+  },
+  myMessage: {
+    url: "/messages/my",
+    pre: preUrl
   }
 }
 

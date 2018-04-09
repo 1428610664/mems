@@ -14,6 +14,8 @@
 
   import {XHeader} from 'vux'
   import footer from 'components/footer/footer'
+  import {mapGetters, mapMutations} from 'vuex'
+  import {setIsLogin, setUserInfo} from 'common/js/cache'
 
   const title = {home: "主页", message: "消息", me: "我"}
 
@@ -22,6 +24,14 @@
       return {
         title: this.$route.path.substring(1) ? title[this.$route.path.substring(1)]: "主页"
       }
+    },
+    computed: {
+      ...mapGetters([
+        'isLogin',
+        'userData'
+      ])
+    },
+    created() {
     },
     components: {
       XHeader,
@@ -32,7 +42,19 @@
         this.title = t;
       }
     },
-    created() {
+    watch: {
+      isLogin(login){
+        console.log("登录状态改变："+login)
+        if(login) {
+          this.$router.replace({path:"/home"});
+        }else{
+          this.$router.replace({path:"/login"})
+        }
+        setIsLogin(login)
+      },
+      userData(newData){
+        setUserInfo(newData)
+      }
     }
   }
 </script>
