@@ -1,12 +1,13 @@
 <template>
   <div>
-    <div :id='id' class="multi_select_" @click="selectShow">
-      <slot></slot>
+    <div class="multi_select_" @click="selectShow">
+      <cell :title="title" :value="value" is-link></cell>
     </div>
     <div v-transfer-dom>
       <popup v-model="dropDown" position="bottom" max-height="50%">
         <div class="select_keyWorld" v-show="search">
-          <x-input type="text" :placeholder="placeholder" v-model="params.keyWord" @on-change="onEnter" @on-enter="onEnter"></x-input>
+          <x-input type="text" :placeholder="placeholder" v-model="params.keyWord" @on-change="onEnter"
+                   @on-enter="onEnter"></x-input>
         </div>
         <div class="select_item">
           <checklist :options="rows" v-model="selectValue" :max=max @on-change="change"></checklist>
@@ -20,18 +21,13 @@
 </template>
 
 <script>
-  import { XInput, Checklist, Actionsheet, TransferDom, Popup, XButton } from 'vux'
+  import {XInput, Cell, Checklist, Actionsheet, TransferDom, Popup, XButton} from 'vux'
   import request from 'common/js/request'
+
   export default {
-    data () {
+    data() {
       return {
-        rows: [
-          {key: 'name1', value: 'value1'},
-          {key: 'name2', value: 'value2'},
-          {key: 'name3', value: 'value3'},
-          {key: 'name4', value: 'value4'},
-          {key: 'name5', value: 'value5'}
-        ],
+        rows: [],
         selectValue: [],
         params: {
           keyWord: '',
@@ -45,6 +41,7 @@
     components: {
       XInput,
       Checklist,
+      Cell,
       Actionsheet,
       Popup,
       XButton
@@ -53,15 +50,7 @@
       TransferDom
     },
     props: {
-      id: {
-        type: String,
-        default: ''
-      },
       url: {
-        type: String,
-        default: ''
-      },
-      name: {
         type: String,
         default: ''
       },
@@ -69,9 +58,18 @@
         type: String,
         default: ''
       },
+      param: '',
+      title: {
+        type: String,
+        default: ''
+      },
       search: {
         type: Boolean,
         default: false
+      },
+      isFirstRequest : {
+        type: Boolean,
+        default: true
       },
       placeholder: {
         type: String,
@@ -83,49 +81,56 @@
       }
     },
     watch: {
-      url (url) {
-        this.getRows()
+      url(url) {
+        if(this.isFirstRequest) this.getRows()
       }
     },
-    mounted () {
+    mounted() {
       this.$nextTick(function () {
         if (this.url !== '') {
-          this.getRows()
+          if(this.isFirstRequest)this.getRows()
         }
       })
     },
+    watch:{
+      param(v){
+        this.value = ''
+        this.getRows()
+      }
+    },
     methods: {
-      selectShow () {
+      selectShow() {
         this.dropDown = true
       },
-      onEnter () {
+      onEnter() {
         this.getRows()
       },
-      change (val, label) {
-        console.log('change', val, label)
+      change(val, label) {
+        //console.log('change', val, label)
       },
-      clickActionSheet () {
+      clickActionSheet() {
       },
-      getRows () {
-        request.get(this.url, this.params).then((data) => {
+      getRows() {
+        request.get(this.url, Object.assign({}, this.params, this.param)).then((data) => {
           this.rows = []
           if (data.success) {
             data.data.rows.forEach((item) => {
-              this.rows.push({key: item[this.value], value: item[this.name]})
+              this.rows.push({key: item, value: item})
             })
           }
         }, (error) => {
           console.log(JSON.stringify('error===' + error))
         })
       },
-      onOk () {
+      onOk() {
         this.dropDown = false
-        console.log(this.selectValue)
-        this.$emit('on-ok', this.selectValue)
+        this.$emit('input', this.selectValue.join(","))
+        this.$emit('on-ok', this.selectValue.join(","))
       }
     }
   }
 </script>
 
 <style scoped>
+
 </style>

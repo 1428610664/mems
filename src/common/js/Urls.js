@@ -1,12 +1,24 @@
 const preUrl = "http://192.168.1.130/ems"
 
 const requestUrl = {
+  // 登录
   login: {
     url: "/users/login",
     pre: preUrl
   },
+  // 我的消息
   myMessage: {
     url: "/messages/my",
+    pre: preUrl
+  },
+  // 系统分类
+  appType: {
+    url: "/ips/findAppType",
+    pre: preUrl
+  },
+  // 所属分类
+  appName: {
+    url: "/ips/findAppNameByType",
     pre: preUrl
   }
 }
