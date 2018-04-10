@@ -175,3 +175,23 @@ header .head-cont{-webkit-flex: 1;-ms-flex: 1;flex: 1;line-height: 46px;}
 .mlistbox .mlist i.icon{left: 3%;top: 14px;width: 20px;height: 20px;line-height: 20px;}
 .mlistbox .mlist i.i_more{right: 0;}
 
+/*vux*/
+.vux-header{position: relative;z-index: 5;}
+.weui-toast{width: 9.2em!important;}
+.vux-header-title{font-size: 16px!important;}
+.weui-label{color: #95A6C2;}
+.vux-cell-primary .vux-label{color: #95A6C2;}
+.weui-cell__ft{text-align: left!important;}
+.weui-cells__title{color: #95A6C2!important;}
+.weui-cell:before{border-top: 2px solid #d4d4d4!important;}
+.weui-cells:before{border-top: 2px solid #d4d4d4!important;}
+.weui-cells:after{border-bottom: 2px solid #d4d4d4!important;}
+.vux-cell-box:before{border-top: 2px solid #d4d4d4!important;}
+
+.weui-cells{margin-top: 6px!important;}
+.weui-cell_select .weui-cell__bd:after{height: 8px!important;width: 8px!important;border-width: 1px 1px 0 0!important;border-color: #95A6C2!important;right: 17px!important;}
+
+.vux-datetime p{color: #95A6C2;}
+.dp-header{background: #F4F4F4;}
+
+.vux-x-switch .weui-label{text-align: right;}

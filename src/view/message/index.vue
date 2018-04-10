@@ -82,7 +82,7 @@
             this.totalCount = data.data.total
             this.content = pullRefresh ? data.data.rows : this.content.concat(data.data.rows)
           } else {
-            Toast("请求失败")
+            this.$vux.toast.text("请求失败", "bottom")
           }
           this.$refs.scroll.requestSuccess(data.data, isUpload, pullRefresh, this.content, this.totalCount)
         }, error => {

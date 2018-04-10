@@ -2,12 +2,12 @@
 
   <div>
     <ul class="grid-wrapper clear">
-      <li class="grid posct">
+      <router-link to="/serviceRequest" tag="li" class="grid posct">
         <div>
           <div class="icon iconfont posct icon-fuwuqingqiu fz24 mb1"><i class="number fz12">99+</i></div>
           <div class="name ct">服务请求</div>
         </div>
-      </li>
+      </router-link>
       <li class="grid posct">
         <div>
           <div class="icon iconfont posct icon-xitongguzhang fz22 mb2"><i class="number fz12">5</i></div>
@@ -15,6 +15,7 @@
         </div>
       </li>
     </ul>
+    <router-view></router-view>
   </div>
 
 </template>
@@ -25,8 +26,7 @@
 
   export default {
     data() {
-      return {
-      }
+      return {}
     },
     methods: {},
     components: {
@@ -39,12 +39,13 @@
 </script>
 
 <style scoped>
-  .grid{
+  .grid {
     padding: 10px 0;
     width: 25%;
     float: left;
   }
-  .name{
+
+  .name {
     padding-top: 5px;
   }
 
@@ -56,8 +57,8 @@
     position: relative;
   }
 
-  .number{
-    font-style:normal;
+  .number {
+    font-style: normal;
     position: absolute;
     top: 0px;
     right: -3px;

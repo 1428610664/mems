@@ -1,4 +1,4 @@
-const preUrl = "http://192.168.1.100/ems"
+const preUrl = "http://192.168.1.130/ems"
 
 const requestUrl = {
   login: {

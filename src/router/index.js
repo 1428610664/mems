@@ -9,16 +9,28 @@ export default new Router({
     {
       path: '/',
       redirect: '/home'
-    },{
+    }, {
       path: '/home',
-      component: (resolve) => require(['view/home'], resolve)
+      component: (resolve) => require(['view/home'], resolve),
+      children: [
+        {
+          path: '/serviceRequest',
+          component: (resolve) => require(['view/service-request'], resolve),
+          children: [
+            {
+              path: '/addRequest',
+              component: (resolve) => require(['view/add-request'], resolve),
+            }
+          ]
+        }
+      ]
     }, {
       path: '/login',
       component: (resolve) => require(['view/login'], resolve)
     }, {
       path: '/message',
       component: (resolve) => require(['view/message'], resolve)
-    },{
+    }, {
       path: '/me',
       component: (resolve) => require(['view/me'], resolve),
       children: [

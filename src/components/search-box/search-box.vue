@@ -1,6 +1,6 @@
 <template>
   <div class="search-box">
-    <i class="iconfont icon-sousuo"></i>
+    <i class="iconfont icon-sousuo c3"></i>
     <input ref="query" v-model="query" class="box" :placeholder="placeholder"/>
     <i @click="clear" v-show="query" class="iconfont icon-guanbi fz18"></i>
   </div>
