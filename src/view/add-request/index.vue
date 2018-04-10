@@ -46,6 +46,13 @@
           appType: '',   // 系统分类
           appName: ''    // 所属系统
         },
+        checkData: {
+          name: {message: "请输入标题", check: "isEmpty"},
+          summary: {message: "请输入描述", check: "isEmpty"},
+          appType: {message: "请选择系统分类", check: "isEmpty"},
+          appName: {message: "请选择所属系统", check: "isEmpty"},
+        },
+
         checkNumberArray: ["是", "否"],
         FlowActions: [
           {TypeId: 1, FlowActionName: "提交"},
@@ -65,21 +72,6 @@
     },
     methods: {
       footerEvent(typeId) {
-        if(utils.isEmpty(this.bindData.appType)){
-          this.$vux.toast.text("请选择系统", "bottom")
-          return
-        }
-        if(utils.isEmpty(this.bindData.appName)){
-          this.$vux.toast.text("请选择所属系统", "bottom")
-          return
-        }
-        if(utils.isEmpty(this.bindData.name)){
-          this.$vux.toast.text("请填写标题", "bottom")
-          return
-        }if(utils.isEmpty(this.bindData.summary)){
-          this.$vux.toast.text("请填写内容", "bottom")
-          return
-        }
         this.submitEvent(typeId)
       }
     },

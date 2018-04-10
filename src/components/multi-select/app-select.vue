@@ -94,8 +94,9 @@
     },
     watch:{
       param(v){
-        this.value = ''
-        this.getRows()
+        this.$emit('input', '')
+        this.rows = []
+        if(v.appType)this.getRows()
       }
     },
     methods: {

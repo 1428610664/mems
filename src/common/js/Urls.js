@@ -11,6 +11,11 @@ const requestUrl = {
     url: "/messages/my",
     pre: preUrl
   },
+  // 服务请求
+  serviceRequest: {
+    url: "/services",
+    pre: preUrl
+  },
   // 系统分类
   appType: {
     url: "/ips/findAppType",

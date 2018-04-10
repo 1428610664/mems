@@ -9,7 +9,7 @@
     </div>
 
     <not-result v-if="state == 4 && mark == false"></not-result>
-    <div class="loaded" v-if="state == 1 && mark == true">- 已加载完毕 -</div>
+    <div class="loaded ct" v-if="state == 1 && mark == true">- 已加载完毕 -</div>
   </div>
 
 </template>

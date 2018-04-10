@@ -7,11 +7,11 @@
     <div class="flex-box mt">
       <div class="title ct c3">时间：</div>
       <div class="desc">
-        <span class="c4">{{new Date(row.sendTime.time).format("yyyy-MM-dd hh:mm:ss")}}</span>
+        <span class="c4">{{new Date(row.time).format("yyyy-MM-dd hh:mm:ss")}}</span>
         <span class="status-success fr">处理中</span>
       </div>
     </div>
-    <i class="number fz12 c" v-if="row.counts != 0? true: false ">{{row.counts > 99? "99+": row.counts}}</i>
+    <i class="number fz12 c" v-if="showNunber && row.counts != 0? true: false ">{{row.counts > 99? "99+": row.counts}}</i>
   </div>
 </template>
 
@@ -19,7 +19,11 @@
   export default {
     name: "item-wrapper",
     props: {
-      row: Object
+      row: Object,
+      showNunber: {
+        type: Boolean,
+        default: true
+      }
     },
     data(){
       return {}

@@ -80,7 +80,7 @@
           if (data.data) {
             this.isPullLoaded = false
             this.totalCount = data.data.total
-            this.content = pullRefresh ? data.data.rows : this.content.concat(data.data.rows)
+            this.content = pullRefresh ? this._parseDate(data.data.rows) : this.content.concat(this._parseDate(data.data.rows))
           } else {
             this.$vux.toast.text("请求失败", "bottom")
           }
@@ -99,6 +99,13 @@
       },
       loadingStateChange(LoadingState) {
         this.LoadingState = LoadingState
+      },
+      _parseDate(res){
+        let data = []
+        res.forEach((v, i) => {
+          data.push({id: v.id, name: v.name, time: v.sendTime.time, counts: v.counts})
+        })
+        return data
       }
     },
     components: {
