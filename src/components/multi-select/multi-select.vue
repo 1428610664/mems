@@ -21,7 +21,7 @@
 
 <script>
   import { XInput, Checklist, Actionsheet, TransferDom, Popup, XButton } from 'vux'
-  import request from '../js/request'
+  import request from 'common/js/request'
   export default {
     data () {
       return {

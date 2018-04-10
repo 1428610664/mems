@@ -7,6 +7,7 @@
         <cell title="get" is-link @click.native="get"></cell>
         <cell title="post" is-link @click.native="post"></cell>
       </group>
+      <tabs id="GMED5V3LZY2FGP0G"></tabs>
     </div>
   </transition>
 
@@ -16,6 +17,7 @@
 
   import {XHeader,Group, Cell} from 'vux'
   import request from 'common/js/request'
+  import Tabspan from 'components/tabs-pan/tabs-pan'
 
   export default {
     name: "test",
@@ -46,7 +48,8 @@
     components: {
       XHeader,
       Group,
-      Cell
+      Cell,
+      'tabs':Tabspan
     }
   }
 </script>
