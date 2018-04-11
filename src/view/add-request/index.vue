@@ -23,12 +23,10 @@
 
 <script>
 
-  import {XHeader} from 'vux'
-  import {Group, XTextarea, XInput, Selector} from 'vux'
+  import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
   import appSelect from 'components/multi-select/app-select'
   import {getUrl} from 'common/js/Urls'
-  import utils from 'common/js/utils'
   import { eventMixin } from "common/mixin/eventMixin"
 
   export default {

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import 'common/js/common'
+import publicUtils from 'common/js/publicUtils'
 import FastClick from 'fastclick'
 import VueRouter from 'vue-router'
 import VueLazyload from 'vue-lazyload'
@@ -13,6 +14,7 @@ Vue.use(VueRouter)
 Vue.use(ToastPlugin)
 Vue.use(LoadingPlugin)
 Vue.use(ConfirmPlugin)
+Vue.use(publicUtils)
 
 
 Vue.config.productionTip = false

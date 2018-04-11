@@ -118,7 +118,7 @@
       _parseDate(res){
         let data = []
         res.forEach((v, i) => {
-          data.push({id: v.id, name: v.name, time: v.createTime.time})
+          data.push({id: v.id, name: v.name, time: v.createTime.time, status: v.status})
         })
         return data
       }

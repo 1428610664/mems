@@ -8,6 +8,7 @@
 			</div>
 			<loading-page :state="upPullLoadingState" :mark="true"></loading-page>
 		</div>
+    <div class="iconfont icon-arrowup goTop posct b2 c fz18" @click="goTop" v-show="showGoTop"></div>
 	</div>
 </template>
 
@@ -25,7 +26,8 @@
 				upPullLoadingState: 0,
 				isShowLoading: false,
 				dropdownText: "↓ 下拉刷新",
-				isRefreshEnd: true
+				isRefreshEnd: true,
+        showGoTop: false
 			}
 		},
 		props: {
@@ -43,7 +45,7 @@
 			},
 			probeType: {
 				type: Number,
-				default: 1
+				default: 3
 			},
 			click: {
 				type: Boolean,
@@ -92,6 +94,7 @@
 				if(this.listenScroll) {
 					this.scroll.on('scroll', (pos) => {
 						this.$emit('scroll', pos)
+            this.showGoTop = pos.y <= -100 ? true : false
 						if(!this.isRefreshEnd) return
 						if(pos.y >= 50) {
 							this.dropdownText = this.contentover
@@ -201,7 +204,10 @@
 					this.$refs.dropdown.style.top = "-"+i+"px"
 					this.scroll.scrollTo( 0, "-"+i)
 				}, 4)
-			}
+			},
+      goTop(){
+        this.scroll.scrollTo( 0, 0, 200, "easeInOutQuad")
+      }
 		},
 		watch: {
 			data() {
@@ -221,5 +227,14 @@
 .scroller-trans{min-height: 100%;}
 .dropdown{position: absolute;top: -50px;left: 0;width: 100%;height: 50px;line-height: 50px;font-weight: 700;color: #999;}
 .dropdown img{vertical-align: middle;margin: -3px 5px 0 0;}
+
+  .goTop{
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2;
+  }
 
 </style>
