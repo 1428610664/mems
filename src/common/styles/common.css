@@ -88,6 +88,12 @@ textarea{overflow:auto;resize:none;vertical-align:top;}
   transform: translate3d(100%, 0, 0)
 }
 
+.hr {
+  height: 1px;
+  background: #D9D9D9;
+  margin-left: 15px;
+}
+
 /*状态边框样式*/
 .status-default{
   border: 1px solid #c1c1c1;

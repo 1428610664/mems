@@ -20,6 +20,10 @@ export default new Router({
             {
               path: '/addRequest',
               component: (resolve) => require(['view/add-request'], resolve),
+            },
+            {
+              path: '/handleRequest',
+              component: (resolve) => require(['view/handle-request'], resolve),
             }
           ]
         }
