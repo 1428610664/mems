@@ -28,6 +28,7 @@
   import appSelect from 'components/multi-select/app-select'
   import {getUrl} from 'common/js/Urls'
   import { eventMixin } from "common/mixin/eventMixin"
+  import {mapGetters, mapMutations} from 'vuex'
 
   export default {
     name: "index",
@@ -37,10 +38,12 @@
         sysTypeTypeUrl: getUrl("appType"),
         sysTypeNameUrl: getUrl("appName"),
 
+        mark: false,
+
         bindData: {
           name: '',       // 标题
           summary: '',   // 内容
-          type: '否',    // 是否查数
+          type: '2',     // 是否查数
           appType: '',   // 系统分类
           appName: ''    // 所属系统
         },
@@ -50,27 +53,50 @@
           appType: {message: "请选择系统分类", check: "isEmpty"},
           appName: {message: "请选择所属系统", check: "isEmpty"},
         },
-
-        checkNumberArray: ["是", "否"],
-        FlowActions: [
-          {TypeId: 1, FlowActionName: "提交"},
-          {TypeId: 2, FlowActionName: "暂存"}
-        ]
+        checkNumberArray: [{key: "1", value: '是'}, {key: "2", value: '否'}],
       }
     },
     created() {
       setTimeout(() => {
-
+        if(this.$route.query.id && this.temporaryRequest){
+          this.bindData.name = this.temporaryRequest.name
+          this.bindData.summary = this.temporaryRequest.summary
+          this.bindData.type = this.temporaryRequest.type
+          this.bindData.appType = this.temporaryRequest.appType
+          this.bindData.appName = this.temporaryRequest.appName
+        }else{
+          this.setTemporaryRequest(null)
+        }
       }, 20)
     },
     computed: {
+      ...mapGetters([
+        'temporaryRequest',
+      ]),
       sysTypeParam(){
         return {appType: this.bindData.appType}
+      },
+      FlowActions(){
+        let actions = [
+          {TypeId: 1, FlowActionName: "提交", params: {status: 0}},
+          {TypeId: 2, FlowActionName: "暂存", params: {status: 100}}
+        ]
+        if(this.$route.query.id){
+          actions = [
+            {TypeId: 1, FlowActionName: "提交", params: {status: 0, id: this.$route.query.id}},
+            {TypeId: 2, FlowActionName: "暂存", params: {status: 100, id: this.$route.query.id}},
+            {TypeId: 6, FlowActionName: "删除", params: {status: 100}, id: this.$route.query.id, type: "delete"}
+          ]
+        }
+        return actions
       }
     },
     methods: {
-      footerEvent(typeId) {
-        this.submitEvent(typeId)
+      ...mapMutations({
+        setTemporaryRequest: 'SET_TEMPORARY_REQUEST',
+      }),
+      footerEvent(action) {
+        this.submitEvent(action)
       }
     },
     components: {

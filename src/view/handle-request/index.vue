@@ -7,18 +7,22 @@
           <x-input title="请求标题" placeholder="请输入文字" v-model="bindData.name"></x-input>
           <x-textarea title="请求描述" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
                       :max="200"></x-textarea>
-          <x-input title="请求编号" placeholder="请输入文字" v-model="bindData.Nunber"></x-input>
+          <x-input title="请求编号" :readonly="true" placeholder="请输入文字" v-model="serial"></x-input>
+          <div class="hr"></div>
+          <div class="hz-cell">
+            <span class="label c4">状态</span>
+            <span :class="getStatusType(status).class">{{getStatusType(status).title}}</span>
+          </div>
           <selector v-model="bindData.type" title="是否查数" :options="checkNumberArray"></selector>
           <div class="hr"></div>
           <app-select :url="sysTypeTypeUrl" title="系统分类" v-model="bindData.appType"></app-select>
           <div class="hr"></div>
-          <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :param="sysTypeParam" :isFirstRequest="false"></app-select>
-
-          <x-input title="提价时间" v-model="bindData.name"></x-input>
-          <x-input title="提交人" v-model="bindData.name"></x-input>
-          <x-input title="满意度" v-model="bindData.name"></x-input>
-          <x-input title="处理评价" v-model="bindData.name"></x-input>
-
+          <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :param="sysTypeParam"
+                      :isFirstRequest="false"></app-select>
+          <x-input title="提价时间" :readonly="true" v-model="createTime"></x-input>
+          <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
+          <x-input title="满意度" :readonly="true" v-model="cacsi"></x-input>
+          <x-input title="处理评价" :readonly="true" v-model="evaluate"></x-input>
         </group>
       </div>
 
@@ -33,7 +37,9 @@
   import commFooter from 'components/comm-footer'
   import appSelect from 'components/multi-select/app-select'
   import {getUrl} from 'common/js/Urls'
-  import { eventMixin } from "common/mixin/eventMixin"
+  import {eventMixin} from "common/mixin/eventMixin"
+  import {mapGetters, mapMutations} from 'vuex'
+  import {getUserInfo} from 'common/js/cache'
 
   export default {
     name: "index",
@@ -43,14 +49,20 @@
         sysTypeTypeUrl: getUrl("appType"),
         sysTypeNameUrl: getUrl("appName"),
 
+        serial: '',    // 请求编号
+        createTime: '',// 提交事件
+        createUser: '', // 提交人
+        cacsi: '',      // 满意度
+        evaluate: '',   // 处理评价
+        status: '',       // 状态
         bindData: {
           name: '',       // 标题
           summary: '',   // 内容
-          Nunber: '',
-          type: '否',    // 是否查数
+          type: '2',     // 是否查数
           appType: '',   // 系统分类
           appName: ''    // 所属系统
         },
+
         checkData: {
           name: {message: "请输入标题", check: "isEmpty"},
           summary: {message: "请输入描述", check: "isEmpty"},
@@ -58,26 +70,93 @@
           appName: {message: "请选择所属系统", check: "isEmpty"},
         },
 
-        checkNumberArray: ["是", "否"],
-        FlowActions: [
-          {TypeId: 1, FlowActionName: "提交"},
-          {TypeId: 2, FlowActionName: "暂存"}
-        ]
+        checkNumberArray: [{key: "1", value: '是'}, {key: "2", value: '否'}]
       }
     },
     computed: {
-      sysTypeParam(){
+      ...mapGetters([
+        'handleRequest',
+      ]),
+      sysTypeParam() {
         return {appType: this.bindData.appType}
+      },
+      FlowActions(){
+        let actions = []
+        let createUser = this.handleRequest.createUser.split("/")[1], handler = this.handleRequest.handler.split("/")[1];
+        let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
+        console.log("====getUserInfo()==="+JSON.stringify(getUserInfo()))
+        console.log("createUser："+createUser +"-----------------handler："+ handler)
+        console.log("userName："+userName +"-----------------toUser："+ toUser +"------------------role："+ role)
+
+        if(this.status == 0){// 未处理
+          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
+            actions = [
+              {TypeId: 5, FlowActionName: "取消", id: this.$route.query.id},
+            ]
+          }else if(role == 5){
+            actions = [
+              {TypeId: 4, FlowActionName: "驳回", id: this.$route.query.id},
+              {TypeId: 3, FlowActionName: "转派", id: this.$route.query.id},
+              {TypeId: 7, FlowActionName: "关单", id: this.$route.query.id},
+            ]
+          }else{
+            actions = []
+          }
+        }else if(status == 1) { // 处理中
+          if(handler == userName || (toUser && toUser.split(",").indexOf(handler) != -1)){
+            actions = [
+              {TypeId: 3, FlowActionName: "转派", id: this.$route.query.id},
+              {TypeId: 7, FlowActionName: "关单", id: this.$route.query.id},
+            ]
+          }else{
+            // edti 不可编辑
+          }
+        }else if(status == 2) {  // 被驳回
+          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
+            actions = [
+              {TypeId: 5, FlowActionName: "取消", id: this.$route.query.id},
+              {TypeId: 11, FlowActionName: "再次提交", id: this.$route.query.id},
+            ]
+          }else{
+            // edti 不可编辑
+          }
+        }else if(status == 3){ // 待评价
+          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
+            actions = [
+              {TypeId: 8, FlowActionName: "提交评价", id: this.$route.query.id},
+              {TypeId: 11, FlowActionName: "再次提交", id: this.$route.query.id},
+            ]
+          }else{
+            // edti 不可编辑
+          }
+        }else{ // status == 4 || status == 99 || status == 100
+          // edti 不可编辑
+          actions = []
+        }
+        return actions
       }
     },
     created() {
       setTimeout(() => {
-
+        if (this.handleRequest) {
+          for (var k in this.bindData) {
+            this.bindData[k] = this.handleRequest[k]
+          }
+          this.serial = this.handleRequest.serial
+          this.createTime = new Date(this.handleRequest.createTime.time).format("yyyy-MM-dd hh:mm:ss")
+          this.createUser = this.handleRequest.createUser
+          this.cacsi = this.getCacsi(this.handleRequest.cacsi)
+          this.status = this.handleRequest.status
+          this.evaluate = this.handleRequest.evaluate
+        }
       }, 20)
     },
     methods: {
-      footerEvent(typeId) {
-        this.submitEvent(typeId)
+      ...mapMutations({
+        setHandleRequest: 'SET_HANDLE_REQUEST',
+      }),
+      footerEvent(action) {
+        this.submitEvent(action)
       }
     },
     components: {
@@ -104,11 +183,25 @@
     overflow-y: auto;
   }
 
-  .wrapper-content{
+  .wrapper-content {
     position: absolute;
     top: 46px;
     bottom: 45px;
     overflow: auto;
     width: 100%;
+  }
+
+  .hz-cell{
+    padding: 10px 15px;
+    position: relative;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+  }
+  .hz-cell .label{
+    width: 4.5em;
+    text-align: right;
+    margin-right: 2em;
   }
 </style>

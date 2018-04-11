@@ -2,11 +2,10 @@
   <transition name="move">
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">服务请求
-        <router-link to="/addRequest" tag="a" slot="right" class="iconfont icon-tianjia"></router-link>
+        <router-link to="/addRequest" tag="a" v-if="userData && userData.user.role == 4" slot="right" class="iconfont icon-tianjia"></router-link>
       </x-header>
       <tab>
-        <tab-item selected @on-item-click="onTabItemClick">未完成</tab-item>
-        <tab-item @on-item-click="onTabItemClick">已完成</tab-item>
+        <tab-item v-for="(item, index) in tab" :selected="index == selectIndex" @on-item-click="onTabItemClick">{{item}}</tab-item>
       </tab>
       <div class="search-box">
         <search-box @query="searchQuery" placeholder="消息搜搜"></search-box>
@@ -40,12 +39,15 @@
   import Scroller from 'components/scroll/scroller'
   import request from 'common/js/request'
   import {getUrl} from 'common/js/Urls'
+  import {mapGetters, mapMutations} from 'vuex'
+  import {getUserInfo} from 'common/js/cache'
 
   export default {
     name: "index",
     data() {
       return {
         selectIndex: 0,
+        content: [],
 
         refresh: {
           content: [],
@@ -53,37 +55,70 @@
           pageNo: 1,
           pageSize: 10,
           totalCount: 0,
-          params: {name: '', status: 0}
+          params: {keyWord: ''}
         },
+      }
+    },
+    computed: {
+      ...mapGetters([
+        'userData',
+      ]),
+      tab(){
+        let tab
+        if(getUserInfo().user.role == 4){ // 普通用户Tab
+          tab = ["处理中", "已结束"]
+        }else{
+          tab = ["待处理", "已处理", "所有"]
+        }
+        return tab
+      },
+      status(){
+        let status
+        if(getUserInfo().user.role == 4){
+          status = ["0,1,2,3,100", "4,99"]
+        }else{
+          status = ["0", ">=1", ""]
+        }
+        return status
       }
     },
     created() {
       setTimeout(() => {
+        this.refresh.params.status = this.status[this.selectedIndex]
         this.getList()
       }, 800)
     },
     methods: {
+      ...mapMutations({
+        setTemporaryRequest: 'SET_TEMPORARY_REQUEST',
+        setHandleRequest: 'SET_HANDLE_REQUEST'
+      }),
       onTabItemClick(index) {
-        this.refresh.params.name = ''
+        this.refresh.params.keyWord = ''
         this.selectIndex = index
-        if(index == 0){
-          this.refresh.params.status = 0
-        }else{
-          delete this.refresh.params.status
-        }
+        // status：【0：未受理】【1：处理中】【2：被驳回】【3：待评价】【4：已取消】【99：已关闭】【100：暂存】
+        this.refresh.params.status = this.status[index]
         this.getList(false, true)
         this.$vux.toast.text(index + "", "bottom")
       },
       onItemClick(row){
-        this.$router.push({path: '/handleRequest',query:{id: row.id}})
+        // 暂存数据跳往添加页面 否则跳往处理服务请求页面
+        let itemData = this.content[this._findIndex(row.id, this.content)]
+        if(row.status == 100){
+          this.setTemporaryRequest(itemData)
+          this.$router.push({path: "/addRequest",query:{id: row.id}})
+        }else{
+          this.setHandleRequest(itemData)
+          this.$router.push({path: '/handleRequest',query:{id: row.id}})
+        }
       },
       searchQuery(v){
-        this.refresh.params.name = v
+        this.refresh.params.keyWord = v
         this.getList(false, true)
       },
       pullRefresh() {
         setTimeout(() => {
-          this.refresh.params.name = ''
+          this.refresh.params.keyWord = ''
           this.getList(true, true)
         }, 800)
       },
@@ -97,6 +132,7 @@
           if (data.data) {
             this.refresh.isPullLoaded = false
             this.refresh.totalCount = data.data.total
+            this.content = pullRefresh ? data.data.rows : this.content.concat(data.data.rows)
             this.refresh.content = pullRefresh ? this._parseDate(data.data.rows) : this.refresh.content.concat(this._parseDate(data.data.rows))
           } else {
             this.$vux.toast.text("请求失败", "bottom")
@@ -123,6 +159,11 @@
           data.push({id: v.id, name: v.name, time: v.createTime.time, status: v.status})
         })
         return data
+      },
+      _findIndex(id, data){
+        return data.findIndex((item) => {
+          return item.id == id
+        })
       }
     },
     components: {

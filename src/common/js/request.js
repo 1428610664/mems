@@ -1,5 +1,5 @@
 import axios from "axios"
-
+axios.defaults.baseURL = 'http://192.168.1.130/ems'
 const commonParams = {}
 const option = {}
 
@@ -21,5 +21,8 @@ export default {
   },
   get(url, parma) {
     return this.ajax(url, parma, "get")
+  },
+  delete(url, parma){
+    return this.ajax(url, parma, "delete")
   }
 }

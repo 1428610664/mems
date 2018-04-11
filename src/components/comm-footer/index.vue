@@ -33,7 +33,7 @@
     },
     methods: {
       event(id, mark){
-        this.$emit("event", id, mark)
+        this.$emit("event", this.FlowActions[this._findIndex(id)], mark)
       },
       hideMore(){
         this.isShowMore = false
@@ -51,6 +51,11 @@
         }else{
           return t.slice(3)
         }
+      },
+      _findIndex(id){
+        return this.FlowActions.findIndex((item) => {
+          return item.TypeId == id
+        })
       }
     }
   }

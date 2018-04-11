@@ -34,7 +34,7 @@ const requestUrl = {
 }
 
 export function getUrl(key, id){
-  let url = requestUrl[key].pre + requestUrl[key].url
+  let url = requestUrl[key].url
   let ref = /\{(.*?)\}/gi
   if(id){
     url = url.replace(ref, (s, t) => {

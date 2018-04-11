@@ -8,7 +8,7 @@
       <div class="title ct c3">时间：</div>
       <div class="desc">
         <span class="c4">{{new Date(row.time).format("yyyy-MM-dd hh:mm:ss")}}</span>
-        <span v-if="row.status" :class="getStatusType(row.status).class" class=" fr">{{getStatusType(row.status).title}}</span>
+        <span :class="getStatusType(row.status).class" class=" fr">{{getStatusType(row.status).title}}</span>
       </div>
     </div>
     <i class="number fz12 c" v-if="showNunber && row.counts != 0? true: false ">{{row.counts > 99? "99+": row.counts}}</i>

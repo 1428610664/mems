@@ -13,6 +13,19 @@ export default {
        }
     }
     /**
+     * 转义满意度
+     * @param number
+     * @returns {string}
+     */
+    Vue.prototype.getCacsi = function (number) {
+      switch ('' + number) {
+        case '10': return '不满意'
+        case '20': return '一般'
+        case '30': return '满意'
+        default: ''
+      }
+    }
+    /**
      * 转义用户类型
      * @param number
      * @returns {string}
