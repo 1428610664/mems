@@ -73,7 +73,7 @@
         this.$vux.toast.text(index + "", "bottom")
       },
       onItemClick(row){
-        alert(JSON.stringify(row))
+        this.$router.push({path: '/handleRequest',query:{id: row.id}})
       },
       searchQuery(v){
         this.params.name = v
