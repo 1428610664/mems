@@ -10,15 +10,15 @@
     </div>
 
     <scroller class="list-wrapper" ref="scroll"
-              :data="content"
-              :totalCount="totalCount"
+              :data="refresh.content"
+              :totalCount="refresh.totalCount"
               :pullup="true"
               :pulldown="true"
               :listenScroll="true"
               @scrollToEnd="scrollToEnd"
               @loadingStateChange="loadingStateChange"
               @pullRefresh="pullRefresh">
-      <div  v-show="LoadingState == 1" v-for="item in content" >
+      <div  v-show="refresh.LoadingState == 1" v-for="item in refresh.content" >
         <item-wrapper @onClick="onItemClick"  :row="item"></item-wrapper>
       </div>
     </scroller>
@@ -39,12 +39,14 @@
       return {
         selectIndex: 0,
 
-        content: [],
-        LoadingState: 2,
-        pageNo: 1,
-        pageSize: 10,
-        totalCount: 0,
-        params: {name: ''}
+        refresh: {
+          content: [],
+          LoadingState: 2,
+          pageNo: 1,
+          pageSize: 10,
+          totalCount: 0,
+          params: {name: ''}
+        },
       }
     },
     created() {
@@ -61,44 +63,44 @@
         alert(JSON.stringify(row))
       },
       searchQuery(v){
-        this.params.name = v
+        this.refresh.params.name = v
         this.getList(false, true)
       },
       pullRefresh() {
         setTimeout(() => {
-          this.params.name = ''
+          this.refresh.params.name = ''
           this.getList(true, true)
         }, 800)
       },
       getList(isUpload, pullRefresh) {
         if (pullRefresh) {
-          this.pageNo = 1
-          this.pageSize = 10
+          this.refresh.pageNo = 1
+          this.refresh.pageSize = 10
         }
-        let param = {offset: (this.pageNo - 1) * this.pageSize,limit: this.pageSize}
-        request.get(getUrl("myMessage"), Object.assign({}, this.params, param)).then(data => {
+        let param = {offset: (this.refresh.pageNo - 1) * this.refresh.pageSize,limit: this.refresh.pageSize}
+        request.get(getUrl("myMessage"), Object.assign({}, this.refresh.params, param)).then(data => {
           if (data.data) {
-            this.isPullLoaded = false
-            this.totalCount = data.data.total
-            this.content = pullRefresh ? this._parseDate(data.data.rows) : this.content.concat(this._parseDate(data.data.rows))
+            this.refresh.isPullLoaded = false
+            this.refresh.totalCount = data.data.total
+            this.refresh.content = pullRefresh ? this._parseDate(data.data.rows) : this.refresh.content.concat(this._parseDate(data.data.rows))
           } else {
             this.$vux.toast.text("请求失败", "bottom")
           }
-          this.$refs.scroll.requestSuccess(data.data, isUpload, pullRefresh, this.content, this.totalCount)
+          this.$refs.scroll.requestSuccess(data.data, isUpload, pullRefresh, this.refresh.content, this.refresh.totalCount)
         }, error => {
           console.log("error=======" + JSON.stringify(error))
         })
       },
       scrollToEnd() {
-        if (this.content.length == 0 || this.content.length >= this.totalCount || this.isPullLoaded) {
+        if (this.refresh.content.length == 0 || this.refresh.content.length >= this.refresh.totalCount || this.refresh.isPullLoaded) {
           return
         }
-        this.isPullLoaded = true
-        this.pageNo++
+        this.refresh.isPullLoaded = true
+        this.refresh.pageNo++
         this.getList(false)
       },
       loadingStateChange(LoadingState) {
-        this.LoadingState = LoadingState
+        this.refresh.LoadingState = LoadingState
       },
       _parseDate(res){
         let data = []
