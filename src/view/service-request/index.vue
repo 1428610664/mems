@@ -107,7 +107,7 @@
         })
       },
       scrollToEnd() {
-        if (this.refresh.content.length == 0 || this.refresh.content.length >= this.totalCount || this.isPullLoaded) {
+        if (this.refresh.content.length == 0 || this.refresh.content.length >= this.refresh.totalCount || this.refresh.isPullLoaded) {
           return
         }
         this.refresh.isPullLoaded = true
