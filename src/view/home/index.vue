@@ -8,12 +8,12 @@
           <div class="name ct">服务请求</div>
         </div>
       </router-link>
-      <li class="grid posct">
+      <router-link to="/faultsWarning" tag="li" class="grid posct">
         <div>
           <div class="icon iconfont posct icon-xitongguzhang fz22 mb2"><i class="number fz12">5</i></div>
           <div class="name ct">人工报障</div>
         </div>
-      </li>
+      </router-link>
     </ul>
     <router-view></router-view>
   </div>

@@ -25,7 +25,12 @@ const requestUrl = {
   appName: {
     url: "/ips/findAppNameByType",
     pre: preUrl
-  }
+  },
+  // 人工报障
+  faultsWarning: {
+    url: "/faults",
+    pre: preUrl
+  },
 }
 
 export function getUrl(key, id){

@@ -26,6 +26,20 @@ export default new Router({
               component: (resolve) => require(['view/handle-request'], resolve),
             }
           ]
+        },
+        {
+          path: '/faultsWarning',
+          component: (resolve) => require(['view/faults-warning'], resolve),
+          children: [
+            {
+              path: '/addWarning',
+              component: (resolve) => require(['view/add-warning'], resolve),
+            },
+            {
+              path: '/handleWarning',
+              component: (resolve) => require(['view/handle-warning'], resolve),
+            }
+          ]
         }
       ]
     }, {
