@@ -34,10 +34,10 @@
       ])
     },
     created() {
-      setTimeout(() => {
-        this.getServiceNumber()
-        this.getFaultsNumber()
-      }, 20)
+      this.getNumber()
+      setInterval(() => {
+        this.getNumber()
+      }, 10000)
     },
     components: {
       XHeader,
@@ -46,13 +46,17 @@
     methods: {
       check(t) {
         this.title = t;
+      },
+      getNumber(){
+        this.getServiceNumber()
+        this.getFaultsNumber()
       }
     },
     watch: {
       isLogin(login){
         console.log("登录状态改变："+login)
         if(login) {
-          this.$router.replace({path:"/home"});
+          this.$router.replace({path:"/home"})
         }else{
           this.$router.replace({path:"/login"})
         }

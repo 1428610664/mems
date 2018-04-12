@@ -59,6 +59,10 @@ export default new Router({
       component: (resolve) => require(['view/me'], resolve),
       children: [
         {
+          path: '/setting',
+          component: (resolve) => require(['view/setting'], resolve)
+        },
+        {
           path: '/test',
           component: (resolve) => require(['view/test'], resolve)
         },

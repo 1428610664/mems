@@ -3,11 +3,6 @@ import {getUrl} from 'common/js/Urls'
 import {mapMutations} from 'vuex'
 
 export const numberMixin = {
-  data(){
-    return {
-      hz: "123"
-    }
-  },
   methods: {
     ...mapMutations({
       setServicesNumber: 'SET_SERVICE_NUMBER',

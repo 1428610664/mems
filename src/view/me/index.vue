@@ -7,7 +7,7 @@
       <div class="big-bg" :style="bgStyle"></div>
     </div>
     <ul class="mlistbox fz16 c4">
-      <router-link to="/test" tag="li" class="mlist">
+      <router-link to="/setting" tag="li" class="mlist">
         <i class="icon fz20 c1 iconfont icon-shezhi"></i>
         <span>设置</span>
         <span class="num c btnR fr fz12 hide"></span>

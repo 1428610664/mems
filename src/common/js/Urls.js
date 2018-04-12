@@ -6,6 +6,10 @@ const requestUrl = {
     url: "/users/login",
     pre: preUrl
   },
+  users: {
+    url: "/users",
+    pre: preUrl
+  },
   // 我的消息
   myMessage: {
     url: "/messages/my",
