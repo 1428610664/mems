@@ -1,10 +1,13 @@
 <style scoped>
+  .tab_div{
+    padding: 2px;
+  }
   .p_content {
     border: 1px solid #cccccc;
-    height: 200px;
-    margin-top: 10px;
+    height: 150px !important;
     overflow: auto;
-    padding-left: 15px;
+    margin-top: 15px;
+    padding: 1px;
     text-align: left;
   }
 
@@ -20,7 +23,7 @@
   }
 
   .tab_time {
-    margin-left: 17px;
+    margin-left: 5px;
     color: #8D8D8D
   }
 
@@ -29,36 +32,36 @@
   }
 </style>
 <template>
-  <div>
-  <tab :line-width=2 active-color='#fc378c' v-model="index">
-    <tab-item class="vux-center"  v-for="(item, i) in list" :key="i">
-      {{item}}
-    </tab-item>
-  </tab>
-  <swiper v-model="index" height="100px" :show-dots="false">
-    <swiper-item v-for="(item, i) in list" :key="i">
-      <div v-if="i==0" class="p_content" :style="styleTabname1">
-        <div v-show="opinions!=''" v-for="row in opinions">
-          <div class="m-t15">
-            <span class="tab_user_name">{{row.userName}}</span>
-            <span class="tab_time">{{row.time.time}}</span>({{row.descs}})
-            <div class="xheditor-con-div tab_summary" v-html="row.content"></div>
+  <div class="tab_div">
+    <tab :line-width=2 active-color='#fc378c' v-model="index">
+      <tab-item class="vux-center"  v-for="(item, i) in list" :key="i">
+        {{item}}({{numberMsg['key'+i]}})
+      </tab-item>
+    </tab>
+    <swiper v-model="index" height="180px" :show-dots="false">
+      <swiper-item v-for="(item, i) in list" :key="i">
+        <div v-if="i==0" class="p_content">
+          <div v-show="opinions!=''" v-for="row in opinions">
+            <div class="m-t15 fz12">
+              <span class="tab_user_name fz12">{{row.userName}}</span>
+              <span class="tab_time fz12">{{new Date(row.time.time).format("yyyy-MM-dd hh:mm:ss")}}</span>({{row.descs}})
+              <div class="xheditor-con-div tab_summary fz12" v-html="row.content"></div>
+            </div>
           </div>
+           <p class="fz12" v-show="opinions==''">暂无内容</p>
         </div>
-         <p v-show="opinions==''">暂无内容</p>
-      </div>
-      <div v-if="i==1" class="p_content" :style="styleTabname2">
-        <div v-show="messages!=''" v-for="row in messages">
-          <div class="m-t15">
-            <span class="tab_user_name">{{row.sendUser}}</span>
-            <span class="tab_time">{{row.sendTime.time}}</span>
-            <div class="xheditor-con-div tab_summary" v-html="row.summary"></div>
+        <div v-if="i==1" class="p_content">
+          <div v-show="messages!=''" v-for="row in messages">
+            <div class="m-t15 fz12">
+              <span class="tab_user_name fz12">{{row.sendUser}}</span>
+              <span class="tab_time fz12">{{new Date(row.sendTime.time).format("yyyy-MM-dd hh:mm:ss")}}</span>
+              <div class="xheditor-con-div tab_summary fz12" v-html="row.summary"></div>
+            </div>
           </div>
+          <p class="fz12" v-show="messages==''">暂无消息</p>
         </div>
-        <p v-show="messages==''">暂无消息</p>
-      </div>
-    </swiper-item>
-  </swiper>
+      </swiper-item>
+    </swiper>
   </div>
 </template>
 <script type="es6">
@@ -73,13 +76,10 @@
         list: ['处理经过', '消息面板'],
         opinions: "",
         messages: "",
-        styleTabname1: {
-          height: '100px',
-          position: 'relative'
-        },
-        styleTabname2: {
-          height: '100px',
-        },
+        numberMsg:{
+          key0:0,
+          key1:0,
+        }
       }
     },
     components: {
@@ -102,25 +102,24 @@
     },
     methods: {
       loadTasOpinions() {
-        request.get("http://192.168.1.130/ems/events/opinion/"+this.id , {status:0}).then((res) => {
-          console.log(res)
+        request.get(getUrl('opinion',this.id), {status:0}).then((res) => {
+          this.numberMsg.key0 = res.data.rows.length
           if (res.data.rows.length == "0") {
             this.opinions = ""
           } else {
             this.opinions = res.data.rows
-            this.styleTabname1.height = '200px'
           }
         }, (error) => {
           console.log(JSON.stringify('error===' + error))
         })
       },
       loadTasMessages() {
-        request.get("http://192.168.1.130/ems/messages", {refId:this.id, status:0}).then((res) => {
+        request.get(getUrl('messages'), {refId:this.id, status:0}).then((res) => {
+          this.numberMsg.key1 = res.data.rows.length
           if (res.data.rows.length == "0") {
             this.messages = ""
           } else {
             this.messages = res.data.rows
-            this.styleTabname2.height = "200px"
           }
         }, (error) => {
           console.log(JSON.stringify('error===' + error))

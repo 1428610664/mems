@@ -1,4 +1,4 @@
-const preUrl = "http://192.168.1.130/ems"
+const preUrl = ""
 
 const requestUrl = {
   // 登录
@@ -31,15 +31,28 @@ const requestUrl = {
     url: "/faults",
     pre: preUrl
   },
+  // 人工报障
+  faultsWarning: {
+    url: "/faults",
+    pre: preUrl
+  },
+  // 消息面板
+  messages: {
+    url: "/messages",
+    pre: preUrl
+  },
+  // 处理经过
+  opinion: {
+    url: "/events/opinion/{id}",
+    pre: preUrl
+  },
 }
 
 export function getUrl(key, id){
   let url = requestUrl[key].url
   let ref = /\{(.*?)\}/gi
   if(id){
-    url = url.replace(ref, (s, t) => {
-      return obj[t]
-    })
+    url = url.replace(ref,id)
   }
   return url
 }

@@ -12,6 +12,12 @@ const mutations = {
   },
   [types.SET_HANDLE_REQUEST](state, data) {
     state.handleRequest = data
+  },
+  [types.SET_TEMPORARY_WARNING](state, data) {
+    state.temporaryWarning = data
+  },
+  [types.SET_HANDLE_WARNING](state, data) {
+    state.handleWarning = data
   }
 }
 

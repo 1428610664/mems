@@ -9,9 +9,9 @@
           <div class="hr"></div>
           <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :param="sysTypeParam" :isFirstRequest="false"></app-select>
 
-          <selector v-model="bindData.type" title="是否查数" :options="checkNumberArray"></selector>
+          <datetime v-model="bindData.faultTime" format="YYYY-MM-DD HH:mm" title="发生时间"></datetime>
           <x-input title="标题" placeholder="请输入文字" v-model="bindData.name"></x-input>
-          <x-textarea title="描述" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
+          <x-textarea title="内容" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
                       :max="200"></x-textarea>
         </group>
       </div>
@@ -23,54 +23,79 @@
 
 <script>
 
-  import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
+  import {XHeader, Group, Datetime, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
   import appSelect from 'components/multi-select/app-select'
   import {getUrl} from 'common/js/Urls'
-  import { eventMixin } from "common/mixin/eventMixin"
+  import { addRequestMixin } from "common/mixin/eventMixin"
+  import {mapGetters, mapMutations} from 'vuex'
 
   export default {
     name: "index",
-    mixins: [eventMixin],
+    mixins: [addRequestMixin],
     data() {
       return {
         sysTypeTypeUrl: getUrl("appType"),
         sysTypeNameUrl: getUrl("appName"),
 
+        mark: false,
+
         bindData: {
           name: '',       // 标题
           summary: '',   // 内容
-          type: '否',    // 是否查数
+          faultTime:'',        //时间
           appType: '',   // 系统分类
           appName: ''    // 所属系统
         },
         checkData: {
           name: {message: "请输入标题", check: "isEmpty"},
-          summary: {message: "请输入描述", check: "isEmpty"},
+          summary: {message: "请输入内容", check: "isEmpty"},
           appType: {message: "请选择系统分类", check: "isEmpty"},
           appName: {message: "请选择所属系统", check: "isEmpty"},
         },
-
-        checkNumberArray: ["是", "否"],
-        FlowActions: [
-          {TypeId: 1, FlowActionName: "提交"},
-          {TypeId: 2, FlowActionName: "暂存"}
-        ]
       }
     },
     created() {
       setTimeout(() => {
-
+        if(this.$route.query.id && this.setTemporaryWarning){
+          this.bindData.name = this.setTemporaryWarning.name
+          this.bindData.summary = this.setTemporaryWarning.summary
+          this.bindData.faultTime = this.setTemporaryWarning.faultTime
+          this.bindData.appType = this.setTemporaryWarning.appType
+          this.bindData.appName = this.setTemporaryWarning.appName
+        }else{
+          this.setTemporaryWarning(null)
+        }
       }, 20)
     },
     computed: {
+      ...mapGetters([
+        'temporaryWarning',
+      ]),
       sysTypeParam(){
         return {appType: this.bindData.appType}
+      },
+      FlowActions(){
+        let actions = [
+          {TypeId: 12, FlowActionName: "提交", params: {status: 0}},
+          {TypeId: 13, FlowActionName: "暂存", params: {status: 100}}
+        ]
+        if(this.$route.query.id){
+          actions = [
+            {TypeId: 12, FlowActionName: "提交", params: {status: 0, id: this.$route.query.id}},
+            {TypeId: 13, FlowActionName: "暂存", params: {status: 100, id: this.$route.query.id}},
+            {TypeId: 17, FlowActionName: "删除", params: {status: 100}, id: this.$route.query.id, type: "delete"}
+          ]
+        }
+        return actions
       }
     },
     methods: {
-      footerEvent(typeId) {
-        this.submitEvent(typeId)
+      ...mapMutations({
+        setTemporaryWarning: 'SET_TEMPORARY_WARNING',
+      }),
+      footerEvent(action) {
+        this.submitEvent(action)
       }
     },
     components: {
@@ -79,6 +104,7 @@
 
       XHeader,
       Group,
+      Datetime,
       XTextarea,
       XInput,
       Selector

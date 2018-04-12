@@ -4,21 +4,26 @@
       <x-header :left-options="{backText: ''}">处理人工报障</x-header>
       <div class="wrapper-content">
         <group label-width="4.5em" label-margin-right="2em" label-align="right">
-          <x-input title="请求标题" placeholder="请输入文字" v-model="bindData.name"></x-input>
-          <x-textarea title="请求描述" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
+          <x-input title="报障标题" placeholder="请输入文字" v-model="bindData.name"></x-input>
+          <x-textarea title="报障内容" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
                       :max="200"></x-textarea>
-          <x-input title="请求编号" placeholder="请输入文字" v-model="bindData.Nunber"></x-input>
-          <selector v-model="bindData.type" title="是否查数" :options="checkNumberArray"></selector>
+          <div class="hr"></div>
+          <div class="hz-cell">
+            <span class="label c4">状态</span>
+            <span :class="getStatusType(status).class">{{getStatusType(status).title}}</span>
+          </div>
           <div class="hr"></div>
           <app-select :url="sysTypeTypeUrl" title="系统分类" v-model="bindData.appType"></app-select>
           <div class="hr"></div>
-          <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :param="sysTypeParam" :isFirstRequest="false"></app-select>
-
-          <x-input title="提价时间" v-model="bindData.name"></x-input>
-          <x-input title="提交人" v-model="bindData.name"></x-input>
-          <x-input title="满意度" v-model="bindData.name"></x-input>
-          <x-input title="处理评价" v-model="bindData.name"></x-input>
-
+          <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :param="sysTypeParam"
+                      :isFirstRequest="false"></app-select>
+          <x-input title="报障编号" :readonly="true" placeholder="请输入文字" v-model="serial"></x-input>
+          <x-input title="报障时间" :readonly="true" v-model="bindData.faultTime"></x-input>
+          <x-input title="提交时间" :readonly="true" v-model="createTime"></x-input>
+          <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
+          <x-input title="满意度" :readonly="true" v-model="cacsi"></x-input>
+          <x-input title="处理评价" :readonly="true" v-model="evaluate"></x-input>
+          <tabs :id="rowId"></tabs>
         </group>
       </div>
 
@@ -29,11 +34,14 @@
 
 <script>
 
-  import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
+  import {XHeader, Group, Datetime, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
   import appSelect from 'components/multi-select/app-select'
   import {getUrl} from 'common/js/Urls'
-  import { eventMixin } from "common/mixin/eventMixin"
+  import {eventMixin} from "common/mixin/eventMixin"
+  import {mapGetters, mapMutations} from 'vuex'
+  import {getUserInfo} from 'common/js/cache'
+  import Tabspan from 'components/tabs-pan/tabs-pan'
 
   export default {
     name: "index",
@@ -42,15 +50,21 @@
       return {
         sysTypeTypeUrl: getUrl("appType"),
         sysTypeNameUrl: getUrl("appName"),
-
+        rowId:this.$route.query.id,
+        serial: '',    // 请求编号
+        createTime: '',// 提交时间
+        createUser: '', // 提交人
+        cacsi: '',      // 满意度
+        evaluate: '',   // 处理评价
+        status: '',       // 状态
         bindData: {
           name: '',       // 标题
           summary: '',   // 内容
-          Nunber: '',
-          type: '否',    // 是否查数
+          faultTime: '', //报障时间
           appType: '',   // 系统分类
           appName: ''    // 所属系统
         },
+
         checkData: {
           name: {message: "请输入标题", check: "isEmpty"},
           summary: {message: "请输入描述", check: "isEmpty"},
@@ -58,34 +72,101 @@
           appName: {message: "请选择所属系统", check: "isEmpty"},
         },
 
-        checkNumberArray: ["是", "否"],
-        FlowActions: [
-          {TypeId: 1, FlowActionName: "提交"},
-          {TypeId: 2, FlowActionName: "暂存"}
-        ]
+        checkNumberArray: [{key: "1", value: '是'}, {key: "2", value: '否'}]
       }
     },
     computed: {
-      sysTypeParam(){
+      ...mapGetters([
+        'handleWarning',
+      ]),
+      sysTypeParam() {
         return {appType: this.bindData.appType}
+      },
+      FlowActions(){
+        console.log(this.handleWarning)
+        let actions = []
+        let createUser = this.handleWarning.createUser.split("/")[1], handler = this.handleWarning.handler.split("/")[1];
+        let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
+
+        if(this.status == 0){// 未处理
+          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
+            actions = [
+              {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
+            ]
+          }else if(role == 5){
+            actions = [
+              {TypeId: 15, FlowActionName: "驳回", id: this.$route.query.id},
+              {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
+              {TypeId: 18, FlowActionName: "关闭", id: this.$route.query.id},
+            ]
+          }else{
+            actions = []
+          }
+        }else if(status == 1) { // 处理中
+          if(handler == userName || (toUser && toUser.split(",").indexOf(handler) != -1)){
+            actions = [
+              {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
+              {TypeId: 18, FlowActionName: "关闭", id: this.$route.query.id},
+            ]
+          }else{
+            // edti 不可编辑
+          }
+        }else if(status == 2) {  // 被驳回
+          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
+            actions = [
+              {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
+              {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
+            ]
+          }else{
+            // edti 不可编辑
+          }
+        }else if(status == 3){ // 待评价
+          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
+            actions = [
+              {TypeId: 19, FlowActionName: "提交评价", id: this.$route.query.id},
+              {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
+            ]
+          }else{
+            // edti 不可编辑
+          }
+        }else{ // status == 4 || status == 99 || status == 100
+          // edti 不可编辑
+          actions = []
+        }
+        return actions
       }
     },
     created() {
       setTimeout(() => {
-
+        if (this.handleWarning) {
+          for (var k in this.bindData) {
+            this.bindData[k] = k == 'faultTime'? new Date(this.handleWarning[k].time).format("yyyy-MM-dd hh:mm:ss") :this.handleWarning[k]
+          }
+          this.serial = this.handleWarning.serial
+          this.createTime = new Date(this.handleWarning.createTime.time).format("yyyy-MM-dd hh:mm:ss")
+          this.createUser = this.handleWarning.createUser
+          this.cacsi = this.getCacsi(this.handleWarning.cacsi)
+          this.status = this.handleWarning.status
+          this.evaluate = this.handleWarning.evaluate
+        }
       }, 20)
     },
     methods: {
-      footerEvent(typeId) {
-        this.submitEvent(typeId)
+      ...mapMutations({
+        setHandleWarning: 'SET_HANDLE_WARNING',
+      }),
+      footerEvent(action) {
+        this.submitEvent(action)
       }
     },
     components: {
       commFooter,
       appSelect,
+      'tabs':Tabspan,
 
       XHeader,
       Group,
+      Datetime,
       XTextarea,
       XInput,
       Selector
@@ -104,11 +185,25 @@
     overflow-y: auto;
   }
 
-  .wrapper-content{
+  .wrapper-content {
     position: absolute;
     top: 46px;
     bottom: 45px;
     overflow: auto;
     width: 100%;
+  }
+
+  .hz-cell{
+    padding: 10px 15px;
+    position: relative;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+  }
+  .hz-cell .label{
+    width: 4.5em;
+    text-align: right;
+    margin-right: 2em;
   }
 </style>
