@@ -27,12 +27,12 @@
   import commFooter from 'components/comm-footer'
   import appSelect from 'components/multi-select/app-select'
   import {getUrl} from 'common/js/Urls'
-  import { eventMixin } from "common/mixin/eventMixin"
+  import { addRequestMixin } from "common/mixin/eventMixin"
   import {mapGetters, mapMutations} from 'vuex'
 
   export default {
     name: "index",
-    mixins: [eventMixin],
+    mixins: [addRequestMixin],
     data() {
       return {
         sysTypeTypeUrl: getUrl("appType"),

@@ -54,7 +54,7 @@
       },
       userData(newData){
         setUserInfo(newData)
-      }
+      },
     }
   }
 </script>

@@ -3,7 +3,7 @@
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">处理服务请求</x-header>
       <div class="wrapper-content">
-        <group label-width="4.5em" label-margin-right="2em" label-align="right">
+        <group label-width="5em" label-margin-right="2em" label-align="right">
           <x-input title="请求标题" placeholder="请输入文字" v-model="bindData.name"></x-input>
           <x-textarea title="请求描述" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
                       :max="200"></x-textarea>
@@ -20,6 +20,7 @@
           <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :param="sysTypeParam"
                       :isFirstRequest="false"></app-select>
           <x-input title="提价时间" :readonly="true" v-model="createTime"></x-input>
+          <x-input title="当前处理人" :readonly="true" v-model="handler"></x-input>
           <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
           <x-input title="满意度" :readonly="true" v-model="cacsi"></x-input>
           <x-input title="处理评价" :readonly="true" v-model="evaluate"></x-input>
@@ -51,6 +52,7 @@
 
         serial: '',    // 请求编号
         createTime: '',// 提交事件
+        handler: '',    // 当前处理人
         createUser: '', // 提交人
         cacsi: '',      // 满意度
         evaluate: '',   // 处理评价
@@ -87,6 +89,8 @@
         console.log("====getUserInfo()==="+JSON.stringify(getUserInfo()))
         console.log("createUser："+createUser +"-----------------handler："+ handler)
         console.log("userName："+userName +"-----------------toUser："+ toUser +"------------------role："+ role)
+
+        console.log("-------handleRequest--------"+JSON.stringify(this.handleRequest))
 
         if(this.status == 0){// 未处理
           if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
@@ -145,6 +149,7 @@
           this.serial = this.handleRequest.serial
           this.createTime = new Date(this.handleRequest.createTime.time).format("yyyy-MM-dd hh:mm:ss")
           this.createUser = this.handleRequest.createUser
+          this.handler = this.handleRequest.handler
           this.cacsi = this.getCacsi(this.handleRequest.cacsi)
           this.status = this.handleRequest.status
           this.evaluate = this.handleRequest.evaluate

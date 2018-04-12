@@ -8,7 +8,7 @@
         <tab-item v-for="(item, index) in tab" :selected="index == selectIndex" @on-item-click="onTabItemClick">{{item}}</tab-item>
       </tab>
       <div class="search-box">
-        <search-box @query="searchQuery" placeholder="消息搜搜"></search-box>
+        <search-box @query="searchQuery" placeholder="搜索"></search-box>
       </div>
 
       <scroller class="list-wrapper" ref="scroll"
@@ -72,19 +72,26 @@
         }
         return tab
       },
-      status(){
-        let status
+      getTabParms(){
+        // status：【0：未受理】【1：处理中】【2：被驳回】【3：待评价】【4：已取消】【99：已关闭】【100：暂存】
+        let Parms = []
+        // 普通用户tab切换附加参数
         if(getUserInfo().user.role == 4){
-          status = ["0,1,2,3,100", "4,99"]
-        }else{
-          status = ["0", ">=1", ""]
+          Parms = [{status: '0,1,2,3,100',isMy: true}, {status: '4,99',isMy: true}]
+        }else {
+          // 其它用户tab切换附加参数
+          Parms = [{status: '0'}, {status: '>=1',}, {isAll: true}]
+          // 二线用户tab切换附加参数
+          if(getUserInfo().user.role == 2){
+            Parms = [{isTurn: true, status: '<=1'}, {status: '>1', handler: "!=" + getUserInfo().user.userName, passUser: getUserInfo().user.userName},{}]
+          }
         }
-        return status
+        return Parms
       }
     },
     created() {
       setTimeout(() => {
-        this.refresh.params.status = this.status[this.selectedIndex]
+        this.refresh.params = this.getTabParms[this.selectIndex]
         this.getList()
       }, 800)
     },
@@ -96,10 +103,8 @@
       onTabItemClick(index) {
         this.refresh.params.keyWord = ''
         this.selectIndex = index
-        // status：【0：未受理】【1：处理中】【2：被驳回】【3：待评价】【4：已取消】【99：已关闭】【100：暂存】
-        this.refresh.params.status = this.status[index]
+        this.refresh.params = this.getTabParms[index]
         this.getList(false, true)
-        this.$vux.toast.text(index + "", "bottom")
       },
       onItemClick(row){
         // 暂存数据跳往添加页面 否则跳往处理服务请求页面
@@ -127,7 +132,7 @@
           this.refresh.pageNo = 1
           this.refresh.pageSize = 10
         }
-        let param = {offset: (this.refresh.pageNo - 1) * this.refresh.pageSize,limit: this.refresh.pageSize, isMy: true}
+        let param = {offset: (this.refresh.pageNo - 1) * this.refresh.pageSize,limit: this.refresh.pageSize}
         request.get(getUrl("serviceRequest"), Object.assign({}, this.refresh.params, param)).then(data => {
           if (data.data) {
             this.refresh.isPullLoaded = false
