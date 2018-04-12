@@ -5,10 +5,10 @@ export function actionJson(no, id){
     No1: ["/services", "提交"],				              // 提交请求
     No2: ["/services", "暂存"],				              // 暂存请求
     No3: [`/services/${id}/turn`, "转派"],				  // 转派请求
-    No4: [`/services/${id}/reject`, "驳回"],	      // 驳回请求
-    No5: [`/services/${id}/cancel`, "取消"],				// 取消请求
+    No4: [`/services/${id}/reject`, "驳回", 1],	      // 驳回请求
+    No5: [`/services/${id}/cancel`, "取消", 1],				// 取消请求
     No6: [`/services/${id}`, "删除"],				        // 删除请求
-    No7: [`/services/${id}/close`, "关闭"],			  	// 关闭请求
+    No7: [`/services/${id}/close`, "关闭", 1],			  	// 关闭请求
     No8: [`/services/${id}/evaluate`, "评价"],			// 评价请求
     No9: ["/services/opinion", "添加"],				      // 添加请求处理意见
     No10: [`/services/${id}/update`, "修改"],			  // 修改请求

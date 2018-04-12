@@ -165,6 +165,9 @@ textarea{overflow:auto;resize:none;vertical-align:top;}
   z-index: 10;
 }
 
+.cell{padding: 6px 10px;}
+.cell:before{content: ''; display: inline-block;width: 3px;height: 16px;background: #3D5C99;vertical-align: text-bottom}
+
 /*头布局*/
 header{position: fixed;top: 0;left: 0;z-index: 10;width: 100%;height: 46px;}
 header .head-lef,header .head-rig{-webkit-flex: 0 0 46px;-ms-flex: 0 0 46px;flex: 0 0 46px;height: 46px;line-height: 46px;text-align: center;}

@@ -4,6 +4,9 @@ const state = {
   isLogin : getIsLogin(),
   userData : getUserInfo(),
 
+  servicesNumber: 0,         // 服务请求首页number
+  faultsNumber: 0,           // 人工报障首页number
+
   temporaryRequest: null,   // 服务请求暂存item数据
   handleRequest: null,      // 服务请求处理item数据
 

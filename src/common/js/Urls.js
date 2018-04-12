@@ -46,6 +46,21 @@ const requestUrl = {
     url: "/events/opinion/{id}",
     pre: preUrl
   },
+  // 转派用户
+  turnUser: {
+    url: "/users/turnUser",
+    pre: preUrl
+  },
+  // 服务请求首页number
+  servicesNumber: {
+    url: "/services/number",
+    pre: preUrl
+  },
+  // 人工报障首页number
+  faultsNumber: {
+    url: "/faults/number",
+    pre: preUrl
+  }
 }
 
 export function getUrl(key, id){

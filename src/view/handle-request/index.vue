@@ -28,6 +28,7 @@
       </div>
 
       <comm-footer :FlowActions="FlowActions" @event="footerEvent"></comm-footer>
+      <router-view></router-view>
     </div>
   </transition>
 </template>
@@ -38,13 +39,13 @@
   import commFooter from 'components/comm-footer'
   import appSelect from 'components/multi-select/app-select'
   import {getUrl} from 'common/js/Urls'
-  import {eventMixin} from "common/mixin/eventMixin"
+  import {handleRequestMixin} from "common/mixin/eventMixin"
   import {mapGetters, mapMutations} from 'vuex'
   import {getUserInfo} from 'common/js/cache'
 
   export default {
     name: "index",
-    mixins: [eventMixin],
+    mixins: [handleRequestMixin],
     data() {
       return {
         sysTypeTypeUrl: getUrl("appType"),
@@ -71,7 +72,6 @@
           appType: {message: "请选择系统分类", check: "isEmpty"},
           appName: {message: "请选择所属系统", check: "isEmpty"},
         },
-
         checkNumberArray: [{key: "1", value: '是'}, {key: "2", value: '否'}]
       }
     },
@@ -83,6 +83,7 @@
         return {appType: this.bindData.appType}
       },
       FlowActions(){
+        if(!this.handleRequest) return []
         let actions = []
         let createUser = this.handleRequest.createUser.split("/")[1], handler = this.handleRequest.handler.split("/")[1];
         let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
@@ -106,7 +107,7 @@
           }else{
             actions = []
           }
-        }else if(status == 1) { // 处理中
+        }else if(this.status == 1) { // 处理中
           if(handler == userName || (toUser && toUser.split(",").indexOf(handler) != -1)){
             actions = [
               {TypeId: 3, FlowActionName: "转派", id: this.$route.query.id},
@@ -115,20 +116,20 @@
           }else{
             // edti 不可编辑
           }
-        }else if(status == 2) {  // 被驳回
+        }else if(this.status == 2) {  // 被驳回
           if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
             actions = [
-              {TypeId: 5, FlowActionName: "取消", id: this.$route.query.id},
-              {TypeId: 11, FlowActionName: "再次提交", id: this.$route.query.id},
+              {TypeId: 5, FlowActionName: "取消请求", id: this.$route.query.id},
+              {TypeId: 1, FlowActionName: "再次提交", params: {status: 0, id: this.$route.query.id}, id: this.$route.query.id},
             ]
           }else{
             // edti 不可编辑
           }
-        }else if(status == 3){ // 待评价
+        }else if(this.status == 3){ // 待评价
           if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
             actions = [
               {TypeId: 8, FlowActionName: "提交评价", id: this.$route.query.id},
-              {TypeId: 11, FlowActionName: "再次提交", id: this.$route.query.id},
+              {TypeId: 11, FlowActionName: "再次提交", params: {status: 0, id: this.$route.query.id}, id: this.$route.query.id},
             ]
           }else{
             // edti 不可编辑
@@ -141,7 +142,16 @@
       }
     },
     created() {
-      setTimeout(() => {
+      this._initRequest()
+    },
+    methods: {
+      ...mapMutations({
+        setHandleRequest: 'SET_HANDLE_REQUEST',
+      }),
+      footerEvent(action) {
+        this.submitEvent(action)
+      },
+      _initRequest(){
         if (this.handleRequest) {
           for (var k in this.bindData) {
             this.bindData[k] = this.handleRequest[k]
@@ -153,15 +163,9 @@
           this.cacsi = this.getCacsi(this.handleRequest.cacsi)
           this.status = this.handleRequest.status
           this.evaluate = this.handleRequest.evaluate
+        }else {
+          this.$router.replace('/serviceRequest')
         }
-      }, 20)
-    },
-    methods: {
-      ...mapMutations({
-        setHandleRequest: 'SET_HANDLE_REQUEST',
-      }),
-      footerEvent(action) {
-        this.submitEvent(action)
       }
     },
     components: {

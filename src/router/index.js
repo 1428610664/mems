@@ -24,6 +24,12 @@ export default new Router({
             {
               path: '/handleRequest',
               component: (resolve) => require(['view/handle-request'], resolve),
+              children: [
+                {
+                  path: '/turnSend',
+                  component: (resolve) => require(['view/turn-send'], resolve)
+                }
+              ]
             }
           ]
         },

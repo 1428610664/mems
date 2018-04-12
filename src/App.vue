@@ -16,10 +16,12 @@
   import footer from 'components/footer/footer'
   import {mapGetters, mapMutations} from 'vuex'
   import {setIsLogin, setUserInfo} from 'common/js/cache'
+  import {numberMixin} from "common/mixin/numberMixin"
 
   const title = {home: "主页", message: "消息", me: "我"}
 
   export default {
+    mixins: [numberMixin],
     data() {
       return {
         title: this.$route.path.substring(1) ? title[this.$route.path.substring(1)]: "主页"
@@ -32,6 +34,10 @@
       ])
     },
     created() {
+      setTimeout(() => {
+        this.getServiceNumber()
+        this.getFaultsNumber()
+      }, 20)
     },
     components: {
       XHeader,

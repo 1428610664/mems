@@ -18,6 +18,12 @@ const mutations = {
   },
   [types.SET_HANDLE_WARNING](state, data) {
     state.handleWarning = data
+  },
+  [types.SET_SERVICE_NUMBER](state, data) {
+    state.servicesNumber = data
+  },
+  [types.SET_FAULTS_NUMBER](state, data) {
+    state.faultsNumber = data
   }
 }
 
