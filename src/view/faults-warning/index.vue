@@ -2,14 +2,13 @@
   <transition name="move">
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">人工报障
-        <router-link to="/addWarning" tag="a" slot="right" class="iconfont icon-tianjia"></router-link>
+        <router-link to="/addWarning" tag="a" v-if="(userData && userData.user.role == 4)||(userData && userData.user.role == 3)" slot="right" class="iconfont icon-tianjia"></router-link>
       </x-header>
       <tab>
-        <tab-item selected @on-item-click="onTabItemClick">未完成</tab-item>
-        <tab-item @on-item-click="onTabItemClick">已完成</tab-item>
+        <tab-item v-for="(item, index) in tab" :key='index' :selected="index == selectIndex" @on-item-click="onTabItemClick">{{item}}</tab-item>
       </tab>
       <div class="search-box">
-        <search-box @query="searchQuery" placeholder="消息搜搜"></search-box>
+        <search-box @query="searchQuery" placeholder="搜索"></search-box>
       </div>
 
       <scroller class="list-wrapper" ref="scroll"
@@ -40,12 +39,15 @@
   import Scroller from 'components/scroll/scroller'
   import request from 'common/js/request'
   import {getUrl} from 'common/js/Urls'
+  import {mapGetters, mapMutations} from 'vuex'
+  import {getUserInfo} from 'common/js/cache'
 
   export default {
     name: "index",
     data() {
       return {
         selectIndex: 0,
+        content: [],
 
         refresh: {
           content: [],
@@ -53,29 +55,67 @@
           pageNo: 1,
           pageSize: 10,
           totalCount: 0,
-          params: {keyWord: '', status: 0}
+          params: {keyWord: ''}
         },
+      }
+    },
+    computed: {
+      ...mapGetters([
+        'userData',
+      ]),
+      tab(){
+        let tab
+        if(getUserInfo().user.role == 4){ // 普通用户Tab
+          tab = ["处理中", "已结束"]
+        }else{
+          tab = ["待处理", "已处理", "所有"]
+        }
+        return tab
+      },
+      getTabParms(){
+        // status：【0：未受理】【1：处理中】【2：被驳回】【3：待评价】【4：已取消】【99：已关闭】【100：暂存】
+        let Parms = []
+        // 普通用户tab切换附加参数
+        if(getUserInfo().user.role == 4 || getUserInfo().user.role == 3){
+          Parms = [{status: '0,1,2,3,100',isMy: true}, {status: '4,99',isMy: true}]
+        }else {
+          // 其它用户tab切换附加参数
+          Parms = [{status: '0'}, {status: '>=1',}, {isAll: true}]
+          // 二线用户tab切换附加参数
+          if(getUserInfo().user.role == 2){
+            Parms = [{isTurn: true, status: '<=1'}, {status: '>1', handler: "!=" + getUserInfo().user.userName, passUser: getUserInfo().user.userName},{}]
+          }
+        }
+        return Parms
       }
     },
     created() {
       setTimeout(() => {
+        this.refresh.params = this.getTabParms[this.selectIndex]
         this.getList()
       }, 800)
     },
     methods: {
+      ...mapMutations({
+        setTemporaryWarning: 'SET_TEMPORARY_WARNING',
+        setHandleWarning: 'SET_HANDLE_WARNING'
+      }),
       onTabItemClick(index) {
         this.refresh.params.keyWord = ''
         this.selectIndex = index
-        if(index == 0){
-          this.refresh.params.status = 0
-        }else{
-          delete this.refresh.params.status
-        }
+        this.refresh.params = this.getTabParms[index]
         this.getList(false, true)
-        this.$vux.toast.text(index + "", "bottom")
       },
       onItemClick(row){
-        this.$router.push({path: '/handleWarning',query:{id: row.id}})
+        // 暂存数据跳往添加页面 否则跳往处理服务请求页面
+        let itemData = this.content[this._findIndex(row.id, this.content)]
+        if(row.status == 100){
+          this.setTemporaryWarning(itemData)
+          this.$router.push({path: "/addWarning",query:{id: row.id}})
+        }else{
+          this.setHandleWarning(itemData)
+          this.$router.push({path: '/handleWarning',query:{id: row.id}})
+        }
       },
       searchQuery(v){
         this.refresh.params.keyWord = v
@@ -92,11 +132,12 @@
           this.refresh.pageNo = 1
           this.refresh.pageSize = 10
         }
-        let param = {offset: (this.refresh.pageNo - 1) * this.refresh.pageSize,limit: this.refresh.pageSize, isMy: true}
+        let param = {offset: (this.refresh.pageNo - 1) * this.refresh.pageSize,limit: this.refresh.pageSize}
         request.get(getUrl("faultsWarning"), Object.assign({}, this.refresh.params, param)).then(data => {
           if (data.data) {
             this.refresh.isPullLoaded = false
             this.refresh.totalCount = data.data.total
+            this.content = pullRefresh ? data.data.rows : this.content.concat(data.data.rows)
             this.refresh.content = pullRefresh ? this._parseDate(data.data.rows) : this.refresh.content.concat(this._parseDate(data.data.rows))
           } else {
             this.$vux.toast.text("请求失败", "bottom")
@@ -123,6 +164,11 @@
           data.push({id: v.id, name: v.name, time: v.createTime.time, status: v.status})
         })
         return data
+      },
+      _findIndex(id, data){
+        return data.findIndex((item) => {
+          return item.id == id
+        })
       }
     },
     components: {

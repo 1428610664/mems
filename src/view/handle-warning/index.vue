@@ -23,7 +23,8 @@
           <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
           <x-input title="满意度" :readonly="true" v-model="cacsi"></x-input>
           <x-input title="处理评价" :readonly="true" v-model="evaluate"></x-input>
-          <tabs :id="rowId"></tabs>
+          <div class="hr"></div>
+          <tabs-pan :id="rowId"></tabs-pan>
         </group>
       </div>
 
@@ -34,14 +35,14 @@
 
 <script>
 
-  import {XHeader, Group, Datetime, XTextarea, XInput, Selector} from 'vux'
+  import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
   import appSelect from 'components/multi-select/app-select'
   import {getUrl} from 'common/js/Urls'
   import {eventMixin} from "common/mixin/eventMixin"
   import {mapGetters, mapMutations} from 'vuex'
   import {getUserInfo} from 'common/js/cache'
-  import Tabspan from 'components/tabs-pan/tabs-pan'
+  import tabsPan from 'components/tabs-pan/tabs-pan'
 
   export default {
     name: "index",
@@ -83,7 +84,6 @@
         return {appType: this.bindData.appType}
       },
       FlowActions(){
-        console.log(this.handleWarning)
         let actions = []
         let createUser = this.handleWarning.createUser.split("/")[1], handler = this.handleWarning.handler.split("/")[1];
         let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
@@ -162,11 +162,10 @@
     components: {
       commFooter,
       appSelect,
-      'tabs':Tabspan,
+      datetime,
 
       XHeader,
       Group,
-      Datetime,
       XTextarea,
       XInput,
       Selector

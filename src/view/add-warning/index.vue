@@ -9,7 +9,7 @@
           <div class="hr"></div>
           <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :param="sysTypeParam" :isFirstRequest="false"></app-select>
 
-          <datetime v-model="bindData.faultTime" format="YYYY-MM-DD HH:mm" title="发生时间"></datetime>
+          <datetime v-model="bindData.faultTime" format="YYYY-MM-DD HH:mm:ss" title="报障时间"></datetime>
           <x-input title="标题" placeholder="请输入文字" v-model="bindData.name"></x-input>
           <x-textarea title="内容" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
                       :max="200"></x-textarea>
@@ -23,9 +23,10 @@
 
 <script>
 
-  import {XHeader, Group, Datetime, XTextarea, XInput, Selector} from 'vux'
+  import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
   import appSelect from 'components/multi-select/app-select'
+  import datetime from 'components/datetime/index'
   import {getUrl} from 'common/js/Urls'
   import { addRequestMixin } from "common/mixin/eventMixin"
   import {mapGetters, mapMutations} from 'vuex'
@@ -101,10 +102,10 @@
     components: {
       commFooter,
       appSelect,
+      datetime,
 
       XHeader,
       Group,
-      Datetime,
       XTextarea,
       XInput,
       Selector
