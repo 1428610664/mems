@@ -44,6 +44,12 @@ export default new Router({
             {
               path: '/handleWarning',
               component: (resolve) => require(['view/handle-warning'], resolve),
+              children: [
+                {
+                  path: '/turnSendwarning',
+                  component: (resolve) => require(['view/turn-sendwarning'], resolve)
+                }
+              ]
             }
           ]
         }

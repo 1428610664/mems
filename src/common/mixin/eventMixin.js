@@ -118,24 +118,34 @@ export const eventMixin = {
      * @param i
      */
     submitEvent(action){
-      if(!this._checkData()) return
-      console.log(JSON.stringify(Object.assign({}, this.bindData, action.params)))
       let _this = this
-      this.$vux.confirm.show({
-        title: '提示',
-        content: '确认'+action.FlowActionName+'？',
-        onConfirm () {
-          _this.$vux.loading.show({text: '数据提交中...'})
-          request[action.type ? action.type : "post"](actionJson(action.TypeId, action.id)[0], Object.assign({}, _this.bindData, action.params)).then((res) => {
-            _this.$vux.loading.hide()
-            if(res.success)window.history.back()
-            _this.$vux.toast.text(res.desc, "bottom")
-          }, (error) => {
-            _this.$vux.loading.hide()
-            console.log("error ： "+JSON.stringify(error))
-          })
+      if(actionJson(action.TypeId, action.id)[2] == 1){ //不需要验证非空
+
+      }else {
+        _this.$vux.toast.text(action.FlowActionName, "bottom")
+        if(action.TypeId == 14){ // 转派
+          console.log("+===================" ,this.$route.query.id)
+           this.$router.push({path: "/turnSendwarning",query:{id: this.$route.query.id,type: ""}})
+          return
         }
-      })
+        if(!this._checkData()) return
+        console.log(JSON.stringify(Object.assign({}, this.bindData, action.params)))
+        this.$vux.confirm.show({
+          title: '提示',
+          content: '确认'+action.FlowActionName+'？',
+          onConfirm () {
+            _this.$vux.loading.show({text: '数据提交中...'})
+            request[action.type ? action.type : "post"](actionJson(action.TypeId, action.id)[0], Object.assign({}, _this.bindData, action.params)).then((res) => {
+              _this.$vux.loading.hide()
+              if(res.success)window.history.back()
+              _this.$vux.toast.text(res.desc, "bottom")
+            }, (error) => {
+              _this.$vux.loading.hide()
+              console.log("error ： "+JSON.stringify(error))
+            })
+          }
+        })
+      }
     }
   }
 }

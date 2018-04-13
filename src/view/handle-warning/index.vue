@@ -29,6 +29,7 @@
       </div>
 
       <comm-footer :FlowActions="FlowActions" @event="footerEvent"></comm-footer>
+      <router-view></router-view>
     </div>
   </transition>
 </template>
@@ -84,10 +85,11 @@
         return {appType: this.bindData.appType}
       },
       FlowActions(){
+        if(!this.handleWarning) return []
         let actions = []
         let createUser = this.handleWarning.createUser.split("/")[1], handler = this.handleWarning.handler.split("/")[1];
         let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
-
+        debugger;
         if(this.status == 0){// 未处理
           if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
             actions = [
@@ -102,7 +104,7 @@
           }else{
             actions = []
           }
-        }else if(status == 1) { // 处理中
+        }else if(this.status == 1) { // 处理中
           if(handler == userName || (toUser && toUser.split(",").indexOf(handler) != -1)){
             actions = [
               {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
@@ -111,7 +113,7 @@
           }else{
             // edti 不可编辑
           }
-        }else if(status == 2) {  // 被驳回
+        }else if(this.status == 2) {  // 被驳回
           if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
             actions = [
               {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
@@ -120,7 +122,7 @@
           }else{
             // edti 不可编辑
           }
-        }else if(status == 3){ // 待评价
+        }else if(this.status == 3){ // 待评价
           if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
             actions = [
               {TypeId: 19, FlowActionName: "提交评价", id: this.$route.query.id},
@@ -133,23 +135,12 @@
           // edti 不可编辑
           actions = []
         }
+        console.log(actions)
         return actions
       }
     },
     created() {
-      setTimeout(() => {
-        if (this.handleWarning) {
-          for (var k in this.bindData) {
-            this.bindData[k] = k == 'faultTime'? new Date(this.handleWarning[k].time).format("yyyy-MM-dd hh:mm:ss") :this.handleWarning[k]
-          }
-          this.serial = this.handleWarning.serial
-          this.createTime = new Date(this.handleWarning.createTime.time).format("yyyy-MM-dd hh:mm:ss")
-          this.createUser = this.handleWarning.createUser
-          this.cacsi = this.getCacsi(this.handleWarning.cacsi)
-          this.status = this.handleWarning.status
-          this.evaluate = this.handleWarning.evaluate
-        }
-      }, 20)
+      this._initWarning()
     },
     methods: {
       ...mapMutations({
@@ -157,12 +148,27 @@
       }),
       footerEvent(action) {
         this.submitEvent(action)
+      },
+      _initWarning(){
+        if (this.handleWarning) {
+            for (var k in this.bindData) {
+              this.bindData[k] = k == 'faultTime'? new Date(this.handleWarning[k].time).format("yyyy-MM-dd hh:mm:ss") :this.handleWarning[k]
+            }
+            this.serial = this.handleWarning.serial
+            this.createTime = new Date(this.handleWarning.createTime.time).format("yyyy-MM-dd hh:mm:ss")
+            this.createUser = this.handleWarning.createUser
+            this.cacsi = this.getCacsi(this.handleWarning.cacsi)
+            this.status = this.handleWarning.status
+            this.evaluate = this.handleWarning.evaluate
+        }else {
+          this.$router.replace('/faultsWarning')
+        }
       }
     },
     components: {
       commFooter,
       appSelect,
-      datetime,
+      tabsPan,
 
       XHeader,
       Group,
