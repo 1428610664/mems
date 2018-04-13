@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import { TOAST_POS } from 'common/js/config'
 
 let uploadPath = ''
 
@@ -7,7 +6,7 @@ export function Toast(txt){
 	if(window.plus){
 		plus.nativeUI.toast(txt)
 	}else{
-		Vue.$vux.toast.text(txt, TOAST_POS)
+		Vue.$vux.toast.text(txt, "button")
 	}
 }
 
@@ -16,7 +15,7 @@ export function initBack(){
 		plus.navigator.setStatusBarBackground("#3D5C99")
 		plus.device.setWakelock(true)
 		plus.webview.currentWebview().setStyle({scrollIndicator: 'none',})
-		
+
 		var first = null
 		plus.key.addEventListener('backbutton',function(){
 			if(!first){
@@ -26,12 +25,11 @@ export function initBack(){
 					first = null
 				},2000)
 			}else{
-				if(new Date().getTime() - first < 2000){  
+				if(new Date().getTime() - first < 2000){
 					plus.runtime.quit()
 				}
 			}
 		},false)
-		
 	})
 }
 
@@ -369,14 +367,14 @@ var hzMUI = {
 	hzDown 支持单文件、多文件下载
 		init(urlarr,cb1,cb2,cb3)
 			urlarr ：下载路径
-				单文件下载为：String Url 
-				多文件下载为：Array Url 
+				单文件下载为：String Url
+				多文件下载为：Array Url
 			cb1(download,status) ：下载成功失败回调 status = 200为下载成功
 			cb2(jd)：下载过程监听回调 jd返回为进度
 			cb3()：多文件下载完返回事件
 */
 function hzDown(){
-	
+
 }
 hzDown.prototype = {
 	init : function(urlarr,cb1,cb2,cb3){
@@ -436,4 +434,3 @@ hzDown.prototype = {
 		this.task.abort();
 	}
 }
-	

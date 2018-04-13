@@ -16,7 +16,9 @@
   import footer from 'components/footer/footer'
   import {mapGetters, mapMutations} from 'vuex'
   import {setIsLogin, setUserInfo} from 'common/js/cache'
+  import {initBack} from 'common/js/H5Utils'
   import {numberMixin} from "common/mixin/numberMixin"
+
 
   const title = {home: "主页", message: "消息", me: "我"}
 
@@ -24,6 +26,7 @@
     mixins: [numberMixin],
     data() {
       return {
+        timer: null,
         title: this.$route.path.substring(1) ? title[this.$route.path.substring(1)]: "主页"
       }
     },
@@ -34,6 +37,13 @@
       ])
     },
     created() {
+      setTimeout(() => {
+        initBack()
+        if(!this.isLogin){
+          this.$router.replace({path:"/login"})
+        }
+      }, 20)
+
       this.getNumber()
       setInterval(() => {
         this.getNumber()
@@ -50,6 +60,11 @@
       getNumber(){
         this.getServiceNumber()
         this.getFaultsNumber()
+        if(this.timer) clearInterval(this.timer)
+        this.timer = setInterval(() => {
+          this.getServiceNumber()
+          this.getFaultsNumber()
+        }, 10000)
       }
     },
     watch: {
@@ -57,6 +72,7 @@
         console.log("登录状态改变："+login)
         if(login) {
           this.$router.replace({path:"/home"})
+          this.getNumber()
         }else{
           this.$router.replace({path:"/login"})
         }

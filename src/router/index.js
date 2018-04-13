@@ -63,6 +63,14 @@ export default new Router({
           component: (resolve) => require(['view/setting'], resolve)
         },
         {
+          path: '/modifyPsw',
+          component: (resolve) => require(['view/modify-psw'], resolve)
+        },
+        {
+          path: '/delegation',
+          component: (resolve) => require(['view/delegation'], resolve)
+        },
+        {
           path: '/test',
           component: (resolve) => require(['view/test'], resolve)
         },

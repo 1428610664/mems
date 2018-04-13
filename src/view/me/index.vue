@@ -13,7 +13,13 @@
         <span class="num c btnR fr fz12 hide"></span>
         <i class="i_more iconfont icon-arrowright"></i>
       </router-link>
-      <router-link to="/test" tag="li" class="mlist">
+      <router-link to="/modifyPsw" tag="li" class="mlist">
+        <i class="icon fz20 c1 iconfont icon-icon-mima"></i>
+        <span>修改密码</span>
+        <span class="num c btnR fr fz12 hide"></span>
+        <i class="i_more iconfont icon-arrowright"></i>
+      </router-link>
+      <router-link to="/delegation" tag="li" class="mlist">
         <i class="icon fz20 c1 iconfont icon-shouquan"></i>
         <span>转授权</span>
         <span class="num c btnR fr fz12 hide"></span>
