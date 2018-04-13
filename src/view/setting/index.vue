@@ -1,6 +1,6 @@
 <template>
   <transition name="move">
-    <div class="wrapper b">
+    <div class="seting-wrapper b">
       <x-header :left-options="{backText: ''}">设置</x-header>
 
       <div class="wrapper-content">
@@ -90,7 +90,7 @@
 
 <style scoped>
 
-  .wrapper {
+  .seting-wrapper {
     position: fixed;
     top: 0;
     left: 0;

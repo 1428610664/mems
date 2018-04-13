@@ -3,6 +3,7 @@ import {getIsLogin, getUserInfo} from 'common/js/cache'
 const state = {
   isLogin : getIsLogin(),
   userData : getUserInfo(),
+  authorize: null,          // 授权数据
 
   servicesNumber: 0,         // 服务请求首页number
   faultsNumber: 0,           // 人工报障首页number

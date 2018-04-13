@@ -68,7 +68,7 @@
         }
         let userNames = this._getSelectTurnUserName()
         if(userNames.length == 0) {
-          this.$vux.toast.text("请选择转派用户", "bottom")
+          this.$vux.toast.text("请选择"+action.FlowActionName+"用户", "bottom")
           return
         }
         this.$emit('actionEvent', action, userNames)
@@ -123,14 +123,14 @@
 
   .list-item {
     min-width: 90px;
-    height: 26px;
+    height: 30px;
     padding: 0 5px;
-    line-height: 26px;
+    line-height: 30px;
     text-align: center;
     border-radius: 3px;
     border: 1px solid #ccc;
     background-color: #fff;
-    margin:0 4px 4px 0;
+    margin:0 5px 5px 0;
   }
   .item-selected{
     background: #3D5C99;

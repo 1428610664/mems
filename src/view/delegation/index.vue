@@ -16,29 +16,37 @@
   import {actionJson} from 'api/commonEvent'
   import {getUrl} from 'common/js/Urls'
   import {getUserInfo} from 'common/js/cache'
+  import {authorizeMixin} from 'common/mixin/authorizeMixin'
+  import {mapMutations} from 'vuex'
 
   export default {
     name: "index",
+    mixins: [authorizeMixin],
     data() {
       return {
         url: getUrl("users"),
         role: getUserInfo().user.role,
-        FlowActions: [{TypeId: 1, FlowActionName: "授权"},{TypeId: 0, FlowActionName: "取消"}]}
+        FlowActions: [{TypeId: 1, FlowActionName: "授权"}, {TypeId: 0, FlowActionName: "取消"}]
+      }
     },
     methods: {
-      actionEvent(action, userNames){
-        console.log(JSON.stringify(userNames))
-        /*this.$vux.loading.show({text: '数据提交中...'})
-          request.post(actionJson(this.$route.query.type == "request" ? 3 : 14, this.$route.query.id)[0], {users: userNames.join(",")}).then(res => {
-            this.$vux.loading.hide()
-            this.$vux.toast.text(res.desc, "bottom")
-            if(res.success){
-              this.$router.replace({path:"/home"});
-            }
-          }, error => {
-            this.$vux.loading.hide()
-          })*/
-        }
+      ...mapMutations({
+        setAuthorize: 'SET_AUTHORIZE'
+      }),
+      actionEvent(action, userNames) {
+        this.$vux.loading.show({text: '数据提交中...'})
+        request.post(getUrl("authorize"), {toUser: userNames.join(",")}).then(res => {
+          this.$vux.loading.hide()
+          this.$vux.toast.text(res.desc, "bottom")
+          if (res.success) {
+            this.setAuthorize(res)
+            //this.confirmAuthorize(res)
+            this.$router.replace({path: "/home"})
+          }
+        }, error => {
+          this.$vux.loading.hide()
+        })
+      }
     },
     components: {
       XHeader,

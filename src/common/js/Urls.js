@@ -10,6 +10,21 @@ const requestUrl = {
     url: "/users",
     pre: preUrl
   },
+  // 转授权
+  authorize: {
+    url: "/authorize",
+    pre: preUrl
+  },
+  // 取消转授权
+  cancelAuthorize: {
+    url: "/authorize/{id}",
+    pre: preUrl
+  },
+  // 修改密码
+  updatePsw: {
+    url: "/users/updatePwd",
+    pre: preUrl
+  },
   // 我的消息
   myMessage: {
     url: "/messages/my",

@@ -7,6 +7,9 @@ const mutations = {
   [types.SET_USERDATA](state, data) {
     state.userData = data
   },
+  [types.SET_AUTHORIZE](state, data) {
+    state.authorize = data
+  },
   [types.SET_TEMPORARY_REQUEST](state, data) {
     state.temporaryRequest = data
   },

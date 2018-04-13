@@ -5,9 +5,9 @@
 
       <div class="wrapper-content">
         <group label-width="4.5em" label-margin-right="2em" label-align="right">
-          <x-input title="原密码" type="password" v-model="originalPsw"></x-input>
-          <x-input title="密码" type="password" v-model="bindData.passWord"></x-input>
-          <x-input title="确认密码" type="password" v-model="confirmPsw"></x-input>
+          <x-input title="原密码" type="password" v-model="bindData.passWord"></x-input>
+          <x-input title="新密码" type="password" v-model="bindData.newPassWord"></x-input>
+          <x-input title="确认密码" type="password" v-model="bindData.confirmPsw"></x-input>
         </group>
       </div>
       <comm-footer :FlowActions="acitons" @event="footerEvent"></comm-footer>
@@ -21,22 +21,28 @@
   import commFooter from 'components/comm-footer'
   import {getUserInfo} from 'common/js/cache'
   import request from 'common/js/request'
+  import utils from 'common/js/utils'
   import {getUrl} from 'common/js/Urls'
 
   export default {
     name: "index",
     data() {
       return {
-        originalPsw: '',    // 账号
-        confirmPsw: '',     // 手机
         bindData: {
-          passWord: '',     // 名称
+          passWord: '',       // 原密码
+          newPassWord: '',   // 密码
+          confirmPsw: '',     // 确认密码
         },
 
         acitons:[
           {TypeId: 1, FlowActionName: "修改"},
           {TypeId: 0, FlowActionName: "取消"}
-        ]
+        ],
+        checkData: {
+          passWord: {message: "请输入原密码", check: "isEmpty"},
+          newPassWord: {message: "请输入新密码", check: "isEmpty"},
+          confirmPsw: {message: "请输入确认密码", check: "isEmpty"},
+        }
       }
     },
     created() {
@@ -53,14 +59,29 @@
           history.go(-1)
           return
         }
-        console.log(JSON.stringify(this.bindData))
+        if(!this._checkData()) return
+        if(this.bindData.newPassWord != this.bindData.confirmPsw){
+          this.$vux.toast.text("新密码与确认密码不一致", "bottom")
+          return
+        }
         this.$vux.loading.show({text: '数据提交中...'})
-        request.post(getUrl("users"), Object.assign({}, {id: getUserInfo().user.id}, this.bindData)).then(res => {
+        request.post(getUrl("updatePsw"), Object.assign({}, {userName: getUserInfo().user.userName}, this.bindData)).then(res => {
           this.$vux.loading.hide()
           this.$vux.toast.text(res.desc, "bottom")
         }, error => {
           this.$vux.loading.hide()
         })
+      },
+      _checkData(){
+        let mark = true
+        for(var k in this.checkData){
+          if(utils[this.checkData[k].check](this.bindData[k])){
+            mark = false
+            this.$vux.toast.text(this.checkData[k].message, "bottom")
+            break
+          }
+        }
+        return mark
       }
     },
     components: {

@@ -18,22 +18,21 @@
   import {setIsLogin, setUserInfo} from 'common/js/cache'
   import {initBack} from 'common/js/H5Utils'
   import {numberMixin} from "common/mixin/numberMixin"
-
-
-  const title = {home: "主页", message: "消息", me: "我"}
+  import {authorizeMixin} from 'common/mixin/authorizeMixin'
 
   export default {
-    mixins: [numberMixin],
+    mixins: [numberMixin, authorizeMixin],
     data() {
       return {
         timer: null,
-        title: this.$route.path.substring(1) ? title[this.$route.path.substring(1)]: "主页"
+        title: "主页"
       }
     },
     computed: {
       ...mapGetters([
         'isLogin',
-        'userData'
+        'userData',
+        'authorize'
       ])
     },
     created() {
@@ -44,6 +43,8 @@
           this.$router.replace({path:"/login"})
         }
         this.getNumber()
+
+        // 定时任务获取授权信息
       }, 20)
     },
     components: {
@@ -78,6 +79,11 @@
       userData(newData){
         setUserInfo(newData)
       },
+      authorize(authorize){
+        if(authorize){
+          this.confirmAuthorize()
+        }
+      }
     }
   }
 </script>

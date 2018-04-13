@@ -5,7 +5,7 @@
         <router-link to="/addRequest" tag="a" v-if="userData && userData.user.role == 4" slot="right" class="iconfont icon-tianjia"></router-link>
       </x-header>
       <tab>
-        <tab-item v-for="(item, index) in tab" :selected="index == selectIndex" @on-item-click="onTabItemClick">{{item}}</tab-item>
+        <tab-item v-for="(item, index) in tab"  :key='index' :selected="index == selectIndex" @on-item-click="onTabItemClick">{{item}}</tab-item>
       </tab>
       <div class="search-box">
         <search-box @query="searchQuery" placeholder="搜索"></search-box>

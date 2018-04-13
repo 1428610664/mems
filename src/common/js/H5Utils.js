@@ -18,7 +18,8 @@ export function initBack(){
 
 		var first = null
 		plus.key.addEventListener('backbutton',function(){
-		  if(window.location.href.substring(window.location.href.lastIndexOf("/")) != "/home"){
+		  var href = window.location.href.substring(window.location.href.lastIndexOf("/"))
+		  if(href != "/home" || href != "/login"){
         history.go(-1)
 		    return
       }
