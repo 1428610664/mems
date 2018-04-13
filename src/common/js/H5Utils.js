@@ -18,6 +18,10 @@ export function initBack(){
 
 		var first = null
 		plus.key.addEventListener('backbutton',function(){
+		  if(window.location.href.substring(window.location.href.lastIndexOf("/")) != "/home"){
+        history.go(-1)
+		    return
+      }
 			if(!first){
 				first = new Date().getTime()
 				plus.nativeUI.toast('再按一次退出应用')

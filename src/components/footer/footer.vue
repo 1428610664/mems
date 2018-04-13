@@ -30,6 +30,7 @@
 		},
 		methods: {
 			changeTitle(index){
+			  console.log(window.location.href.substring(window.location.href.lastIndexOf("/")))
 				this.$emit("change-title",title[index]);
 			}
 		},

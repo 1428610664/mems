@@ -39,15 +39,12 @@
     created() {
       setTimeout(() => {
         initBack()
+        if(window.plus)console.log("【created】this.isLogin："+this.isLogin)
         if(!this.isLogin){
           this.$router.replace({path:"/login"})
         }
-      }, 20)
-
-      this.getNumber()
-      setInterval(() => {
         this.getNumber()
-      }, 10000)
+      }, 20)
     },
     components: {
       XHeader,
