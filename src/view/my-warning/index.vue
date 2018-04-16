@@ -21,7 +21,8 @@
           <x-input title="报障时间" :readonly="true" v-model="bindData.faultTime"></x-input>
           <x-input title="提交时间" :readonly="true" v-model="createTime"></x-input>
           <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
-          <x-input title="满意度" :readonly="true" v-model="cacsi"></x-input>
+          <x-input  v-show="cacsiSelect=='hide'"title="满意度" :readonly="true" v-model="cacsi"></x-input>
+          <selector v-show="cacsiSelect=='show'" v-model="cacsiKey" title="满意度" :options="select.cacsi"></selector>
           <x-input title="处理评价" :readonly="true" v-model="evaluate"></x-input>
           <div class="hr"></div>
           <tabs-pan :id="rowId"></tabs-pan>
@@ -56,7 +57,11 @@
         serial: '',    // 请求编号
         createTime: '',// 提交时间
         createUser: '', // 提交人
+
         cacsi: '',      // 满意度
+        cacsiKey:'30', // 满意度
+        cacsiSelect:'hide',
+
         evaluate: '',   // 处理评价
         status: '',       // 状态
         bindData: {
@@ -65,6 +70,9 @@
           faultTime: '', //报障时间
           appType: '',   // 系统分类
           appName: ''    // 所属系统
+        },
+        select:{
+          cacsi:[{key:"10",value:"不满意"},{key:"20",value:"一般"},{key:"30",value:"满意"}]
         },
 
         checkData: {
@@ -117,6 +125,7 @@
           }
         }else if(this.status == 3){ // 待评价
           if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
+            this.cacsiSelect = 'show'
             actions = [
               {TypeId: 19, FlowActionName: "提交评价", id: this.$route.query.id},
               {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
@@ -150,6 +159,7 @@
             this.createTime = new Date(this.handleWarning.createTime.time).format("yyyy-MM-dd hh:mm:ss")
             this.createUser = this.handleWarning.createUser
             this.cacsi = this.getCacsi(this.handleWarning.cacsi)
+            this.cacsiKey =  this.handleWarning.cacsi== 0 ?  "30":this.handleWarning.cacsi + ''
             this.status = this.handleWarning.status
             this.evaluate = this.handleWarning.evaluate
         }else {

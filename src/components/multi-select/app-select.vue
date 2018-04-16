@@ -72,6 +72,10 @@
         type: Boolean,
         default: false
       },
+      readonly: {
+        type: Boolean,
+        default: false
+      },
       isFirstRequest : {
         type: Boolean,
         default: true
@@ -107,6 +111,7 @@
     },
     methods: {
       selectShow() {
+        if(this.readonly) return
         this.dropDown = true
         this.style.height =  window.screen.height * 0.6 -117 + "px"
       },

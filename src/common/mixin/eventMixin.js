@@ -123,9 +123,8 @@ export const eventMixin = {
 
       }else {
         _this.$vux.toast.text(action.FlowActionName, "bottom")
-        console.log(JSON.stringify(Object.assign({}, this.bindData, action.params)))
+
         if(action.TypeId == 14){ // 转派
-          console.log("+===================" ,this.$route.query.id)
            this.$router.push({path: "/turnSendwarning",query:{id: this.$route.query.id,type: "",row:Object.assign({}, this.bindData, action.params)}})
           return
         }
@@ -135,7 +134,10 @@ export const eventMixin = {
           content: '确认'+action.FlowActionName+'？',
           onConfirm () {
             _this.$vux.loading.show({text: '数据提交中...'})
-            request[action.type ? action.type : "post"](actionJson(action.TypeId, action.id)[0], Object.assign({}, _this.bindData, action.params)).then((res) => {
+            request[action.type ? action.type : "post"](actionJson(action.TypeId, action.id)[0],Object.assign({}, _this.bindData, action.params,
+              action.FlowActionName=='再次提交'? {id: action.id,status:0}:{},
+              action.TypeId== 19? {cacsi: _this.cacsiKey}:{}  //提交评价
+              ) ).then((res) => {
               _this.$vux.loading.hide()
               if(res.success)window.history.back()
               _this.$vux.toast.text(res.desc, "bottom")

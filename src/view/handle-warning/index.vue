@@ -30,6 +30,16 @@
           <x-input title="报障时间" :readonly="true" v-model="bindData.faultTime"></x-input>
           <x-input title="提交时间" :readonly="true" v-model="createTime"></x-input>
           <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
+          <div class="hr"></div>
+          <div class="hz-cell">
+            <div class="weui-cell__hd">
+              <span class="label c4 in-line">提交部门</span>
+            </div>
+            <div class="weui-cell__bd">
+              <span class="in-line" :title="departName">{{departName}}</span>
+            </div>
+          </div>
+          <!--<x-input title="提交人部门" :readonly="true" v-model="departName"></x-input>-->
           <x-input title="满意度" :readonly="true" v-model="cacsi"></x-input>
           <x-input title="处理评价" :readonly="true" v-model="evaluate"></x-input>
           <div class="hr"></div>
@@ -65,6 +75,7 @@
         serial: '',    // 请求编号
         createTime: '',// 提交时间
         createUser: '', // 提交人
+        departName: '', // 提交人部门
         cacsi: '',      // 满意度
         evaluate: '',   // 处理评价
         status: '',       // 状态
@@ -159,6 +170,7 @@
           // edti 不可编辑
           actions = []
         }
+        console.log(actions)
         return actions
       }
     },
@@ -183,6 +195,7 @@
             this.serial = this.handleWarning.serial
             this.createTime = new Date(this.handleWarning.createTime.time).format("yyyy-MM-dd hh:mm:ss")
             this.createUser = this.handleWarning.createUser
+            this.departName = this.handleWarning.departName
             this.cacsi = this.getCacsi(this.handleWarning.cacsi)
             this.status = this.handleWarning.status
             this.evaluate = this.handleWarning.evaluate

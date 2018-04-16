@@ -3,13 +3,13 @@
   <div>
     <footer class="" v-show="FlowActions != 0">
       <ul class="fbox fz16 c4">
-        <li class="flex" @click="event(item.TypeId)" :data-id="item.TypeId" v-for="(item, index) in _filterActions(FlowActions, true)" v-if="item.TypeId != 18">{{item.FlowActionName}}</li>
+        <li class="flex" @click="event(item.TypeId)" :data-id="item.TypeId" v-for="(item, index) in _filterActions(FlowActions, true)">{{item.FlowActionName}}</li>
         <li class="flex" @click="showMore" v-show="FlowActions.length > 4">更多</li>
       </ul>
     </footer>
     <div class="more-wrapper fz15 c4 b" :class="{hide: !isShowMore}">
       <ul>
-        <li @click="event(item.TypeId, true)" v-if="item.TypeId != 18" :data-id="item.TypeId" v-for="(item, index) in _filterActions(FlowActions, false)">{{item.FlowActionName}}</li>
+        <li @click="event(item.TypeId, true)" :data-id="item.TypeId" v-for="(item, index) in _filterActions(FlowActions, false)">{{item.FlowActionName}}</li>
       </ul>
     </div>
     <div class="more-bg" :class="{hide: !isShowMore}" @click="hideMore"></div>
