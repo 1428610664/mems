@@ -1,4 +1,9 @@
 import axios from "axios"
+import {setIsLogin, setUserInfo} from 'common/js/cache'
+import store from 'store/index'
+import * as types from 'store/mutation-types'
+
+
 axios.defaults.baseURL = 'http://192.168.1.130/ems'
 const commonParams = {}
 const option = {}
@@ -10,7 +15,15 @@ export default {
       axios({method: type ,url: url,params: data})
       //axios[type](url, (type.toLowerCase() == "post" ? data : {params: data}), option)
         .then((data) => {
-          resolve(data.data)
+          // 登录失效
+          if (!data.data.success && data.data.data && data.data.data.TimeOut) {
+            setIsLogin(false)
+            setUserInfo(null)
+            store.commit(types.SET_ISLOGIN, false)
+            store.commit(types.SET_USERDATA, null)
+          }else{
+            resolve(data.data)
+          }
         }).catch((error) => {
         reject(error)
       })

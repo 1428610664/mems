@@ -20,6 +20,9 @@
   import {numberMixin} from "common/mixin/numberMixin"
   import {authorizeMixin} from 'common/mixin/authorizeMixin'
 
+  import request from 'common/js/request'
+  import {getUrl} from 'common/js/Urls'
+
   export default {
     mixins: [numberMixin, authorizeMixin],
     data() {
@@ -43,8 +46,6 @@
           this.$router.replace({path:"/login"})
         }
         this.getNumber()
-
-        // 定时任务获取授权信息
       }, 20)
     },
     components: {
@@ -52,17 +53,41 @@
       'v-footer': footer
     },
     methods: {
+      ...mapMutations({
+        setAuthorize: "SET_AUTHORIZE"
+      }),
       check(t) {
         this.title = t;
       },
       getNumber(){
-        this.getServiceNumber()
-        this.getFaultsNumber()
-        if(this.timer) clearInterval(this.timer)
-        this.timer = setInterval(() => {
+        if(this.isLogin){
+          // 定时任务获取授权信息
+          this.getAuthorizeToUser()
+          // 获取首页服务请求、人功报障number
           this.getServiceNumber()
           this.getFaultsNumber()
+        }
+        if(this.timer) clearInterval(this.timer)
+        this.timer = setInterval(() => {
+          if(this.isLogin){
+            // 定时任务获取授权信息
+            this.getAuthorizeToUser()
+            // 获取首页服务请求、人功报障number
+            this.getServiceNumber()
+            this.getFaultsNumber()
+          }
         }, 10000)
+      },
+      getAuthorizeToUser(){
+        request.get(getUrl("authorizeToUser"), {}).then( res => {
+          if(res.success){
+            if(res.data.rows.length > 0){
+              this.setAuthorize({data: res.data.rows[0]})
+              this.confirmAuthorize()
+            }
+          }
+        }, error => {
+        })
       }
     },
     watch: {

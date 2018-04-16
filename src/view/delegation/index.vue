@@ -39,6 +39,7 @@
           this.$vux.loading.hide()
           this.$vux.toast.text(res.desc, "bottom")
           if (res.success) {
+            console.log(JSON.stringify(res))
             this.setAuthorize(res)
             //this.confirmAuthorize(res)
             this.$router.replace({path: "/home"})

@@ -74,7 +74,7 @@
         this.$emit('actionEvent', action, userNames)
       },
       _getTurnUser(keyWord){
-        request.get(this.url ? this.url : getUrl("turnUser"), {keyWord: keyWord, limit: 100, role: this.role}).then(res => {
+        request.get(this.url ? this.url : getUrl("turnUser"), {keyWord: keyWord, limit: 100, role: this.role,queryMe: false}).then(res => {
           this.turnUser = []
           res.data.rows.forEach((v, i) => {
             this.turnUser.push({key: i, value: v.userName +"/"+ v.name})

@@ -45,7 +45,7 @@
           pageNo: 1,
           pageSize: 10,
           totalCount: 0,
-          params: {name: ''}
+          params: {keyWord: ''}
         },
       }
     },
@@ -55,23 +55,28 @@
       }, 800)
     },
     activated(){
-      this.$refs.scroll.refresh()
+      //this.$refs.scroll.refresh()
+      this.getList()
+      this.$refs.scroll.scrollTo( 0, 0, 200, "")
     },
     methods: {
       onTabItemClick(index) {
+        if(this.selectIndex == index) return
+        this.$vux.loading.show({text: '加载中...'})
         this.selectIndex = index
-        this.$vux.toast.text(index + "", "bottom")
+        this.refresh.params.keyWord = ''
+        this.getList(false, true)
       },
       onItemClick(row){
         alert(JSON.stringify(row))
       },
       searchQuery(v){
-        this.refresh.params.name = v
+        this.refresh.params.keyWord = v
         this.getList(false, true)
       },
       pullRefresh() {
         setTimeout(() => {
-          this.refresh.params.name = ''
+          this.refresh.params.keyWord = ''
           this.getList(true, true)
         }, 800)
       },
@@ -80,8 +85,9 @@
           this.refresh.pageNo = 1
           this.refresh.pageSize = 10
         }
-        let param = {offset: (this.refresh.pageNo - 1) * this.refresh.pageSize,limit: this.refresh.pageSize}
+        let param = {offset: (this.refresh.pageNo - 1) * this.refresh.pageSize,limit: this.refresh.pageSize, status: this.selectIndex == 0 ? 0: 99}
         request.get(getUrl("myMessage"), Object.assign({}, this.refresh.params, param)).then(data => {
+          this.$vux.loading.hide()
           if (data.data) {
             this.refresh.isPullLoaded = false
             this.refresh.totalCount = data.data.total
@@ -91,6 +97,7 @@
           }
           this.$refs.scroll.requestSuccess(data.data, isUpload, pullRefresh, this.refresh.content, this.refresh.totalCount)
         }, error => {
+          this.$vux.loading.hide()
           console.log("error=======" + JSON.stringify(error))
         })
       },
