@@ -85,5 +85,38 @@ export default {
         default : return {title: number, class: ''}
       }
     }
+    /**
+     * 优先级
+     * @param number
+     * @returns {*}
+     */
+    Vue.prototype.getSeverity = function (number) {
+      switch (number + '') {
+        case '0': return {title: '未分类', color: '#71ed42'}
+        case '1': return {title: '极高', color: '#FF0000'}
+        case '2': return {title: '高', color: '#E36C0A'}
+        case '3': return {title: '中', color: '#eaea00'}
+        case '4': return {title: '低', color: '#00B0F0'}
+        case '5': return {title: '恢复', color: '#92D050'}
+        default : return {title: '未分类', color: '#71ed42'}
+      }
+    }
+    /**
+     * 事件类别
+     * @param number
+     * @returns {*}
+     */
+    Vue.prototype.getEventType = function (number) {
+      switch (number + '') {
+        case '1': return '普通'
+        case '2': return '故障事件（可用性）'
+        case '3': return '问询'
+        case '4': return '误报'
+        case '5': return '驳回'
+        case '6': return '屏蔽'
+        case '7': return '维护期'
+        default : return '普通'
+      }
+    }
   }
 }

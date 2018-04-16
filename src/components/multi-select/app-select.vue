@@ -4,15 +4,16 @@
       <cell :title="title" :value="value" is-link></cell>
     </div>
     <div v-transfer-dom>
-      <popup v-model="dropDown" position="bottom" max-height="50%">
+      <popup v-model="dropDown" position="bottom" max-height="60%">
         <div class="select_keyWorld" v-show="search">
           <x-input type="text" :placeholder="placeholder" v-model="params.keyWord" @on-change="onEnter"
                    @on-enter="onEnter"></x-input>
         </div>
-        <div class="select_item">
+        <div class="select_item" :style="style">
+          <div class="loaded ct" v-if="rows.length == 0">- 查无选项 -</div>
           <checklist :options="rows" v-model="selectValue" :max=max @on-change="change"></checklist>
         </div>
-        <div style="padding: 15px;">
+        <div class="select_button">
           <x-button @click.native="onOk" plain type="primary">确认</x-button>
         </div>
       </popup>
@@ -34,6 +35,10 @@
           offset: 0,
           limit: 20
         },
+        style:{
+          height: 'inherit'
+        },
+        dateRow:[],
         max: +this.size,
         dropDown: false
       }
@@ -96,15 +101,22 @@
       param(v){
         this.$emit('input', '')
         this.rows = []
+        this.dateRow = []
         if(v.appType)this.getRows()
       }
     },
     methods: {
       selectShow() {
         this.dropDown = true
+        this.style.height =  window.screen.height * 0.6 -117 + "px"
       },
       onEnter() {
-        this.getRows()
+        this.rows = []
+        this.dateRow.forEach((item)=>{
+          if(item.key.indexOf(this.params.keyWord) != -1){
+              this.rows.push(item)
+          }
+        })
       },
       change(val, label) {
         //console.log('change', val, label)
@@ -113,11 +125,14 @@
       },
       getRows() {
         request.get(this.url, Object.assign({}, this.params, this.param)).then((data) => {
+          this.params.keyWord = ''
           this.rows = []
+          this.dateRow = []
           if (data.success) {
             data.data.rows.forEach((item) => {
               this.rows.push({key: item, value: item})
             })
+            this.dateRow = this.rows
           }
         }, (error) => {
           console.log(JSON.stringify('error===' + error))
@@ -133,5 +148,7 @@
 </script>
 
 <style scoped>
-
+  .select_keyWorld{height: 42px;}
+  .select_button{padding:15px; height:45px; }
+  .select_item{overflow: auto;background-color: #ffffff;}
 </style>

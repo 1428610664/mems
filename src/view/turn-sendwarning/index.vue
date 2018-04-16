@@ -24,6 +24,8 @@
     },
     methods: {
       actionEvent(action, userNames){
+        console.log(this.$route.query.row)
+        return
         this.$vux.loading.show({text: '数据提交中...'})
         request.post(actionJson(this.$route.query.type == "request" ? 3 : 14, this.$route.query.id)[0], {users: userNames.join(",")}).then(res => {
           this.$vux.loading.hide()

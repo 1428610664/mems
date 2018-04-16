@@ -8,7 +8,8 @@
         <div class="select_keyWorld" v-show="search">
           <x-input type="text" :placeholder="placeholder" v-model="params.keyWord" @on-change="onEnter" @on-enter="onEnter"></x-input>
         </div>
-        <div class="select_item">
+        <div class="select_item" :style="style">
+          <div class="loaded ct" v-if="rows.length == 0">- 查无选项 -</div>
           <checklist :options="rows" v-model="selectValue" :max=max @on-change="change"></checklist>
         </div>
         <div style="padding: 15px;">
@@ -33,6 +34,9 @@
           {key: 'name5', value: 'value5'}
         ],
         selectValue: [],
+        style:{
+          height: 'inherit'
+        },
         params: {
           keyWord: '',
           offset: 0,
@@ -97,6 +101,7 @@
     methods: {
       selectShow () {
         this.dropDown = true
+        this.style.height =  window.screen.height * 0.6 -117 + "px"
       },
       onEnter () {
         this.getRows()
@@ -128,4 +133,7 @@
 </script>
 
 <style scoped>
+  .select_keyWorld{height: 42px;}
+  .select_button{padding:15px; height:45px; }
+  .select_item{overflow: auto;background-color: #ffffff;}
 </style>

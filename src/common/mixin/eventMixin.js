@@ -123,13 +123,13 @@ export const eventMixin = {
 
       }else {
         _this.$vux.toast.text(action.FlowActionName, "bottom")
+        console.log(JSON.stringify(Object.assign({}, this.bindData, action.params)))
         if(action.TypeId == 14){ // 转派
           console.log("+===================" ,this.$route.query.id)
-           this.$router.push({path: "/turnSendwarning",query:{id: this.$route.query.id,type: ""}})
+           this.$router.push({path: "/turnSendwarning",query:{id: this.$route.query.id,type: "",row:Object.assign({}, this.bindData, action.params)}})
           return
         }
         if(!this._checkData()) return
-        console.log(JSON.stringify(Object.assign({}, this.bindData, action.params)))
         this.$vux.confirm.show({
           title: '提示',
           content: '确认'+action.FlowActionName+'？',

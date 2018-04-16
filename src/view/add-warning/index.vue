@@ -5,9 +5,9 @@
       <div class="wrapper-content">
         <group label-width="4.5em" label-margin-right="2em" label-align="right">
 
-          <app-select :url="sysTypeTypeUrl" title="系统分类" v-model="bindData.appType"></app-select>
+          <app-select :url="sysTypeTypeUrl" title="系统分类" v-model="bindData.appType" :search="true"></app-select>
           <div class="hr"></div>
-          <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :param="sysTypeParam" :isFirstRequest="false"></app-select>
+          <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :search="true" :param="sysTypeParam" :isFirstRequest="false"></app-select>
 
           <datetime v-model="bindData.faultTime" format="YYYY-MM-DD HH:mm:ss" title="报障时间"></datetime>
           <x-input title="标题" placeholder="请输入文字" v-model="bindData.name"></x-input>
@@ -57,17 +57,7 @@
       }
     },
     created() {
-      setTimeout(() => {
-        if(this.$route.query.id && this.setTemporaryWarning){
-          this.bindData.name = this.setTemporaryWarning.name
-          this.bindData.summary = this.setTemporaryWarning.summary
-          this.bindData.faultTime = this.setTemporaryWarning.faultTime
-          this.bindData.appType = this.setTemporaryWarning.appType
-          this.bindData.appName = this.setTemporaryWarning.appName
-        }else{
-          this.setTemporaryWarning(null)
-        }
-      }, 20)
+      this._initWarning()
     },
     computed: {
       ...mapGetters([
@@ -97,6 +87,17 @@
       }),
       footerEvent(action) {
         this.submitEvent(action)
+      },
+      _initWarning() {
+        if (this.$route.query.id && this.temporaryWarning) {
+          this.bindData.name = this.temporaryWarning.name
+          this.bindData.summary = this.temporaryWarning.summary
+          this.bindData.faultTime = new Date(this.temporaryWarning.faultTime.time).format("yyyy-MM-dd hh:mm:ss")
+          this.bindData.appType = this.temporaryWarning.appType
+          this.bindData.appName = this.temporaryWarning.appName
+        } else {
+          this.setTemporaryWarning(null)
+        }
       }
     },
     components: {

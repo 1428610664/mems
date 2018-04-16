@@ -41,6 +41,10 @@ export default new Router({
               component: (resolve) => require(['view/add-warning'], resolve),
             },
             {
+              path: '/myWarning',
+              component: (resolve) => require(['view/my-warning'], resolve)
+            },
+            {
               path: '/handleWarning',
               component: (resolve) => require(['view/handle-warning'], resolve),
               children: [
@@ -49,7 +53,7 @@ export default new Router({
                   component: (resolve) => require(['view/turn-sendwarning'], resolve)
                 }
               ]
-            }
+            },
           ]
         }
       ]

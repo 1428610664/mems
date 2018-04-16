@@ -13,19 +13,10 @@
             <span :class="getStatusType(status).class">{{getStatusType(status).title}}</span>
           </div>
           <div class="hr"></div>
-          <app-select :url="sysTypeTypeUrl" title="系统分类" v-model="bindData.appType"></app-select>
+          <app-select :url="sysTypeTypeUrl" title="系统分类" v-model="bindData.appType" :search="true"></app-select>
           <div class="hr"></div>
           <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :search="true" :param="sysTypeParam"
                       :isFirstRequest="false"></app-select>
-          <div class="hr"></div>
-          <div class="hz-cell">
-            <span class="label c4">优先级</span>
-            <span class="severity_span" :style="{'background-color': getSeverity(bindData.severity).color}">{{getSeverity(bindData.severity).title}}</span>
-          </div>
-          <selector v-model="bindData.influence" title="影响度" :options="select.influence" @on-change="severityChange"></selector>
-          <selector v-model="bindData.urgency" title="紧急度" :options="select.urgency" @on-change="severityChange"></selector>
-          <selector v-model="bindData.type" title="事件类别" :options="select.type"></selector>
-          <selector v-model="bindData.attributes" title="事件属性" :options="select.attributes"></selector>
           <x-input title="报障编号" :readonly="true" placeholder="请输入文字" v-model="serial"></x-input>
           <x-input title="报障时间" :readonly="true" v-model="bindData.faultTime"></x-input>
           <x-input title="提交时间" :readonly="true" v-model="createTime"></x-input>
@@ -73,33 +64,17 @@
           summary: '',   // 内容
           faultTime: '', //报障时间
           appType: '',   // 系统分类
-          appName: '' ,  // 所属系统
-          severity:'0',  //优先级
-          influence:'4' ,  //影响度
-          urgency:'4' ,  //紧急度
-          type:'1' ,  //事件类别
-          attributes:'1' ,  //事件属性
+          appName: ''    // 所属系统
         },
-        rowKey: [
-          {key:'severity',value:'0'},
-          {key:'influence',value:'4'},
-          {key:'urgency',value:'4'},
-          {key:'type',value:'1'},
-          {key:'attributes',value:'1'}
-          ],
 
         checkData: {
-          urgency: {message: "请选择紧急度", check: "isEmpty"},
-          type: {message: "请选择事件类别", check: "isEmpty"},
-          attributes: {message: "请选择事件属性", check: "isEmpty"},
+          name: {message: "请输入标题", check: "isEmpty"},
+          summary: {message: "请输入描述", check: "isEmpty"},
+          appType: {message: "请选择系统分类", check: "isEmpty"},
+          appName: {message: "请选择所属系统", check: "isEmpty"},
         },
 
-        select: {
-          influence:[{key:"2",value:"高"},{key:"3",value:"中"},{key:"4",value:"低"}],
-          urgency:[{key:"2",value:"高"},{key:"3",value:"中"},{key:"4",value:"低"}],
-          type:[{key:"1",value:"普通"},{key:"2",value:"故障事件（可用性）"},{key:"3",value:"问询"}],
-          attributes:[{key:"1",value:"一般事件"},{key:"2",value:"容量事件"},{key:"3",value:"信息安全事件"}],
-        }
+        checkNumberArray: [{key: "1", value: '是'}, {key: "2", value: '否'}]
       }
     },
     computed: {
@@ -118,12 +93,6 @@
           if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
             actions = [
               {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
-            ]
-          }else if(role == 5){
-            actions = [
-              {TypeId: 15, FlowActionName: "驳回", id: this.$route.query.id},
-              {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
-              {TypeId: 18, FlowActionName: "关闭", id: this.$route.query.id},
             ]
           }else{
             actions = []
@@ -177,9 +146,6 @@
             for (var k in this.bindData) {
               this.bindData[k] = k == 'faultTime'? new Date(this.handleWarning[k].time).format("yyyy-MM-dd hh:mm:ss") :this.handleWarning[k]
             }
-            this.rowKey.forEach((item)=>{
-              this.bindData[item.key] = isNaN(+this.handleWarning[item.key])?  this.handleWarning[item] + '': item.value
-            })
             this.serial = this.handleWarning.serial
             this.createTime = new Date(this.handleWarning.createTime.time).format("yyyy-MM-dd hh:mm:ss")
             this.createUser = this.handleWarning.createUser
@@ -189,26 +155,6 @@
         }else {
           this.$router.replace('/faultsWarning')
         }
-      },
-      severityChange (){
-          let _val = parseInt(this.bindData.influence)+parseInt(this.bindData.urgency);
-          if(isNaN(_val)){
-             this.bindData.severity = 0
-          }else{
-            switch (_val){
-              case 4:
-                this.bindData.severity = 1
-                break
-              case 5:
-                this.bindData.severity =2
-                break
-              case 6:
-                this.bindData.severity = 3
-                break
-              default :
-                this.bindData.severity = 4
-            }
-          }
       }
     },
     components: {
@@ -256,11 +202,5 @@
     width: 4.5em;
     text-align: right;
     margin-right: 2em;
-  }
-  .severity_span{
-    display: inline-block;
-    width: 70px;
-    text-align: center;
-    border-radius: 10px;
   }
 </style>

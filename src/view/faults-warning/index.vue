@@ -2,7 +2,7 @@
   <transition name="move">
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">人工报障
-        <router-link to="/addWarning" tag="a" v-if="(userData && userData.user.role == 4)||(userData && userData.user.role == 3)" slot="right" class="iconfont icon-tianjia"></router-link>
+        <router-link to="/addWarning" tag="a" v-if="userData && userData.user.role == 4" slot="right" class="iconfont icon-tianjia"></router-link>
       </x-header>
       <tab>
         <tab-item v-for="(item, index) in tab" :key='index' :selected="index == selectIndex" @on-item-click="onTabItemClick">{{item}}</tab-item>
@@ -76,7 +76,7 @@
         // status：【0：未受理】【1：处理中】【2：被驳回】【3：待评价】【4：已取消】【99：已关闭】【100：暂存】
         let Parms = []
         // 普通用户tab切换附加参数
-        if(getUserInfo().user.role == 4 || getUserInfo().user.role == 3){
+        if(getUserInfo().user.role == 4){
           Parms = [{status: '0,1,2,3,100',isMy: true}, {status: '4,99',isMy: true}]
         }else {
           // 其它用户tab切换附加参数
@@ -114,7 +114,11 @@
           this.$router.push({path: "/addWarning",query:{id: row.id}})
         }else{
           this.setHandleWarning(itemData)
-          this.$router.push({path: '/handleWarning',query:{id: row.id}})
+          if(getUserInfo().user.role == 4){
+            this.$router.push({path: '/myWarning',query:{id: row.id}})
+          }else {
+            this.$router.push({path: '/handleWarning',query:{id: row.id}})
+          }
         }
       },
       searchQuery(v){
