@@ -14,9 +14,9 @@ export const authorizeMixin = {
     ...mapActions([
       'logoutAction'
     ]),
-    ...mapMutations[{
+    ...mapMutations({
       setAuthorize: "SET_AUTHORIZE"
-    }],
+    }),
     logout() {
       this.logoutAction()
     },

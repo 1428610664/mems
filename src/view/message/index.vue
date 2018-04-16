@@ -54,6 +54,9 @@
         this.getList()
       }, 800)
     },
+    activated(){
+      this.$refs.scroll.refresh()
+    },
     methods: {
       onTabItemClick(index) {
         this.selectIndex = index
