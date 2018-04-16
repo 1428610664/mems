@@ -6,6 +6,7 @@ import VueRouter from 'vue-router'
 import VueLazyload from 'vue-lazyload'
 import App from './App'
 import store from 'store'
+import eruda from 'eruda'
 import router from './router'
 import 'common/styles/common.css'
 import  { ToastPlugin,ConfirmPlugin,LoadingPlugin  } from 'vux'
@@ -15,6 +16,9 @@ Vue.use(ToastPlugin)
 Vue.use(LoadingPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(publicUtils)
+
+// 调试 正式环境去除
+eruda.init()
 
 
 Vue.config.productionTip = false

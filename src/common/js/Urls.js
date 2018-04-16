@@ -20,6 +20,11 @@ const requestUrl = {
     url: "/authorize/{id}",
     pre: preUrl
   },
+  // 获取授权给别人的数据
+  authorizeToUser: {
+    url: "/authorize/toUser",
+    pre: preUrl
+  },
   // 修改密码
   updatePsw: {
     url: "/users/updatePwd",

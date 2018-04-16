@@ -104,7 +104,8 @@
     position: absolute;
     top: 46px;
     bottom: 45px;
-    overflow: auto;
+    left: 0;
+    overflow-y: auto;
     width: 100%;
   }
 
