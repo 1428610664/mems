@@ -1,8 +1,7 @@
 <template>
   <transition name="move">
     <div class="wrapper b">
-      <x-header :left-options="{backText: ''}">人工报障
-        <router-link to="/addWarning" tag="a" v-if="userData && userData.user.role == 4" slot="right" class="iconfont icon-tianjia"></router-link>
+      <x-header :left-options="{backText: ''}">我的事件
       </x-header>
       <tab>
         <tab-item v-for="(item, index) in tab" :key='index' :selected="index == selectIndex" @on-item-click="onTabItemClick">{{item}}</tab-item>
