@@ -64,8 +64,8 @@
       ]),
       tab(){
         let tab
-        if(getUserInfo().user.role == 4){ // 普通用户Tab
-          tab = ["处理中", "已结束"]
+        if(getUserInfo().user.role == 1){ // 普通用户Tab
+          tab = ["未响应", "已响应","所有"]
         }else{
           tab = ["待处理", "已处理", "所有"]
         }
