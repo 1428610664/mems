@@ -2,7 +2,7 @@
   <transition name="move">
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">处理人工报障</x-header>
-      <scroller lock-x scrollbarY height="-91">
+      <!--<scroller lock-x scrollbarY height="-91">-->
         <div class="wrapper-content">
           <group label-width="4.5em" label-margin-right="2em" label-align="right">
             <x-input title="报障标题" placeholder="请输入文字" v-model="bindData.name" :readonly="readonly"></x-input>
@@ -44,12 +44,12 @@
             <x-input title="满意度" :readonly="true" v-model="cacsi"></x-input>
             <x-input title="处理评价" :readonly="true" v-model="evaluate"></x-input>
             <div class="hr"></div>
-            <div class="tab_div_height">
+            <!--<div class="tab_div_height">-->
               <tabs-pan :id="rowId"></tabs-pan>
-            </div>
+            <!--</div>-->
           </group>
         </div>
-      </scroller>
+      <!--</scroller>-->
 
       <comm-footer :FlowActions="FlowActions" @event="footerEvent"></comm-footer>
       <router-view></router-view>
@@ -258,13 +258,13 @@
     overflow-y: auto;
   }
 
-  /*.wrapper-content {*/
-    /*position: absolute;*/
-    /*top: 46px;*/
-    /*bottom: 45px;*/
-    /*overflow: auto;*/
-    /*width: 100%;*/
-  /*}*/
+  .wrapper-content {
+    position: absolute;
+    top: 46px;
+    bottom: 45px;
+    overflow: auto;
+    width: 100%;
+  }
   .hz-cell{
     padding: 10px 15px;
     position: relative;
@@ -284,8 +284,8 @@
     text-align: center;
     border-radius: 10px;
   }
-  .wrapper-content:nth-last-child(1){
-    padding-bottom: 0px;
-  }
-  .tab_div_height{ height: 230px;}
+  /*.wrapper-content:nth-last-child(1){*/
+    /*padding-bottom: 0px;*/
+  /*}*/
+  /*.tab_div_height{ height: 230px;}*/
 </style>

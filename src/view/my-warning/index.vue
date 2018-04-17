@@ -3,7 +3,7 @@
   <transition name="move">
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">处理人工报障</x-header>
-      <scroller lock-x scrollbarY height="-91">
+      <!--<scroller lock-x scrollbarY height="-91">-->
       <div class="wrapper-content">
         <group label-width="4.5em" label-margin-right="2em" label-align="right">
           <x-input title="报障标题" placeholder="请输入文字" v-model="bindData.name" :readonly="readonly"></x-input>
@@ -27,12 +27,12 @@
           <selector v-show="cacsiSelect=='show'" v-model="cacsiKey" title="满意度" :options="select.cacsi"></selector>
           <x-input title="处理评价" :readonly="cacsiSelect=='show'? false:true" v-model="evaluate"></x-input>
           <div class="hr"></div>
-          <div class="tab_div_height">
+          <!--<div class="tab_div_height">-->
             <tabs-pan :id="rowId"></tabs-pan>
-          </div>
+          <!--</div>-->
         </group>
       </div>
-      </scroller>
+      <!--</scroller>-->
 
       <comm-footer :FlowActions="FlowActions" @event="footerEvent"></comm-footer>
       <router-view></router-view>
@@ -214,13 +214,13 @@
   .wrapper-content:nth-last-child(1){
     padding-bottom: 0px;
   }
-  /*.wrapper-content {*/
-    /*position: absolute;*/
-    /*top: 46px;*/
-    /*bottom: 45px;*/
-    /*overflow: auto;*/
-    /*width: 100%;*/
-  /*}*/
+  .wrapper-content {
+    position: absolute;
+    top: 46px;
+    bottom: 45px;
+    overflow: auto;
+    width: 100%;
+  }
 
   .hz-cell{
     padding: 10px 15px;
@@ -235,8 +235,8 @@
     text-align: right;
     margin-right: 2em;
   }
-  .wrapper-content:nth-last-child(1){
-    padding-bottom: 0px;
-  }
-  .tab_div_height{ height: 230px;}
+  /*.wrapper-content:nth-last-child(1){*/
+    /*padding-bottom: 0px;*/
+  /*}*/
+  /*.tab_div_height{ height: 230px;}*/
 </style>
