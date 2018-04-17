@@ -6,7 +6,7 @@
       <tab-item @on-item-click="onTabItemClick">已结束</tab-item>
     </tab>
     <div class="search-box">
-      <search-box @query="searchQuery" placeholder="消息搜搜"></search-box>
+      <search-box @query="searchQuery" placeholder="消息搜索"></search-box>
     </div>
 
     <scroller class="list-wrapper" ref="scroll"
@@ -18,10 +18,12 @@
               @scrollToEnd="scrollToEnd"
               @loadingStateChange="loadingStateChange"
               @pullRefresh="pullRefresh">
-      <div  v-show="refresh.LoadingState == 1" v-for="item in refresh.content" >
-        <item-wrapper @onClick="onItemClick"  :row="item"></item-wrapper>
+      <div v-show="refresh.LoadingState == 1" v-for="item in refresh.content">
+        <item-wrapper @onClick="onItemClick" :row="item"></item-wrapper>
       </div>
     </scroller>
+
+    <router-view></router-view>
   </div>
 </template>
 
@@ -54,23 +56,24 @@
         this.getList()
       }, 800)
     },
-    activated(){
+    activated() {
       //this.$refs.scroll.refresh()
       this.getList()
-      this.$refs.scroll.scrollTo( 0, 0, 200, "")
+      this.$refs.scroll.scrollTo(0, 0, 200, "")
     },
     methods: {
       onTabItemClick(index) {
-        if(this.selectIndex == index) return
+        if (this.selectIndex == index) return
         this.$vux.loading.show({text: '加载中...'})
         this.selectIndex = index
         this.refresh.params.keyWord = ''
         this.getList(false, true)
       },
-      onItemClick(row){
-        alert(JSON.stringify(row))
+      onItemClick(row) {
+        //alert(JSON.stringify(row))
+        this.$router.push({path: '/messageDetails',query:{id: row.id}})
       },
-      searchQuery(v){
+      searchQuery(v) {
         this.refresh.params.keyWord = v
         this.getList(false, true)
       },
@@ -85,7 +88,11 @@
           this.refresh.pageNo = 1
           this.refresh.pageSize = 10
         }
-        let param = {offset: (this.refresh.pageNo - 1) * this.refresh.pageSize,limit: this.refresh.pageSize, status: this.selectIndex == 0 ? 0: 99}
+        let param = {
+          offset: (this.refresh.pageNo - 1) * this.refresh.pageSize,
+          limit: this.refresh.pageSize,
+          status: this.selectIndex == 0 ? 0 : 99
+        }
         request.get(getUrl("myMessage"), Object.assign({}, this.refresh.params, param)).then(data => {
           this.$vux.loading.hide()
           if (data.data) {
@@ -112,7 +119,7 @@
       loadingStateChange(LoadingState) {
         this.refresh.LoadingState = LoadingState
       },
-      _parseDate(res){
+      _parseDate(res) {
         let data = []
         res.forEach((v, i) => {
           data.push({id: v.id, name: v.name, time: v.sendTime.time, counts: v.counts})
@@ -142,11 +149,11 @@
     width: 100%;
   }
 
-  .search-box{
+  .search-box {
     padding: 5px 3%;
   }
 
-  .list-wrapper{
+  .list-wrapper {
     position: absolute;
     top: 86px;
     left: 0;
@@ -154,7 +161,6 @@
     width: 100%;
     overflow: hidden;
   }
-
 
 
 </style>

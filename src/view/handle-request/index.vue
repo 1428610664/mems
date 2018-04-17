@@ -4,8 +4,8 @@
       <x-header :left-options="{backText: ''}">处理服务请求</x-header>
       <div class="wrapper-content">
         <group label-width="5em" label-margin-right="2em" label-align="right">
-          <x-input title="请求标题" placeholder="请输入文字" v-model="bindData.name"></x-input>
-          <x-textarea title="请求描述" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
+          <x-input title="请求标题" :readonly="isEdit" placeholder="请输入文字" v-model="bindData.name"></x-input>
+          <x-textarea title="请求描述" :readonly="isEdit" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
                       :max="200"></x-textarea>
           <x-input title="请求编号" :readonly="true" placeholder="请输入文字" v-model="serial"></x-input>
           <div class="hr"></div>
@@ -13,11 +13,11 @@
             <span class="label c4">状态</span>
             <span :class="getStatusType(status).class">{{getStatusType(status).title}}</span>
           </div>
-          <selector v-model="bindData.type" title="是否查数" :options="checkNumberArray"></selector>
+          <selector v-model="bindData.type" :readonly="isEdit" title="是否查数" :options="checkNumberArray"></selector>
           <div class="hr"></div>
-          <app-select :url="sysTypeTypeUrl" title="系统分类" v-model="bindData.appType"></app-select>
+          <app-select :url="sysTypeTypeUrl" :readonly="isEdit" title="系统分类" v-model="bindData.appType"></app-select>
           <div class="hr"></div>
-          <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :param="sysTypeParam"
+          <app-select title="所属系统" :readonly="isEdit" :url="sysTypeNameUrl" v-model="bindData.appName" :param="sysTypeParam"
                       :isFirstRequest="false"></app-select>
           <x-input title="提价时间" :readonly="true" v-model="createTime"></x-input>
           <x-input title="当前处理人" :readonly="true" v-model="handler"></x-input>
@@ -65,7 +65,6 @@
           appType: '',   // 系统分类
           appName: ''    // 所属系统
         },
-
         checkData: {
           name: {message: "请输入标题", check: "isEmpty"},
           summary: {message: "请输入描述", check: "isEmpty"},
@@ -82,10 +81,15 @@
       sysTypeParam() {
         return {appType: this.bindData.appType}
       },
+      // 是否不可编辑
+      isEdit(){
+        let handler = this.handleRequest.handler.split("/")[1]
+        return this.status == 2 && handler == getUserInfo().user.userName ? false : true
+      },
       FlowActions(){
         if(!this.handleRequest) return []
         let actions = []
-        let createUser = this.handleRequest.createUser.split("/")[1], handler = this.handleRequest.handler.split("/")[1];
+        let createUser = this.handleRequest.createUser.split("/")[1], handler = this.handleRequest.handler.split("/")[1]
         let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
         console.log("====getUserInfo()==="+JSON.stringify(getUserInfo()))
         console.log("createUser："+createUser +"-----------------handler："+ handler)

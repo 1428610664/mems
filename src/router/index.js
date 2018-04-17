@@ -62,7 +62,13 @@ export default new Router({
       component: (resolve) => require(['view/login'], resolve)
     }, {
       path: '/message',
-      component: (resolve) => require(['view/message'], resolve)
+      component: (resolve) => require(['view/message'], resolve),
+      children: [
+        {
+          path: '/messageDetails',
+          component: (resolve) => require(['view/message-details'], resolve)
+        }
+      ]
     }, {
       path: '/me',
       component: (resolve) => require(['view/me'], resolve),
