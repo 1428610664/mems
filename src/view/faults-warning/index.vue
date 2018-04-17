@@ -107,7 +107,7 @@
         this.getList(false, true)
       },
       onItemClick(row){
-        // 暂存数据跳往添加页面 否则跳往处理服务请求页面
+        // 暂存数据跳往添加页面 否则跳往处理人工报障页面
         let itemData = this.content[this._findIndex(row.id, this.content)]
         if(row.status == 100){
           this.setTemporaryWarning(itemData)

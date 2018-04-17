@@ -8,7 +8,7 @@
         <group label-width="4.5em" label-margin-right="2em" label-align="right">
           <x-input title="报障标题" placeholder="请输入文字" v-model="bindData.name" :readonly="readonly"></x-input>
           <x-textarea title="报障内容" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
-                      :max="200"></x-textarea>
+                      :max="200" :readonly="readonly"></x-textarea>
           <div class="hr"></div>
           <div class="hz-cell">
             <span class="label c4">状态</span>

@@ -1,12 +1,12 @@
 <template>
   <transition name="move">
     <div class="wrapper b">
-      <x-header :left-options="{backText: ''}">处理人工报障</x-header>
+      <x-header :left-options="{backText: ''}">事件告警详情</x-header>
       <scroller lock-x scrollbarY height="-91">
         <div class="wrapper-content">
           <group label-width="4.5em" label-margin-right="2em" label-align="right">
-            <x-input title="报障标题" placeholder="请输入文字" v-model="bindData.name" :readonly="readonly"></x-input>
-            <x-textarea title="报障内容" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
+            <x-input title="事件标题" placeholder="请输入文字" v-model="bindData.name" :readonly="readonly"></x-input>
+            <x-textarea title="事件内容" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
                         :max="200" :readonly="readonly"></x-textarea>
             <div class="hr"></div>
             <div class="hz-cell">
@@ -27,8 +27,8 @@
             <selector v-model="bindData.urgency" title="紧急度" :options="select.urgency" @on-change="severityChange"  :readonly="readonly"></selector>
             <selector v-model="bindData.type" title="事件类别" :options="select.type" :readonly="readonly"></selector>
             <selector v-model="bindData.attributes" title="事件属性" :options="select.attributes" :readonly="readonly"></selector>
-            <x-input title="报障编号" :readonly="true" placeholder="请输入文字" v-model="serial"></x-input>
-            <x-input title="报障时间" :readonly="true" v-model="bindData.faultTime"></x-input>
+            <x-input title="事件编号" :readonly="true" placeholder="请输入文字" v-model="serial"></x-input>
+            <x-input title="事件时间" :readonly="true" v-model="bindData.faultTime"></x-input>
             <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
             <x-input title="提交时间" :readonly="true" v-model="createTime"></x-input>
             <div class="hr"></div>
@@ -87,7 +87,7 @@
         bindData: {
           name: '',       // 标题
           summary: '',   // 内容
-          faultTime: '', //报障时间
+          faultTime: '', //事件时间
           appType: '',   // 系统分类
           appName: '' ,  // 所属系统
           severity:'0',  //优先级
@@ -120,15 +120,15 @@
     },
     computed: {
       ...mapGetters([
-        'handleWarning',
+        'handleEvents',
       ]),
       sysTypeParam() {
         return {appType: this.bindData.appType}
       },
       FlowActions(){
-        if(!this.handleWarning) return []
+        if(!this.handleEvents) return []
         let actions = []
-        let createUser = this.handleWarning.createUser.split("/")[1], handler = this.handleWarning.handler.split("/")[1];
+        let createUser = this.handleEvents.createUser.split("/")[1], handler = this.handleEvents.handler.split("/")[1];
         let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
         this.readonly = false
         if(role != 5){
@@ -187,28 +187,28 @@
     },
     methods: {
       ...mapMutations({
-        setHandleWarning: 'SET_HANDLE_WARNING',
+        setHandleEvents: 'SET_HANDLE_EVENTS',
       }),
       footerEvent(action) {
         this.submitEvent(action)
       },
       _initWarning(){
-        if (this.handleWarning) {
+        if (this.handleEvents) {
             for (var k in this.bindData) {
-              this.bindData[k] = k == 'faultTime'? new Date(this.handleWarning[k].time).format("yyyy-MM-dd hh:mm:ss") :this.handleWarning[k]
+              this.bindData[k] = k == 'faultTime'? new Date(this.handleEvents[k].time).format("yyyy-MM-dd hh:mm:ss") :this.handleEvents[k]
             }
             this.rowKey.forEach((item)=>{
-              this.bindData[item.key] = isNaN(+this.handleWarning[item.key])?  this.handleWarning[item] + '': item.value
+              this.bindData[item.key] = isNaN(+this.handleEvents[item.key])?  this.handleEvents[item] + '': item.value
             })
-            this.serial = this.handleWarning.serial
-            this.createTime = new Date(this.handleWarning.createTime.time).format("yyyy-MM-dd hh:mm:ss")
-            this.createUser = this.handleWarning.createUser
-            this.departName = this.handleWarning.departName
-            this.cacsi = this.getCacsi(this.handleWarning.cacsi)
-            this.status = this.handleWarning.status
-            this.evaluate = this.handleWarning.evaluate
+            this.serial = this.handleEvents.serial
+            this.createTime = new Date(this.handleEvents.createTime.time).format("yyyy-MM-dd hh:mm:ss")
+            this.createUser = this.handleEvents.createUser
+            this.departName = this.handleEvents.departName
+            this.cacsi = this.getCacsi(this.handleEvents.cacsi)
+            this.status = this.handleEvents.status
+            this.evaluate = this.handleEvents.evaluate
         }else {
-          this.$router.replace('/faultsWarning')
+          this.$router.replace('/myEvents')
         }
       },
       severityChange (){

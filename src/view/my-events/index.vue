@@ -1,7 +1,7 @@
 <template>
   <transition name="move">
     <div class="wrapper b">
-      <x-header :left-options="{backText: ''}">我的事件
+      <x-header :left-options="{backText: ''}">告警事件
       </x-header>
       <tab>
         <tab-item v-for="(item, index) in tab" :key='index' :selected="index == selectIndex" @on-item-click="onTabItemClick">{{item}}</tab-item>
@@ -64,7 +64,7 @@
       ]),
       tab(){
         let tab
-        if(getUserInfo().user.role == 1){ // 普通用户Tab
+        if(getUserInfo().user.role == 5){ // 服务台
           tab = ["未响应", "已响应","所有"]
         }else{
           tab = ["待处理", "已处理", "所有"]
@@ -75,15 +75,10 @@
         // status：【0：未受理】【1：处理中】【2：被驳回】【3：待评价】【4：已取消】【99：已关闭】【100：暂存】
         let Parms = []
         // 普通用户tab切换附加参数
-        if(getUserInfo().user.role == 4){
-          Parms = [{status: '0,1,2,3,100',isMy: true}, {status: '4,99',isMy: true}]
+        if(getUserInfo().user.role == 5){
+          Parms = [{isMy: false,isTurn:false,processStatus:0}, {isMy: false,isTurn:false,processStatus:1}, {}]
         }else {
-          // 其它用户tab切换附加参数
-          Parms = [{status: '0'}, {status: '>=1',isMy: true}, {isAll: true}]
-          // 二线用户tab切换附加参数
-          if(getUserInfo().user.role == 2){
-            Parms = [{isTurn: true, status: '<=1'}, {status: '>1',isMy: true, handler: "!=" + getUserInfo().user.userName, passUser: getUserInfo().user.userName},{}]
-          }
+          Parms = [{status: '0,1',isTurn: true,isTurn:true}, {status: '99',isMy: true,isTurn:true},{}]
         }
         return Parms
       }
@@ -96,8 +91,7 @@
     },
     methods: {
       ...mapMutations({
-        setTemporaryWarning: 'SET_TEMPORARY_WARNING',
-        setHandleWarning: 'SET_HANDLE_WARNING'
+        setHandleEvents: 'SET_HANDLE_EVENTS'
       }),
       onTabItemClick(index) {
         this.refresh.params.keyWord = ''
@@ -106,19 +100,10 @@
         this.getList(false, true)
       },
       onItemClick(row){
-        // 暂存数据跳往添加页面 否则跳往处理服务请求页面
-        let itemData = this.content[this._findIndex(row.id, this.content)]
-        if(row.status == 100){
-          this.setTemporaryWarning(itemData)
-          this.$router.push({path: "/addWarning",query:{id: row.id}})
-        }else{
-          this.setHandleWarning(itemData)
-          if(getUserInfo().user.role == 4){
-            this.$router.push({path: '/myWarning',query:{id: row.id}})
-          }else {
-            this.$router.push({path: '/handleWarning',query:{id: row.id}})
-          }
-        }
+            // 暂存数据跳往添加页面 否则跳往告警详情页面
+          this.setHandleEvents(this.content[this._findIndex(row.id, this.content)])
+          this.$router.push({path: "/handleEvents",query:{id: row.id}})
+
       },
       searchQuery(v){
         this.refresh.params.keyWord = v
@@ -136,7 +121,7 @@
           this.refresh.pageSize = 10
         }
         let param = {offset: (this.refresh.pageNo - 1) * this.refresh.pageSize,limit: this.refresh.pageSize}
-        request.get(getUrl("faultsWarning"), Object.assign({}, this.refresh.params, param)).then(data => {
+        request.get(getUrl("events"), Object.assign({}, this.refresh.params, param)).then(data => {
           if (data.data) {
             this.refresh.isPullLoaded = false
             this.refresh.totalCount = data.data.total
