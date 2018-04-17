@@ -90,9 +90,19 @@ const requestUrl = {
     url: "/faults/number",
     pre: preUrl
   },
-  // 我的事件首页number
+  // 事件告警首页number
   eventsNumber: {
     url: "/events/number",
+    pre: preUrl
+  },
+  // 事件告警
+  events: {
+    url: "/events",
+    pre: preUrl
+  },
+  //所有事件告警
+  history: {
+    url: "events/history",
     pre: preUrl
   }
 }

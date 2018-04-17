@@ -25,7 +25,22 @@ export function actionJson(no, id){
     No19: [`/faults/${id}/evaluate`, "评价",1],			 // 评价报障
     No20: ["/events/opinion", "添加"],				       // 添加报障处理意见
     No21: [`/faults/${id}/update`, "修改"],    	     // 修改报障
-    No22: [`faults/${id}/inquire`, "转问询"]    	     // 修改报障
+    No22: [`/faults/${id}/inquire`, "转问询"] ,   	     // 修改报障
+
+    //事件告警
+    No23: ["/events", "提交"],				                 // 提交事件
+    No24: [`/events/${id}/shield`, "屏蔽"],				   // 屏蔽报障
+    No25: [`/events/${id}/revert`, "取消屏蔽"],	     // 取消屏蔽
+    No26: [`/turnsend/${id}/turn`, "转派"],				   // 转派事件
+    No27: [`/events/${id}`, "删除"],				           // 删除事件
+    No28: [`/events/${id}/reject`, "驳回"],			     // 驳回事件
+    No29: [`/events/${id}/distort`, "误报"],		     // 误报事件
+    No30: [`/events/${id}/close`, "关闭"],		       // 关闭事件
+    No31: ["/events/opinion", "添加"],				       // 添加事件处理意见
+    No32: [`turnsend/${id}/process`, "受理"],    	   // 受理事件
+    No33: [`/events/${id}/update`, "修改"],    	     // 修改事件
+    No34: [`/events/${id}/inquire`, "转问询"],    	 // 转问询事件
+    No35: [`/events/${id}/tags`, "标记"]    	         // 标记事件
 
   }
   return urlJson["No"+no]

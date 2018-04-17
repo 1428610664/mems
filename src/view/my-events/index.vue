@@ -1,7 +1,7 @@
 <template>
   <transition name="move">
     <div class="wrapper b">
-      <x-header :left-options="{backText: ''}">我的事件
+      <x-header :left-options="{backText: ''}">告警事件
       </x-header>
       <tab>
         <tab-item v-for="(item, index) in tab" :key='index' :selected="index == selectIndex" @on-item-click="onTabItemClick">{{item}}</tab-item>
@@ -64,7 +64,7 @@
       ]),
       tab(){
         let tab
-        if(getUserInfo().user.role == 1){ // 普通用户Tab
+        if(getUserInfo().user.role == 5){ // 服务台
           tab = ["未响应", "已响应","所有"]
         }else{
           tab = ["待处理", "已处理", "所有"]
@@ -76,13 +76,13 @@
         let Parms = []
         // 普通用户tab切换附加参数
         if(getUserInfo().user.role == 4){
-          Parms = [{status: '0,1,2,3,100',isMy: true}, {status: '4,99',isMy: true}]
+          Parms = [{status: '0,1,2,3,100',isMy: false,isTurn:false}, {status: '4,99',isMy: true}, {}]
         }else {
           // 其它用户tab切换附加参数
-          Parms = [{status: '0'}, {status: '>=1',isMy: true}, {isAll: true}]
+          Parms = [{status: '0'}, {status: '>=1',isMy: true,isTurn:true}, {isAll: true},{}]
           // 二线用户tab切换附加参数
           if(getUserInfo().user.role == 2){
-            Parms = [{isTurn: true, status: '<=1'}, {status: '>1',isMy: true, handler: "!=" + getUserInfo().user.userName, passUser: getUserInfo().user.userName},{}]
+            Parms = [{isTurn: true, status: '<=1'}, {status: '>1',isMy: true,isTurn:true, handler: "!=" + getUserInfo().user.userName, passUser: getUserInfo().user.userName},{}]
           }
         }
         return Parms
