@@ -55,6 +55,22 @@ export default new Router({
               ]
             },
           ]
+        },
+        {
+          path: '/myEvents',
+          component: (resolve) => require(['view/my-events'], resolve),
+          children: [
+            {
+              path: '/handleEvents',
+              component: (resolve) => require(['view/handle-events'], resolve),
+              children: [
+                {
+                  path: '/turnSendevents',
+                  component: (resolve) => require(['view/turn-sendevents'], resolve)
+                }
+              ]
+            },
+          ]
         }
       ]
     }, {

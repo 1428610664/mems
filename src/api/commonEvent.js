@@ -22,9 +22,10 @@ export function actionJson(no, id){
     No16: [`/faults/${id}/cancel`, "取消"],				   // 取消报障
     No17: [`/faults/${id}`, "删除"],				           // 删除报障
     No18: [`/faults/${id}/cosle`, "关闭"],			     // 关闭报障
-    No19: [`/faults/${id}/evaluate`, "评价"],			   // 评价报障
+    No19: [`/faults/${id}/evaluate`, "评价",1],			 // 评价报障
     No20: ["/events/opinion", "添加"],				       // 添加报障处理意见
-    No21: [`/faults/${id}/update`, "修改"]    	     // 修改报障
+    No21: [`/faults/${id}/update`, "修改"],    	     // 修改报障
+    No22: [`faults/${id}/inquire`, "转问询"]    	     // 修改报障
 
   }
   return urlJson["No"+no]

@@ -27,6 +27,9 @@ const mutations = {
   },
   [types.SET_FAULTS_NUMBER](state, data) {
     state.faultsNumber = data
+  },
+  [types.SET_EVENTS_NUMBER](state, data) {
+    state.eventsNumber = data
   }
 }
 

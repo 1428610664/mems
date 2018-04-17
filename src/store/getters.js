@@ -15,3 +15,5 @@ export const handleWarning = state => state.handleWarning
 export const servicesNumber = state => state.servicesNumber
 
 export const faultsNumber = state => state.faultsNumber
+
+export const eventsNumber = state => state.eventsNumber

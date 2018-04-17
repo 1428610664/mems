@@ -89,6 +89,11 @@ const requestUrl = {
   faultsNumber: {
     url: "/faults/number",
     pre: preUrl
+  },
+  // 我的事件首页number
+  eventsNumber: {
+    url: "/events/number",
+    pre: preUrl
   }
 }
 

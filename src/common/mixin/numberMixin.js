@@ -6,7 +6,8 @@ export const numberMixin = {
   methods: {
     ...mapMutations({
       setServicesNumber: 'SET_SERVICE_NUMBER',
-      setFaultsNumber: 'SET_FAULTS_NUMBER'
+      setFaultsNumber: 'SET_FAULTS_NUMBER',
+      setEventsNumber: 'SET_EVENTS_NUMBER'
     }),
     getServiceNumber() {
       request.get(getUrl("servicesNumber"), {isTurn: false, status: 0}).then(res => {
@@ -21,6 +22,15 @@ export const numberMixin = {
       request.get(getUrl("faultsNumber"), {isMy:false, status: 0}).then(res => {
         if(res.success){
           this.setFaultsNumber(res.data.number)
+        }
+      }, error => {
+
+      })
+    },
+    getEventsNumber() {
+      request.get(getUrl("eventsNumber"), {isMy:false, status: 0}).then(res => {
+        if(res.success){
+          this.setEventsNumber(res.data.number)
         }
       }, error => {
 

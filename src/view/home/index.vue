@@ -14,6 +14,12 @@
           <div class="name ct">人工报障</div>
         </div>
       </router-link>
+      <router-link to="/myEvent" tag="li" class="grid posct">
+        <div>
+          <div class="icon iconfont posct icon-xitongguzhang fz22 mb2"><i class="number fz12">{{eventsNumber}}</i></div>
+          <div class="name ct">我的事件</div>
+        </div>
+      </router-link>
     </ul>
     <router-view></router-view>
   </div>
@@ -32,7 +38,8 @@
     computed:{
       ...mapGetters([
         'servicesNumber',
-        'faultsNumber'
+        'faultsNumber',
+        'eventsNumber'
       ]),
     },
     methods: {},

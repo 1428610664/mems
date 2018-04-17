@@ -66,6 +66,7 @@
           // 获取首页服务请求、人功报障number
           this.getServiceNumber()
           this.getFaultsNumber()
+          this.getEventsNumber()
         }
         if(this.timer) clearInterval(this.timer)
         this.timer = setInterval(() => {
@@ -75,6 +76,7 @@
             // 获取首页服务请求、人功报障number
             this.getServiceNumber()
             this.getFaultsNumber()
+            this.getEventsNumber()
           }
         }, 10000)
       },
