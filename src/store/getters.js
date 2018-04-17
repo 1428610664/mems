@@ -11,6 +11,7 @@ export const handleRequest = state => state.handleRequest
 export const temporaryWarning = state => state.temporaryWarning
 
 export const handleWarning = state => state.handleWarning
+export const handleEvents = state => state.handleEvents
 
 export const servicesNumber = state => state.servicesNumber
 

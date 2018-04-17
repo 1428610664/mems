@@ -30,6 +30,9 @@ const mutations = {
   },
   [types.SET_EVENTS_NUMBER](state, data) {
     state.eventsNumber = data
+  },
+  [types.SET_HANDLE_EVENTS](state, data) {
+    state.handleEvents = data
   }
 }
 
