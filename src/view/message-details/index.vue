@@ -6,26 +6,30 @@
         <search-box @query="searchQuery" placeholder="消息搜索"></search-box>
       </div>
 
-      <scroller class="content-wrapper" ref="scroll">
-        <!-- && item.sendUser.split("/")[1] != getUserInfo().user.userName-->
-        <div class="msg-item" v-for="(item, index) in content" v-if="LoadingState == 1" :key="index" ref="listGroup">
-          <div class="user-info posct c3">
-            <span>{{item.sendUser.split("/")[0]}}<br>{{item.sendUser.split("/")[1]}}</span></div>
-          <div class="msg">
-            <div class="msg-content" v-html="item.message"></div>
-            <div class="msg-time c3 mt"><span class="iconfont icon-time fz12"></span>{{new
-              Date(item.sendTime.time).format("yyyy-MM-dd hh:mm:ss")}}
+      <scroller class="content-wrapper" :data="content" :class="$route.query.status == 99 ? 'pos-b' : ''" ref="scroll">
+
+        <div class="msg-item" :class="_isMeMsg(item) ? 'me-item': ''" v-for="(item, index) in content" v-if="LoadingState == 1" :key="index" ref="listGroup">
+          <template v-if="!_isMeMsg(item)">
+            <div class="user-info posct c3"><span>{{item.sendUser.split("/")[0]}}<br>{{item.sendUser.split("/")[1]}}</span></div>
+            <div class="msg">
+              <div class="msg-content" v-html="item.message"></div>
+              <div class="msg-time c3 mt"><span class="iconfont icon-time fz12"></span> {{new Date(item.sendTime.time).format("yyyy-MM-dd hh:mm:ss")}}</div>
             </div>
-          </div>
+          </template>
+
+          <template v-if="_isMeMsg(item)">
+            <div class="msg">
+              <div style="text-align: right;"><div class="msg-content" v-html="item.message"></div></div>
+              <div class="msg-time c3 mt"><span class="iconfont icon-time fz12"></span> {{new Date(item.sendTime.time).format("yyyy-MM-dd hh:mm:ss")}}</div>
+            </div>
+            <div class="user-info posct c3">
+              <span>{{item.sendUser.split("/")[0]}}<br>{{item.sendUser.split("/")[1]}}</span></div>
+          </template>
         </div>
-        <!--<div class="msg-item me-item">
-          <div class="msg">
-            <div class="msg-content">@肖振鹏 请把这些历史数据，和各核心生产ofasset表的BCP给一份@罗亮</div>
-            <div class="msg-time c3 mt"><span class="iconfont icon-time fz12"></span> 2018-01-25 16:45</div>
-          </div>
-          <div class="user-info posct c3"><span>李国平<br/>06238</span></div>
-        </div>-->
       </scroller>
+      <div class="send-wrapper" v-if="$route.query.status != 99">
+      <send-msg @send="sendMsg" ref="messageWrapper"></send-msg>
+      </div>
     </div>
   </transition>
 </template>
@@ -35,6 +39,7 @@
   import {XHeader} from 'vux'
   import SearchBox from 'components/search-box/search-box'
   import Scroller from 'components/scroll/scroller'
+  import SendMsg from 'components/send-msg/send-msg'
 
   import {getUserInfo} from 'common/js/cache'
   import request from 'common/js/request'
@@ -70,20 +75,38 @@
           this.$refs.scroll.setLoadingState(3)
         })
       },
+      sendMsg(msg){
+        request.post(getUrl("message"), {refId: this.$route.query.id, type: this.$route.query.type, message: msg}).then(res => {
+          console.log("========="+JSON.stringify(res))
+          if (res.success) {
+            // 发送成功立即请求消息列表
+            this.getMessage()
+            this.$refs.messageWrapper.clearMsg()
+          } else {
+            this.$vux.toast.text("发送失败", "bottom")
+          }
+        }, error => {
+          this.$vux.toast.text("发送失败", "bottom")
+        })
+      },
       _scrollToBottom() {
         this.$refs.scroll.scrollToElement(this.$refs.listGroup[this.content.length - 1], 0)
+      },
+      _isMeMsg(item){
+        return item.sendUser.split("/")[1] == getUserInfo().user.userName
       }
     },
     components: {
       XHeader,
 
       SearchBox,
+      SendMsg,
       Scroller
     }
   }
 </script>
 
-<style >
+<style scoped>
 
   .wrapper {
     position: fixed;
@@ -102,9 +125,12 @@
   .content-wrapper {
     position: absolute;
     top: 88px;
-    bottom: 45px;
+    bottom: 50px;
     overflow: hidden;
     width: 100%;
+  }
+  .content-wrapper.pos-b{
+    bottom: 0px!important;
   }
 
   .msg-item {
@@ -136,15 +162,28 @@
     color: #fff;
   }
 
-  .msg-content img {
-    max-width: 100%;
+  .me-item .msg-content{
+    background: #eee;
+    color: #5e5e5e;
   }
-  .msg-content table{
-    max-width: 100%;
-    overflow: auto;
+
+  .send-wrapper{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 22;
+    width: 100%;
+    height: 50px;
   }
-  .msg-content table tr,.msg-content table td{
-    width: 0px!important;
+
+  .send-wrapper:before{
+    content: "";
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: #3D5C99;
+    -webkit-transform: scaleY(.4);
+    transform: scaleY(.4);
   }
 
 </style>

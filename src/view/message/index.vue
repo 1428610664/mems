@@ -71,7 +71,7 @@
       },
       onItemClick(row) {
         //alert(JSON.stringify(row))
-        this.$router.push({path: '/messageDetails',query:{id: row.id}})
+        this.$router.push({path: '/messageDetails',query:{id: row.id, type: row.type,status: row.msgStatus}})
       },
       searchQuery(v) {
         this.refresh.params.keyWord = v
@@ -122,7 +122,7 @@
       _parseDate(res) {
         let data = []
         res.forEach((v, i) => {
-          data.push({id: v.refId, name: v.name, time: v.sendTime.time, counts: v.counts, type: v.type})
+          data.push({id: v.refId, name: v.name, time: v.sendTime.time, counts: v.counts, type: v.type,msgStatus: v.status})
         })
         return data
       }

@@ -95,6 +95,17 @@ textarea{overflow:auto;resize:none;vertical-align:top;}
   margin-left: 15px;
 }
 
+.msg-content img {
+  max-width: 100%;
+}
+.msg-content table{
+  max-width: 100%;
+  overflow: auto;
+}
+.msg-content table tr,.msg-content table td{
+  width: 0px!important;
+}
+
 /*状态边框样式*/
 .status-default{
   border: 1px solid #c1c1c1;

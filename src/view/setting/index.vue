@@ -5,7 +5,7 @@
 
       <scroller class="wrapper-content" ref="scroll">
         <group label-width="4.5em" label-margin-right="2em" label-align="right">
-          <x-input title="账号" v-model="bindData.userName"></x-input>
+          <x-input title="账号"  :readonly="true" v-model="bindData.userName"></x-input>
           <x-input title="名称" v-model="bindData.name"></x-input>
           <x-input title="手机" v-model="bindData.mobilePhone"></x-input>
           <x-input title="固定电话" v-model="bindData.tel"></x-input>

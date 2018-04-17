@@ -1,5 +1,5 @@
 <template>
-  <div id="app" @touchmove.prevent>
+  <div id="app">
     <x-header :left-options="{backText: '', showBack: false}" :title="title"></x-header>
     <div class="content">
       <keep-alive>
