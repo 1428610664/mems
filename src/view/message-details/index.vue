@@ -6,37 +6,26 @@
         <search-box @query="searchQuery" placeholder="消息搜索"></search-box>
       </div>
 
-      <div class="content-wrapper">
-        <div class="msg-item">
-          <div class="user-info posct c3"><span>李国平<br/>06238</span></div>
+      <scroller class="content-wrapper" ref="scroll">
+        <!-- && item.sendUser.split("/")[1] != getUserInfo().user.userName-->
+        <div class="msg-item" v-for="(item, index) in content" v-if="LoadingState == 1" :key="index" ref="listGroup">
+          <div class="user-info posct c3">
+            <span>{{item.sendUser.split("/")[0]}}<br>{{item.sendUser.split("/")[1]}}</span></div>
           <div class="msg">
-            <div class="msg-content">@肖振鹏 请把这些历史数据，和各核心生产ofasset表的BCP给一份@罗亮</div>
-            <div class="msg-time c3 mt"><span class="iconfont icon-time fz12"></span> 2018-01-25 16:45</div>
+            <div class="msg-content" v-html="item.message"></div>
+            <div class="msg-time c3 mt"><span class="iconfont icon-time fz12"></span>{{new
+              Date(item.sendTime.time).format("yyyy-MM-dd hh:mm:ss")}}
+            </div>
           </div>
         </div>
-        <div class="msg-item me-item">
-          <div class="msg">
-            <div class="msg-content">@肖振鹏 请把这些历史数据，和各核心生产ofasset表的BCP给一份@罗亮</div>
-            <div class="msg-time c3 mt"><span class="iconfont icon-time fz12"></span> 2018-01-25 16:45</div>
-          </div>
-          <div class="user-info posct c3"><span>李国平<br/>06238</span></div>
-        </div>
-        <div class="msg-item me-item">
-          <div class="msg">
-            <div class="msg-content">@肖振鹏 请把这些</div>
-            <div class="msg-time c3 mt"><span class="iconfont icon-time fz12"></span> 2018-01-25 16:45</div>
-          </div>
-          <div class="user-info posct c3"><span>李国平<br/>06238</span></div>
-        </div>
-        <div class="msg-item me-item">
+        <!--<div class="msg-item me-item">
           <div class="msg">
             <div class="msg-content">@肖振鹏 请把这些历史数据，和各核心生产ofasset表的BCP给一份@罗亮</div>
             <div class="msg-time c3 mt"><span class="iconfont icon-time fz12"></span> 2018-01-25 16:45</div>
           </div>
           <div class="user-info posct c3"><span>李国平<br/>06238</span></div>
-        </div>
-
-      </div>
+        </div>-->
+      </scroller>
     </div>
   </transition>
 </template>
@@ -45,6 +34,8 @@
 
   import {XHeader} from 'vux'
   import SearchBox from 'components/search-box/search-box'
+  import Scroller from 'components/scroll/scroller'
+
   import {getUserInfo} from 'common/js/cache'
   import request from 'common/js/request'
   import {getUrl} from 'common/js/Urls'
@@ -52,25 +43,47 @@
   export default {
     name: "index",
     data() {
-      return {}
+      return {
+        content: [],
+
+        LoadingState: 2
+      }
     },
     created() {
-
+      setTimeout(this.getMessage, 800)
     },
     methods: {
       searchQuery(v) {
         console.log(v)
+      },
+      getMessage() {
+        request.get(getUrl("message"), {refId: this.$route.query.id, limit: 200, offset: 1}).then(res => {
+          this.content = res.data.rows
+          this.LoadingState = res.data.rows.length > 0 ? 1 : 4
+          this.$refs.scroll.setLoadingState(res.data.rows.length > 0 ? 1 : 4)
+          setTimeout(() => {
+            this.$refs.scroll.refresh()
+            this._scrollToBottom()
+          }, 20)
+        }, error => {
+          this.LoadingState = 3
+          this.$refs.scroll.setLoadingState(3)
+        })
+      },
+      _scrollToBottom() {
+        this.$refs.scroll.scrollToElement(this.$refs.listGroup[this.content.length - 1], 0)
       }
     },
     components: {
       XHeader,
 
-      SearchBox
+      SearchBox,
+      Scroller
     }
   }
 </script>
 
-<style scoped>
+<style >
 
   .wrapper {
     position: fixed;
@@ -90,7 +103,7 @@
     position: absolute;
     top: 88px;
     bottom: 45px;
-    overflow: auto;
+    overflow: hidden;
     width: 100%;
   }
 
@@ -107,7 +120,7 @@
 
   .user-info {
     width: 60px;
-    height: 50px;
+    padding: 0 3px;
   }
 
   .msg {
@@ -122,4 +135,16 @@
     border-radius: 5px;
     color: #fff;
   }
+
+  .msg-content img {
+    max-width: 100%;
+  }
+  .msg-content table{
+    max-width: 100%;
+    overflow: auto;
+  }
+  .msg-content table tr,.msg-content table td{
+    width: 0px!important;
+  }
+
 </style>

@@ -3,7 +3,7 @@
     <div class="search-box">
       <search-box @query="searchQuery" placeholder="搜索"></search-box>
     </div>
-    <div class="wrapper-content">
+    <scroller class="wrapper-content" ref="scroll" :data="turnUser">
       <div class="cell c1">
         系统运行部
       </div>
@@ -14,7 +14,7 @@
           </checker-item>
         </checker>
       </div>
-    </div>
+    </scroller>
     <comm-footer v-if="FlowActions" :FlowActions="FlowActions" @event="footerEvent"></comm-footer>
   </div>
 </template>
@@ -24,6 +24,7 @@
   import {XHeader, Checker, CheckerItem} from 'vux'
   import SearchBox from 'components/search-box/search-box'
   import commFooter from 'components/comm-footer'
+  import Scroller from 'components/scroll/scroller'
 
   import request from 'common/js/request'
   import {getUrl} from 'common/js/Urls'
@@ -56,36 +57,44 @@
     },
     created() {
       this._getTurnUser()
+      setTimeout(() => {
+        this.$refs.scroll.setLoadingState(1)
+      }, 20)
     },
     methods: {
-      searchQuery(v){
+      searchQuery(v) {
         this._getTurnUser(v)
       },
-      footerEvent(action){
-        if(action.TypeId == 0){
+      footerEvent(action) {
+        if (action.TypeId == 0) {
           history.go(-1)
           return
         }
         let userNames = this._getSelectTurnUserName()
-        if(userNames.length == 0) {
-          this.$vux.toast.text("请选择"+action.FlowActionName+"用户", "bottom")
+        if (userNames.length == 0) {
+          this.$vux.toast.text("请选择" + action.FlowActionName + "用户", "bottom")
           return
         }
         this.$emit('actionEvent', action, userNames)
       },
-      _getTurnUser(keyWord){
-        request.get(this.url ? this.url : getUrl("turnUser"), {keyWord: keyWord, limit: 100, role: this.role,queryMe: false}).then(res => {
+      _getTurnUser(keyWord) {
+        request.get(this.url ? this.url : getUrl("turnUser"), {
+          keyWord: keyWord,
+          limit: 100,
+          role: this.role,
+          queryMe: false
+        }).then(res => {
           this.turnUser = []
           res.data.rows.forEach((v, i) => {
-            this.turnUser.push({key: i, value: v.userName +"/"+ v.name})
+            this.turnUser.push({key: i, value: v.userName + "/" + v.name})
           })
         }, error => {
 
         })
       },
-      _getSelectTurnUserName(){
+      _getSelectTurnUserName() {
         let userName = []
-        this.selectUser.forEach(( v, i) => {
+        this.selectUser.forEach((v, i) => {
           userName.push(v.split("/")[0])
         })
         return userName
@@ -97,6 +106,7 @@
       CheckerItem,
 
       commFooter,
+      Scroller,
       SearchBox
     }
   }
@@ -108,7 +118,7 @@
     padding: 5px 3%;
   }
 
-  .wrapper-content{
+  .wrapper-content {
     position: absolute;
     top: 88px;
     left: 0;
@@ -117,7 +127,7 @@
     overflow: auto;
   }
 
-  .user-wrapper{
+  .user-wrapper {
     padding: 5px 10px;
   }
 
@@ -130,9 +140,10 @@
     border-radius: 3px;
     border: 1px solid #ccc;
     background-color: #fff;
-    margin:0 5px 5px 0;
+    margin: 0 5px 5px 0;
   }
-  .item-selected{
+
+  .item-selected {
     background: #3D5C99;
     color: #fff;
     border: 1px solid #3D5C99;

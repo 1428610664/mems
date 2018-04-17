@@ -207,6 +207,9 @@
 			},
       goTop(){
         this.scroll.scrollTo( 0, 0, 200, "easeInOutQuad")
+      },
+      setLoadingState(state){
+			  this.LoadingState = state
       }
 		},
 		watch: {

@@ -2,10 +2,11 @@
   <transition name="move">
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">处理服务请求</x-header>
-      <div class="wrapper-content">
+      <scroller class="wrapper-content" ref="scroll">
         <group label-width="5em" label-margin-right="2em" label-align="right">
           <x-input title="请求标题" :readonly="isEdit" placeholder="请输入文字" v-model="bindData.name"></x-input>
-          <x-textarea title="请求描述" :readonly="isEdit" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
+          <x-textarea title="请求描述" :readonly="isEdit" v-model="bindData.summary" placeholder="请输入文字"
+                      :show-counter="false" :rows="5"
                       :max="200"></x-textarea>
           <x-input title="请求编号" :readonly="true" placeholder="请输入文字" v-model="serial"></x-input>
           <div class="hr"></div>
@@ -17,7 +18,8 @@
           <div class="hr"></div>
           <app-select :url="sysTypeTypeUrl" :readonly="isEdit" title="系统分类" v-model="bindData.appType"></app-select>
           <div class="hr"></div>
-          <app-select title="所属系统" :readonly="isEdit" :url="sysTypeNameUrl" v-model="bindData.appName" :param="sysTypeParam"
+          <app-select title="所属系统" :readonly="isEdit" :url="sysTypeNameUrl" v-model="bindData.appName"
+                      :param="sysTypeParam"
                       :isFirstRequest="false"></app-select>
           <x-input title="提价时间" :readonly="true" v-model="createTime"></x-input>
           <x-input title="当前处理人" :readonly="true" v-model="handler"></x-input>
@@ -25,7 +27,7 @@
           <x-input title="满意度" :readonly="true" v-model="cacsi"></x-input>
           <x-input title="处理评价" :readonly="true" v-model="evaluate"></x-input>
         </group>
-      </div>
+      </scroller>
 
       <comm-footer :FlowActions="FlowActions" @event="footerEvent"></comm-footer>
       <router-view></router-view>
@@ -37,6 +39,7 @@
 
   import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
+  import Scroller from 'components/scroll/scroller'
   import appSelect from 'components/multi-select/app-select'
   import {getUrl} from 'common/js/Urls'
   import {handleRequestMixin} from "common/mixin/eventMixin"
@@ -82,63 +85,73 @@
         return {appType: this.bindData.appType}
       },
       // 是否不可编辑
-      isEdit(){
+      isEdit() {
         let handler = this.handleRequest.handler.split("/")[1]
         return this.status == 2 && handler == getUserInfo().user.userName ? false : true
       },
-      FlowActions(){
-        if(!this.handleRequest) return []
+      FlowActions() {
+        if (!this.handleRequest) return []
         let actions = []
         let createUser = this.handleRequest.createUser.split("/")[1], handler = this.handleRequest.handler.split("/")[1]
         let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
-        console.log("====getUserInfo()==="+JSON.stringify(getUserInfo()))
-        console.log("createUser："+createUser +"-----------------handler："+ handler)
-        console.log("userName："+userName +"-----------------toUser："+ toUser +"------------------role："+ role)
+        console.log("====getUserInfo()===" + JSON.stringify(getUserInfo()))
+        console.log("createUser：" + createUser + "-----------------handler：" + handler)
+        console.log("userName：" + userName + "-----------------toUser：" + toUser + "------------------role：" + role)
 
-        console.log("-------handleRequest--------"+JSON.stringify(this.handleRequest))
+        console.log("-------handleRequest--------" + JSON.stringify(this.handleRequest))
 
-        if(this.status == 0){// 未处理
-          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
+        if (this.status == 0) {// 未处理
+          if (createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)) {
             actions = [
               {TypeId: 5, FlowActionName: "取消", id: this.$route.query.id},
             ]
-          }else if(role == 5){
+          } else if (role == 5) {
             actions = [
               {TypeId: 4, FlowActionName: "驳回", id: this.$route.query.id},
               {TypeId: 3, FlowActionName: "转派", id: this.$route.query.id},
               {TypeId: 7, FlowActionName: "关单", id: this.$route.query.id},
             ]
-          }else{
+          } else {
             actions = []
           }
-        }else if(this.status == 1) { // 处理中
-          if(handler == userName || (toUser && toUser.split(",").indexOf(handler) != -1)){
+        } else if (this.status == 1) { // 处理中
+          if (handler == userName || (toUser && toUser.split(",").indexOf(handler) != -1)) {
             actions = [
               {TypeId: 3, FlowActionName: "转派", id: this.$route.query.id},
               {TypeId: 7, FlowActionName: "关单", id: this.$route.query.id},
             ]
-          }else{
+          } else {
             // edti 不可编辑
           }
-        }else if(this.status == 2) {  // 被驳回
-          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
+        } else if (this.status == 2) {  // 被驳回
+          if (createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)) {
             actions = [
               {TypeId: 5, FlowActionName: "取消请求", id: this.$route.query.id},
-              {TypeId: 1, FlowActionName: "再次提交", params: {status: 0, id: this.$route.query.id}, id: this.$route.query.id},
+              {
+                TypeId: 1,
+                FlowActionName: "再次提交",
+                params: {status: 0, id: this.$route.query.id},
+                id: this.$route.query.id
+              },
             ]
-          }else{
+          } else {
             // edti 不可编辑
           }
-        }else if(this.status == 3){ // 待评价
-          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
+        } else if (this.status == 3) { // 待评价
+          if (createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)) {
             actions = [
               {TypeId: 8, FlowActionName: "提交评价", id: this.$route.query.id},
-              {TypeId: 11, FlowActionName: "再次提交", params: {status: 0, id: this.$route.query.id}, id: this.$route.query.id},
+              {
+                TypeId: 11,
+                FlowActionName: "再次提交",
+                params: {status: 0, id: this.$route.query.id},
+                id: this.$route.query.id
+              },
             ]
-          }else{
+          } else {
             // edti 不可编辑
           }
-        }else{ // status == 4 || status == 99 || status == 100
+        } else { // status == 4 || status == 99 || status == 100
           // edti 不可编辑
           actions = []
         }
@@ -147,6 +160,9 @@
     },
     created() {
       this._initRequest()
+      setTimeout(() => {
+        this.$refs.scroll.setLoadingState(1)
+      }, 20)
     },
     methods: {
       ...mapMutations({
@@ -155,7 +171,7 @@
       footerEvent(action) {
         this.submitEvent(action)
       },
-      _initRequest(){
+      _initRequest() {
         if (this.handleRequest) {
           for (var k in this.bindData) {
             this.bindData[k] = this.handleRequest[k]
@@ -167,13 +183,14 @@
           this.cacsi = this.getCacsi(this.handleRequest.cacsi)
           this.status = this.handleRequest.status
           this.evaluate = this.handleRequest.evaluate
-        }else {
+        } else {
           this.$router.replace('/serviceRequest')
         }
       }
     },
     components: {
       commFooter,
+      Scroller,
       appSelect,
 
       XHeader,
@@ -204,7 +221,7 @@
     width: 100%;
   }
 
-  .hz-cell{
+  .hz-cell {
     padding: 10px 15px;
     position: relative;
     display: flex;
@@ -212,7 +229,8 @@
     -webkit-align-items: center;
     align-items: center;
   }
-  .hz-cell .label{
+
+  .hz-cell .label {
     width: 4.5em;
     text-align: right;
     margin-right: 2em;

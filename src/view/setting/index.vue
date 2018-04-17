@@ -3,7 +3,7 @@
     <div class="seting-wrapper b">
       <x-header :left-options="{backText: ''}">设置</x-header>
 
-      <div class="wrapper-content">
+      <scroller class="wrapper-content" ref="scroll">
         <group label-width="4.5em" label-margin-right="2em" label-align="right">
           <x-input title="账号" v-model="bindData.userName"></x-input>
           <x-input title="名称" v-model="bindData.name"></x-input>
@@ -13,9 +13,10 @@
           <x-input title="部门" v-model="bindData.depart"></x-input>
           <x-input title="微信" v-model="bindData.wechat"></x-input>
           <x-input title="email" v-model="bindData.email"></x-input>
-          <x-textarea title="备注" v-model="bindData.memo" placeholder="请输入..." :show-counter="false" :rows="5" :max="200"></x-textarea>
+          <x-textarea title="备注" v-model="bindData.memo" placeholder="请输入..." :show-counter="false" :rows="5"
+                      :max="200"></x-textarea>
         </group>
-      </div>
+      </scroller>
       <comm-footer :FlowActions="acitons" @event="footerEvent"></comm-footer>
     </div>
   </transition>
@@ -25,6 +26,7 @@
 
   import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
+  import Scroller from 'components/scroll/scroller'
   import {getUserInfo} from 'common/js/cache'
   import request from 'common/js/request'
   import {getUrl} from 'common/js/Urls'
@@ -46,23 +48,26 @@
         },
 
         checkNumberArray: [{key: "1", value: '可用'}, {key: "0", value: '不可用'}],
-        acitons:[
+        acitons: [
           {TypeId: 1, FlowActionName: "保存"},
           {TypeId: 0, FlowActionName: "取消"}
         ]
       }
     },
     created() {
-        this.init()
+      this.init()
+      setTimeout(() => {
+        this.$refs.scroll.setLoadingState(1)
+      }, 20)
     },
     methods: {
-      init(){
-        for(var k in this.bindData){
+      init() {
+        for (var k in this.bindData) {
           this.bindData[k] = getUserInfo().user[k]
         }
       },
-      footerEvent(action){
-        if(action.TypeId == 0){
+      footerEvent(action) {
+        if (action.TypeId == 0) {
           history.go(-1)
           return
         }
@@ -83,7 +88,8 @@
       XInput,
       Selector,
 
-      commFooter
+      commFooter,
+      Scroller
     }
   }
 </script>

@@ -58,7 +58,7 @@
     },
     activated() {
       //this.$refs.scroll.refresh()
-      this.getList()
+      this.getList(false, true)
       this.$refs.scroll.scrollTo(0, 0, 200, "")
     },
     methods: {
@@ -122,7 +122,7 @@
       _parseDate(res) {
         let data = []
         res.forEach((v, i) => {
-          data.push({id: v.id, name: v.name, time: v.sendTime.time, counts: v.counts})
+          data.push({id: v.refId, name: v.name, time: v.sendTime.time, counts: v.counts, type: v.type})
         })
         return data
       }

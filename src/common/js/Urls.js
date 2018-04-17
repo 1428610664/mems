@@ -35,6 +35,11 @@ const requestUrl = {
     url: "/messages/my",
     pre: preUrl
   },
+  // 消息
+  message: {
+    url: "/messages",
+    pre: preUrl
+  },
   // 服务请求
   serviceRequest: {
     url: "/services",

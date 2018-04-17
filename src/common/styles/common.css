@@ -124,6 +124,27 @@ textarea{overflow:auto;resize:none;vertical-align:top;}
   line-height: 16px;
 }
 
+.item-wrapper-yellow {
+  border: 1px solid #eaea00;
+  margin: 5px 3%;
+  padding: 6px 3px;
+  position: relative;
+}
+.item-wrapper-yellow:before{
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: '';
+  height: 0;
+  width: 0;
+  display: block;
+  border: 10px transparent solid;
+  border-bottom-width: 0;
+  border-left-width: 0;
+  border-top-color: #eaea00;
+  z-index: 10;
+}
+
 .item-wrapper-blue {
   border: 1px solid #21CAF4;
   margin: 5px 3%;

@@ -1,5 +1,5 @@
 <template>
-  <div class="item-wrapper-blue" @click="onItemClick">
+  <div :class="clz" @click="onItemClick">
     <div class="flex-box">
       <div class="title ct c3">标题：</div>
       <div class="desc hzline2">{{row.name}}</div>
@@ -27,6 +27,18 @@
     },
     data(){
       return {}
+    },
+    computed: {
+      clz(){
+        switch (this.row.type){
+          case 1:
+          return 'item-wrapper-yellow'
+          case 2:
+            return 'item-wrapper-red'
+          default:
+            return 'item-wrapper-blue'
+        }
+      }
     },
     created(){
       setTimeout(() => {
