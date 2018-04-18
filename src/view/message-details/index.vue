@@ -59,10 +59,10 @@
     },
     methods: {
       searchQuery(v) {
-        console.log(v)
+        this.getMessage(v)
       },
-      getMessage() {
-        request.get(getUrl("message"), {refId: this.$route.query.id, limit: 200, offset: 1}).then(res => {
+      getMessage(keyWord) {
+        request.get(getUrl("message"), {refId: this.$route.query.id, limit: 200, offset: 1,keyWord: keyWord}).then(res => {
           this.content = res.data.rows
           this.LoadingState = res.data.rows.length > 0 ? 1 : 4
           this.$refs.scroll.setLoadingState(res.data.rows.length > 0 ? 1 : 4)

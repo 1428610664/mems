@@ -75,6 +75,11 @@ export default new Router({
         {
           path: '/maintain',
           component: (resolve) => require(['view/maintain'], resolve)
+        },
+        ,
+        {
+          path: '/change',
+          component: (resolve) => require(['view/change'], resolve)
         }
       ]
     }, {

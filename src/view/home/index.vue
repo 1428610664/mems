@@ -16,19 +16,19 @@
       </router-link>
       <router-link to="/myEvents" tag="li" class="grid posct">
         <div>
-          <div class="icon iconfont posct icon-shijiantai fz22 mb3"><i class="number fz12">{{eventsNumber}}</i></div>
+          <div class="icon iconfont posct icon-shijiantai fz22 mb3"></div>
           <div class="name ct">告警事件</div>
         </div>
       </router-link>
       <router-link to="/maintain" tag="li" class="grid posct">
         <div>
-          <div class="icon iconfont posct icon-navicon-xxwh fz22 mb5"><i class="number fz12">{{eventsNumber}}</i></div>
+          <div class="icon iconfont posct icon-navicon-xxwh fz22 mb5"></div>
           <div class="name ct">维护期</div>
         </div>
       </router-link>
-      <router-link to="/maintain" tag="li" class="grid posct">
+      <router-link to="/change" tag="li" class="grid posct">
         <div>
-          <div class="icon iconfont posct icon-change fz22 mb4"><i class="number fz12">{{eventsNumber}}</i></div>
+          <div class="icon iconfont posct icon-change fz22 mb4"></div>
           <div class="name ct">变更白板</div>
         </div>
       </router-link>

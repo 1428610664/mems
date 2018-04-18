@@ -86,6 +86,22 @@ export default {
       }
     }
     /**
+     * 维护期、变更白板状态转义
+     * @param number
+     * @returns {*}
+     */
+    Vue.prototype.getStateType = function (number) {
+      switch (number + '') {
+        case '0': return {title: '未开始', class: 'status-danger'}
+        case '1': return {title: '执行中', class: 'status-success'}
+        case '2': return {title: '已暂停', class: 'status-yellow'}
+        case '3': return {title: '已结束', class: 'status-default'}
+        case '4': return {title: '已禁用', class: 'status-default'}
+        default : return {title: number, class: ''}
+      }
+    }
+
+    /**
      * 优先级
      * @param number
      * @returns {*}

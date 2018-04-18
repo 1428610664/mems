@@ -1,7 +1,7 @@
 <template>
   <transition name="move">
     <div class="wrapper b">
-      <x-header :left-options="{backText: ''}">维护期
+      <x-header :left-options="{backText: ''}">变更白板
         <!--<router-link to="/addRequest" tag="a" slot="right" class="iconfont icon-tianjia"></router-link>-->
         <a slot="right" class="iconfont icon-tianjia"></a>
       </x-header>
@@ -47,7 +47,7 @@
     data() {
       return {
         selectIndex: 0,
-        tab: ["我的维护期", "所有维护期"],
+        tab: ["我的变更", "所有变更"],
 
         content: [],
 
@@ -63,7 +63,7 @@
     },
     computed: {
       getTabParms() {
-        let Parms = [{type: 2, isMy: true,sort: "createTime",order: "desc"}, {type: 2,sort: "createTime",order: "desc"}]
+        let Parms = [{type: 1, isMy: true,sort: "createTime",order: "desc"}, {type: 1,sort: "createTime",order: "desc"}]
 
 
         return Parms
