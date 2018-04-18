@@ -101,9 +101,8 @@
       },
       onItemClick(row){
             // 暂存数据跳往添加页面 否则跳往告警详情页面
-          this.setHandleEvents(this.content[this._findIndex(row.id, this.content)])
+          this.setHandleEvents(row)
           this.$router.push({path: "/handleEvents",query:{id: row.id}})
-
       },
       searchQuery(v){
         this.refresh.params.keyWord = v
@@ -149,7 +148,7 @@
       _parseDate(res){
         let data = []
         res.forEach((v, i) => {
-          data.push({id: v.id, name: v.name, time: v.createTime.time, status: v.status,role:getUserInfo().user.role})
+          data.push(Object.assign({},v,{id: v.cid, name: v.name, time: v.createTime.time, status: v.status,role:getUserInfo().user.role}))
         })
         return data
       },

@@ -2,6 +2,7 @@
 import Scroller from 'vux/src/components/picker/scroller'
 import { isToday, generateRange, each, trimZero, addZero, getMaxDay, parseRow, parseDate, getElement, toElement, removeElement } from 'vux/src/components/datetime/util'
 import { getYears, getMonths, getDays } from 'vux/src/components/datetime/makeData'
+import { getHours, getMinute, getSecond } from 'components/datetime/makeData'
 
 const isBrowser = typeof window === 'object'
 
@@ -51,6 +52,12 @@ const DEFAULT_CONFIG = {
   maxYear: 2030,
   minHour: 0,
   maxHour: 23,
+
+  minMinute: 0,
+  maxMinute: 59,
+  minSecond: 0,
+  maxSecond: 59,
+
   hourList: null,
   minuteList: null,
   secondList: null,
@@ -84,7 +91,7 @@ function renderScroller (el, data, value, fn) {
     one.value = one.value + ''
     return one
   })
-  return new Scroller(el, {
+  return new Scroller(el,{
     data,
     defaultValue: value + '',
     onSelect: fn
@@ -147,11 +154,11 @@ function DatetimePicker (config) {
   }
 
   if (this.config.startDate && !this.config.endDate) {
-    this.config.endDate = new Date('2030/12/31')
+    this.config.endDate = new Date('2030/12/31 23:59:59')
   }
 
   if (!this.config.startDate && this.config.endDate) {
-    this.config.startDate = new Date(`${this.config.minYear}/01/01`)
+    this.config.startDate = new Date(`${this.config.minYear}/01/01 00:00:00`)
   }
 
   this.reMakeData = !!this.config.startDate && !!this.config.endDate
@@ -249,6 +256,9 @@ DatetimePicker.prototype = {
           }, 0)
           if (type === 'year' || type === 'month' || type === 'day') {
             self.hourScroller && self._setHourScroller(self.yearScroller.value, self.monthScroller.value, self.dayScroller.value, self.hourScroller.value)
+            self.minuteScroller && self._setminuteScroller(self.yearScroller.value, self.monthScroller.value, self.dayScroller.value, self.hourScroller.value,self.minuteScroller)
+            self.secondScroller && self._setsecondScroller(self.yearScroller.value, self.monthScroller.value, self.dayScroller.value, self.hourScroller.value,self.minuteScroller,self.secondScroller)
+
           }
           let currentDay
           if (type === 'year') {
@@ -320,7 +330,7 @@ DatetimePicker.prototype = {
     }
   },
 
-  _makeData (type, year, month, day) {
+  _makeData (type, year, month, day,hour,minute) {
     const config = this.config
     const valueMap = this.valueMap
     const list = TYPE_MAP[type]
@@ -355,12 +365,27 @@ DatetimePicker.prototype = {
     } else if (type === 'hour') {
       min = this.config.minHour
       max = this.config.maxHour
+      if (this.reMakeData) {
+        const { minHours, maxHours } = getHours(this.config.startDate, this.config.endDate, this.yearScroller.value * 1, this.monthScroller.value * 1,this.dayScroller.value * 1)
+        min = Math.max(min, minHours)
+        max = Math.min(max, maxHours)
+      }
     } else if (type === 'minute') {
-      min = 0
-      max = 59
+      min = this.config.minMinute
+      max = this.config.maxMinute
+      if (this.reMakeData) {
+        const { minMinute, maxMinute } = getMinute(this.config.startDate, this.config.endDate, this.yearScroller.value * 1, this.monthScroller.value * 1,this.dayScroller.value * 1,this.hourScroller.value * 1)
+        min = Math.max(min, minMinute)
+        max = Math.min(max, maxMinute)
+      }
     }else if (type === "second"){
-      min = 0
-      max = 59
+      min = this.config.minSecond
+      max = this.config.maxSecond
+      if (this.reMakeData) {
+        const {minSecond, maxSecond} = getSecond(this.config.startDate, this.config.endDate, this.yearScroller.value * 1, this.monthScroller.value * 1, this.dayScroller.value * 1, this.hourScroller.value * 1, this.minuteScroller.value * 1)
+        min = Math.max(min, minSecond)
+        max = Math.min(max, maxSecond)
+      }
     }
     for (let i = min; i <= max; i++) {
       let name
@@ -380,6 +405,22 @@ DatetimePicker.prototype = {
         return {
           name: parseRow(config['hourRow'], hour),
           value: Number(hour)
+        }
+      })
+    }
+    if (type === 'minute' && this.config.minuteList) {
+      data = this.config.minuteList.map(minute => {
+        return {
+          name: parseRow(config['minuteRow'], minute),
+          value: Number(minute)
+        }
+      })
+    }
+    if (type === 'second' && this.config.secondList) {
+      data = this.config.secondList.map(second => {
+        return {
+          name: parseRow(config['secondRow'], second),
+          value: Number(second)
         }
       })
     }
@@ -413,22 +454,28 @@ DatetimePicker.prototype = {
       })
     }
 
-    if (type === 'minute' && this.config.minuteList) {
-      data = this.config.minuteList.map(minute => {
+    if (type === 'minute' && this.config.computeHoursFunction) {
+      const isTodayVal =this._isTodayH(new Date(`${year}/${month}/${day} ${hour}`), new Date())
+      const rs = this.config.computeHoursFunction(`${year}-${month}-${day} ${hour}`, isTodayVal, generateRange)
+      data = rs.map(minute => {
         return {
           name: parseRow(config['minuteRow'], minute),
           value: Number(minute)
         }
       })
     }
-    if (type === 'second' && this.config.secondList) {
-      data = this.config.secondList.map(second => {
+
+    if (type === 'second' && this.config.computeHoursFunction) {
+      const isTodayVal = this._isTodayM(new Date(`${year}/${month}/${day} ${hour}:${minute}`), new Date())
+      const rs = this.config.computeHoursFunction(`${year}-${month}-${day} ${hour}:${minute}`, isTodayVal, generateRange)
+      data = rs.map(second => {
         return {
           name: parseRow(config['secondRow'], second),
           value: Number(second)
         }
       })
     }
+
     return data
   },
 
@@ -450,6 +497,12 @@ DatetimePicker.prototype = {
       if (self.yearScroller && self.monthScroller && self.hourScroller) {
         self._setHourScroller(currentYear, currentValue, self.dayScroller.value, self.hourScroller.value)
       }
+      if (self.yearScroller && self.monthScroller && self.hourScroller && self.minuteScroller) {
+        self._setminuteScroller(currentYear, currentValue, self.dayScroller.value, self.hourScroller.value,self.minuteScroller)
+      }
+      if (self.yearScroller && self.monthScroller && self.hourScroller && self.minuteScroller && self.secondScroller) {
+        self._setsecondScroller(currentYear, currentValue, self.dayScroller.value, self.hourScroller.value,self.minuteScroller,self.secondScroller)
+      }
     })
   },
 
@@ -467,6 +520,8 @@ DatetimePicker.prototype = {
     self.dayScroller = renderScroller(div, self._makeData('day', year, month), day, function (currentValue) {
       self.config.onSelect.call(self, 'day', currentValue, self.getValue())
       self.hourScroller && self._setHourScroller(year, month, currentValue, self.hourScroller.value)
+      self.minuteScroller && self._setminuteScroller(year, month, currentValue, self.hourScroller.value,self.minuteScroller.value)
+      self.secondScroller && self._setsecondScroller(year, month, currentValue, self.hourScroller.value,self.minuteScroller.value,self.secondScroller.value)
     })
   },
 
@@ -479,6 +534,33 @@ DatetimePicker.prototype = {
     const div = self.find('[data-role=hour]')
     self.hourScroller = renderScroller(div, self._makeData('hour', year, month, day), hour || '', function (currentValue) {
       self.config.onSelect.call(self, 'hour', currentValue, self.getValue())
+      self.minuteScroller && self._setminuteScroller(year, month, day, currentValue,self.minuteScroller.value)
+      self.secondScroller && self._setsecondScroller(year, month, day, currentValue,self.minuteScroller.value,self.secondScroller.value)
+    })
+  },
+
+  _setminuteScroller (year, month, day, hour,minute) {
+    if (!this.minuteScroller) {
+      return
+    }
+    const self = this
+    self.minuteScroller.destroy()
+    const div = self.find('[data-role=minute]')
+    self.minuteScroller = renderScroller(div, self._makeData('minute', year, month, day,hour), minute || '', function (currentValue) {
+      self.config.onSelect.call(self, 'minute', currentValue, self.getValue())
+      self.secondScroller && self._setsecondScroller(year, month, day, hour,currentValue,self.secondScroller.value)
+    })
+  },
+
+  _setsecondScroller (year, month, day, hour,minute,second) {
+    if (!this.secondScroller) {
+      return
+    }
+    const self = this
+    self.secondScroller.destroy()
+    const div = self.find('[data-role=second]')
+    self.secondScroller = renderScroller(div, self._makeData('second', year, month, day,hour,minute), second || '', function (currentValue) {
+      self.config.onSelect.call(self, 'second', currentValue, self.getValue())
     })
   },
 
@@ -567,6 +649,12 @@ DatetimePicker.prototype = {
     }
 
     this.hide('clear')
+  },
+  _isTodayH (val1, val2) {
+    return val1.getFullYear() === val2.getFullYear() && val1.getMonth() === val2.getMonth() && val1.getDate() === val2.getDate() && val1.getHours() === val2.getHours()
+  },
+  _isTodayM (val1, val2) {
+    return val1.getFullYear() === val2.getFullYear() && val1.getMonth() === val2.getMonth() && val1.getDate() === val2.getDate() && val1.getHours() === val2.getHours() & val1.getMinutes() === val2.getMinutes()
   }
 }
 

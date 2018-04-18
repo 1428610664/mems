@@ -2,21 +2,26 @@
   <transition name="move">
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">事件告警详情</x-header>
-      <!--<scroller lock-x scrollbarY height="-91">-->
         <div class="wrapper-content">
           <group label-width="4.5em" label-margin-right="2em" label-align="right">
-            <x-input title="事件标题" placeholder="请输入文字" v-model="bindData.name" :readonly="readonly"></x-input>
-            <x-textarea title="事件内容" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
-                        :max="200" :readonly="readonly"></x-textarea>
+            <x-input title="事件标题" v-model="handleEvents.name" :readonly="true"></x-input>
+            <x-textarea title="事件内容" v-model="handleEvents.summary" :show-counter="false" :rows="5"
+                        :max="200" :readonly="true"></x-textarea>
+            <x-input title="事件编号" :readonly="true" v-model="handleEvents.serial"></x-input>
+            <x-input title="主机名" :readonly="true" v-model="handleEvents.hostName"></x-input>
+            <x-input title="主机IP" :readonly="true" v-model="handleEvents.ip"></x-input>
             <div class="hr"></div>
             <div class="hz-cell">
               <span class="label c4">状态</span>
-              <span :class="getStatusType(status).class">{{getStatusType(status).title}}</span>
+              <span :class="getEventStatusType(handleEvents).class">{{getEventStatusType(handleEvents).title}}</span>
             </div>
             <div class="hr"></div>
             <app-select :url="sysTypeTypeUrl" title="系统分类" v-model="bindData.appType" :readonly="readonly"></app-select>
             <div class="hr"></div>
             <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :search="true" :param="sysTypeParam"
+                        :isFirstRequest="false" :readonly="readonly"></app-select>
+            <div class="hr"></div>
+            <app-select title="所属组件" :url="sysTypeComponentUrl" v-model="bindData.component" :search="true" :param="sysNameParam"
                         :isFirstRequest="false" :readonly="readonly"></app-select>
             <div class="hr"></div>
             <div class="hz-cell">
@@ -27,7 +32,6 @@
             <selector v-model="bindData.urgency" title="紧急度" :options="select.urgency" @on-change="severityChange"  :readonly="readonly"></selector>
             <selector v-model="bindData.type" title="事件类别" :options="select.type" :readonly="readonly"></selector>
             <selector v-model="bindData.attributes" title="事件属性" :options="select.attributes" :readonly="readonly"></selector>
-            <x-input title="事件编号" :readonly="true" placeholder="请输入文字" v-model="serial"></x-input>
             <x-input title="事件时间" :readonly="true" v-model="bindData.faultTime"></x-input>
             <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
             <x-input title="提交时间" :readonly="true" v-model="createTime"></x-input>
@@ -44,12 +48,10 @@
             <x-input title="满意度" :readonly="true" v-model="cacsi"></x-input>
             <x-input title="处理评价" :readonly="true" v-model="evaluate"></x-input>
             <div class="hr"></div>
-            <!--<div class="tab_div_height">-->
-              <tabs-pan :id="rowId"></tabs-pan>
-            <!--</div>-->
+            <tabs-pan :id="rowId"></tabs-pan>
+
           </group>
         </div>
-      <!--</scroller>-->
 
       <comm-footer :FlowActions="FlowActions" @event="footerEvent"></comm-footer>
       <router-view></router-view>
@@ -75,8 +77,10 @@
       return {
         sysTypeTypeUrl: getUrl("appType"),
         sysTypeNameUrl: getUrl("appName"),
+        sysTypeComponentUrl: getUrl("component"),
         readonly:false,
         rowId:this.$route.query.id,
+        rows:{},
         serial: '',    // 请求编号
         createTime: '',// 提交时间
         createUser: '', // 提交人
@@ -85,11 +89,9 @@
         evaluate: '',   // 处理评价
         status: '',       // 状态
         bindData: {
-          name: '',       // 标题
-          summary: '',   // 内容
-          faultTime: '', //事件时间
           appType: '',   // 系统分类
           appName: '' ,  // 所属系统
+          component : '' ,  // 所属组件
           severity:'0',  //优先级
           influence:'4' ,  //影响度
           urgency:'4' ,  //紧急度
@@ -105,9 +107,7 @@
           ],
 
         checkData: {
-          urgency: {message: "请选择紧急度", check: "isEmpty"},
-          type: {message: "请选择事件类别", check: "isEmpty"},
-          attributes: {message: "请选择事件属性", check: "isEmpty"},
+          // urgency: {message: "请选择紧急度", check: "isEmpty"},
         },
 
         select: {
@@ -123,7 +123,10 @@
         'handleEvents',
       ]),
       sysTypeParam() {
-        return {appType: this.bindData.appType}
+            return {appType: this.bindData.appType}
+      },
+      sysNameParam() {
+           return {appName: this.bindData.appName}
       },
       FlowActions(){
         if(!this.handleEvents) return []
@@ -131,59 +134,55 @@
         let createUser = this.handleEvents.createUser.split("/")[1], handler = this.handleEvents.handler.split("/")[1];
         let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
         this.readonly = false
-        if(role != 5){
-          this.readonly = true
-          return []
-        }
-        if(this.status == 0){// 未处理
-          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
-            actions = [
-              {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
-            ]
-          }else{
-            actions = [
-              {TypeId: 15, FlowActionName: "驳回", id: this.$route.query.id},
-              {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
-              {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id},
-            ]
-          }
-        }else if(this.status == 1) { // 处理中
-          if(handler == userName || (toUser && toUser.split(",").indexOf(handler) != -1)){
-            actions = [
-              {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
-              {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id},
-            ]
-          }else{
-            // edti 不可编辑
-            this.readonly = true
-          }
-        }else if(this.status == 2) {  // 被驳回
-          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
-            actions = [
-              {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
-              {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
-            ]
-          }else{
-            this.readonly = true
-          }
-        }else if(this.status == 3){ // 待评价
-          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
-            actions = [
-              {TypeId: 19, FlowActionName: "提交评价", id: this.$route.query.id},
-              {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
-            ]
-          }else{
-            this.readonly = true
-          }
-        }else{ // status == 4 || status == 99 || status == 100
-          this.readonly = true
-          actions = []
-        }
+        // if(this.status == 0){// 未处理
+        //   if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
+        //     actions = [
+        //       {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
+        //     ]
+        //   }else{
+        //     actions = [
+        //       {TypeId: 15, FlowActionName: "驳回", id: this.$route.query.id},
+        //       {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
+        //       {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id},
+        //     ]
+        //   }
+        // }else if(this.status == 1) { // 处理中
+        //   if(handler == userName || (toUser && toUser.split(",").indexOf(handler) != -1)){
+        //     actions = [
+        //       {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
+        //       {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id},
+        //     ]
+        //   }else{
+        //     // edti 不可编辑
+        //     this.readonly = true
+        //   }
+        // }else if(this.status == 2) {  // 被驳回
+        //   if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
+        //     actions = [
+        //       {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
+        //       {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
+        //     ]
+        //   }else{
+        //     this.readonly = true
+        //   }
+        // }else if(this.status == 3){ // 待评价
+        //   if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
+        //     actions = [
+        //       {TypeId: 19, FlowActionName: "提交评价", id: this.$route.query.id},
+        //       {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
+        //     ]
+        //   }else{
+        //     this.readonly = true
+        //   }
+        // }else{ // status == 4 || status == 99 || status == 100
+        //   this.readonly = true
+        //   actions = []
+        // }
         return actions
       }
     },
     created() {
-      this._initWarning()
+      this._initEvent()
     },
     methods: {
       ...mapMutations({
@@ -192,10 +191,10 @@
       footerEvent(action) {
         this.submitEvent(action)
       },
-      _initWarning(){
+      _initEvent(){
         if (this.handleEvents) {
             for (var k in this.bindData) {
-              this.bindData[k] = k == 'faultTime'? new Date(this.handleEvents[k].time).format("yyyy-MM-dd hh:mm:ss") :this.handleEvents[k]
+              this.bindData[k] = this.handleEvents[k]
             }
             this.rowKey.forEach((item)=>{
               this.bindData[item.key] = isNaN(+this.handleEvents[item.key])?  this.handleEvents[item] + '': item.value
@@ -211,6 +210,9 @@
           this.$router.replace('/myEvents')
         }
       },
+      /**
+       * 优先级计算
+       */
       severityChange (){
           let _val = parseInt(this.bindData.influence)+parseInt(this.bindData.urgency);
           if(isNaN(_val)){
@@ -284,8 +286,4 @@
     text-align: center;
     border-radius: 10px;
   }
-  /*.wrapper-content:nth-last-child(1){*/
-    /*padding-bottom: 0px;*/
-  /*}*/
-  /*.tab_div_height{ height: 230px;}*/
 </style>

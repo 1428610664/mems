@@ -106,7 +106,7 @@
         this.$emit('input', '')
         this.rows = []
         this.dateRow = []
-        if(v.appType)this.getRows()
+        if(v.appType || v.appName)this.getRows()
       }
     },
     methods: {

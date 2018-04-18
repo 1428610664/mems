@@ -25,9 +25,12 @@
             </div>
             <selector v-model="bindData.influence" title="影响度" :options="select.influence" @on-change="severityChange"  :readonly="readonly"></selector>
             <selector v-model="bindData.urgency" title="紧急度" :options="select.urgency" @on-change="severityChange"  :readonly="readonly"></selector>
-            <selector v-model="bindData.type" title="事件类别" :options="select.type" :readonly="readonly"></selector>
             <selector v-model="bindData.attributes" title="事件属性" :options="select.attributes" :readonly="readonly"></selector>
-            <x-input title="报障编号" :readonly="true" placeholder="请输入文字" v-model="serial"></x-input>
+            <selector v-model="bindData.type" title="事件类别" :options="select.type" :readonly="readonly" @on-change="severityChange"></selector>
+            <datetime v-if="bindData.type=='2'" v-model="bindData.serverBtime" :end-date="bindData.serverEtime" format="YYYY-MM-DD HH:mm:ss" title="服务开始时间"></datetime>
+            <datetime v-if="bindData.type=='2'" v-model="bindData.serverEtime" :start-date="bindData.serverBtime" format="YYYY-MM-DD HH:mm:ss" title="服务结束时间"></datetime>
+            <x-input v-if="bindData.type=='2'" title="服务影响时间" :readonly="true" v-model="bindData.serverAtime"></x-input>
+            <x-input title="报障编号" :readonly="true"  v-model="serial"></x-input>
             <x-input title="报障时间" :readonly="true" v-model="bindData.faultTime"></x-input>
             <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
             <x-input title="提交时间" :readonly="true" v-model="createTime"></x-input>
@@ -62,6 +65,7 @@
   import {XHeader, Group, Scroller, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
   import appSelect from 'components/multi-select/app-select'
+  import datetime from 'components/datetime/index'
   import {getUrl} from 'common/js/Urls'
   import {eventMixin} from "common/mixin/eventMixin"
   import {mapGetters, mapMutations} from 'vuex'
@@ -95,6 +99,9 @@
           urgency:'4' ,  //紧急度
           type:'1' ,  //事件类别
           attributes:'1' ,  //事件属性
+          serverBtime:'', //服务开始时间
+          serverEtime:'', //服务结束时间
+          serverAtime:'', //服务影响时长
         },
         rowKey: [
           {key:'severity',value:'0'},
@@ -235,6 +242,7 @@
     components: {
       commFooter,
       appSelect,
+      datetime,
       tabsPan,
 
       XHeader,

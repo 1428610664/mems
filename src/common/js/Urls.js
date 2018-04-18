@@ -55,6 +55,11 @@ const requestUrl = {
     url: "/ips/findAppNameByType",
     pre: preUrl
   },
+  // 所属分类
+  component: {
+    url: "/ips/findComponent",
+    pre: preUrl
+  },
   // 人工报障
   faultsWarning: {
     url: "/faults",
