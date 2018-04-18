@@ -104,6 +104,11 @@ const requestUrl = {
   history: {
     url: "events/history",
     pre: preUrl
+  },
+  // 维护期
+  changes: {
+    url: "/changes",
+    pre: preUrl
   }
 }
 
