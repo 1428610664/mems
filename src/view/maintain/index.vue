@@ -2,8 +2,7 @@
   <transition name="move">
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">维护期
-        <!--<router-link to="/addRequest" tag="a" slot="right" class="iconfont icon-tianjia"></router-link>-->
-        <a slot="right" class="iconfont icon-tianjia"></a>
+        <router-link to="/addMaintain" tag="a" slot="right" class="iconfont icon-tianjia"></router-link>
       </x-header>
       <tab>
         <tab-item v-for="(item, index) in tab" :key='index' :selected="index == selectIndex"
