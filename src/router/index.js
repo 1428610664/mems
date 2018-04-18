@@ -74,7 +74,13 @@ export default new Router({
         },
         {
           path: '/maintain',
-          component: (resolve) => require(['view/maintain'], resolve)
+          component: (resolve) => require(['view/maintain'], resolve),
+          children: [
+            {
+              path: '/addMaintain',
+              component: (resolve) => require(['view/addMaintain'], resolve)
+            }
+          ]
         },
         ,
         {
