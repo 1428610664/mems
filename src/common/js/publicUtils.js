@@ -186,6 +186,33 @@ export default {
       }
     }
 
+    /**
+     * 获取天[1,2,3... 31]
+     * @returns {Array}
+     */
+    Vue.prototype.monthArray = function () {
+      let arr = []
+      for (let i = 1; i < 32; i++) {
+        arr.push(i)
+      }
+      return arr
+    }
+    /**
+     * 获取时点["00:00", "00:30','01:00'...]
+     * @returns {Array}
+     */
+    Vue.prototype.loopTimeArray = function () {
+      let arr = []
+      for (let i = 0; i < 24; i++) {
+        arr.push(i < 10 ? "0" + i + ":00" : i + ":00")
+        arr.push(i < 10 ? "0" + i + ":30" : i + ":30")
+      }
+      return arr
+    }
+    Vue.prototype.weekArray = function () {
+      return [{key: "1", value: '星期一'}, {key: "2", value: '星期二'},{key: "3", value: '星期三'},{key: "4", value: '星期四'},{key: "5", value: '星期五'},{key: "6", value: '星期六'},{key: "0", value: '星期天'}]
+    }
+
 
     /**
      * 获取时点["00:00", "00:30','01:00'...]
