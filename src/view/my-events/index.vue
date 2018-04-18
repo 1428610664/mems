@@ -19,8 +19,8 @@
                 @scrollToEnd="scrollToEnd"
                 @loadingStateChange="loadingStateChange"
                 @pullRefresh="pullRefresh">
-        <div  v-show="refresh.LoadingState == 1" v-for="item in refresh.content" >
-          <item-wrapper @onClick="onItemClick"  :row="item" :showNunber="false"></item-wrapper>
+        <div v-show="refresh.LoadingState == 1" v-for="item in refresh.content" >
+          <event-wrapper @onClick="onItemClick"  :row="item" :showNunber="false"></event-wrapper>
         </div>
       </scroller>
 
@@ -34,7 +34,7 @@
   import SearchBox from 'components/search-box/search-box'
   import {XHeader, Tab, TabItem} from 'vux'
 
-  import ItemWrapper from 'components/item-wrapper/item-wrapper'
+  import EventWrapper from 'components/event-wrapper/event-wrapper'
   import Scroller from 'components/scroll/scroller'
   import request from 'common/js/request'
   import {getUrl} from 'common/js/Urls'
@@ -78,7 +78,7 @@
         if(getUserInfo().user.role == 5){
           Parms = [{isMy: false,isTurn:false,processStatus:0}, {isMy: false,isTurn:false,processStatus:1}, {}]
         }else {
-          Parms = [{status: '0,1',isTurn: true,isTurn:true}, {status: '99',isMy: true,isTurn:true},{}]
+          Parms = [{status: '0,1',isTurn: true,isMy:true,isPass:false}, {status: '99',isMy: true,isTurn:true,isPass:false},{}]
         }
         return Parms
       }
@@ -121,7 +121,7 @@
           this.refresh.pageSize = 10
         }
         let param = {offset: (this.refresh.pageNo - 1) * this.refresh.pageSize,limit: this.refresh.pageSize}
-        request.get(getUrl("events"), Object.assign({}, this.refresh.params, param)).then(data => {
+        request.get(getUrl(this.selectIndex == 2 ? "history" : "events"), Object.assign({}, this.refresh.params, param)).then(data => {
           if (data.data) {
             this.refresh.isPullLoaded = false
             this.refresh.totalCount = data.data.total
@@ -149,7 +149,7 @@
       _parseDate(res){
         let data = []
         res.forEach((v, i) => {
-          data.push({id: v.id, name: v.name, time: v.createTime.time, status: v.status})
+          data.push({id: v.id, name: v.name, time: v.createTime.time, status: v.status,role:getUserInfo().user.role})
         })
         return data
       },
@@ -164,7 +164,7 @@
       Tab,
       TabItem,
       SearchBox,
-      ItemWrapper,
+      EventWrapper,
       Scroller
     }
   }
