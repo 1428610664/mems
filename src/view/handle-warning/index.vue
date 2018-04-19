@@ -5,9 +5,9 @@
       <!--<scroller lock-x scrollbarY height="-91">-->
         <div class="wrapper-content">
           <group label-width="4.5em" label-margin-right="2em" label-align="right">
-            <x-input title="报障标题" placeholder="请输入文字" v-model="bindData.name" :readonly="readonly"></x-input>
-            <x-textarea title="报障内容" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
-                        :max="200" :readonly="readonly"></x-textarea>
+            <x-input title="报障标题" v-model="bindData.name" :readonly="true"></x-input>
+            <x-textarea title="报障内容" v-model="bindData.summary" :show-counter="false" :rows="5"
+                        :max="200" :readonly="true"></x-textarea>
             <div class="hr"></div>
             <div class="hz-cell">
               <span class="label c4">状态</span>
@@ -27,8 +27,8 @@
             <selector v-model="bindData.urgency" title="紧急度" :options="select.urgency" @on-change="severityChange"  :readonly="readonly"></selector>
             <selector v-model="bindData.attributes" title="事件属性" :options="select.attributes" :readonly="readonly"></selector>
             <selector v-model="bindData.type" title="事件类别" :options="select.type" :readonly="readonly" @on-change="severityChange"></selector>
-            <datetime v-if="bindData.type=='2'" v-model="bindData.serverBtime" :end-date="bindData.serverEtime" format="YYYY-MM-DD HH:mm:ss" title="服务开始时间"></datetime>
-            <datetime v-if="bindData.type=='2'" v-model="bindData.serverEtime" :start-date="bindData.serverBtime" format="YYYY-MM-DD HH:mm:ss" title="服务结束时间"></datetime>
+            <datetime v-if="bindData.type=='2'" v-model="bindData.serverBtime" :end-date="bindData.serverEtime" format="YYYY-MM-DD HH:mm:ss" title="服务开始时间" @on-change="serverTimeChange"></datetime>
+            <datetime v-if="bindData.type=='2'" v-model="bindData.serverEtime" :start-date="bindData.serverBtime" format="YYYY-MM-DD HH:mm:ss" title="服务结束时间" @on-change="serverTimeChange"></datetime>
             <x-input v-if="bindData.type=='2'" title="服务影响时间" :readonly="true" v-model="bindData.serverAtime"></x-input>
             <x-input title="报障编号" :readonly="true"  v-model="serial"></x-input>
             <x-input title="报障时间" :readonly="true" v-model="bindData.faultTime"></x-input>
@@ -237,6 +237,13 @@
                 this.bindData.severity = 4
             }
           }
+      },
+      serverTimeChange (){
+        if(this.bindData.serverEtime != '' &&this.bindData.serverBtime != ''){
+          this.bindData.serverAtime =  Date.timeOfDuration(new Date(this.bindData.serverEtime.replace(/-/g, "/")).getTime() - new Date(this.bindData.serverBtime.replace(/-/g, "/")).getTime())
+        }else {
+          this.bindData.serverAtime = ''
+        }
       }
     },
     components: {
