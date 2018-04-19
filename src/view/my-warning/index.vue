@@ -46,14 +46,14 @@
   import commFooter from 'components/comm-footer'
   import appSelect from 'components/multi-select/app-select'
   import {getUrl} from 'common/js/Urls'
-  import {eventMixin} from "common/mixin/eventMixin"
+  import {faultsMixin} from "common/mixin/eventMixin"
   import {mapGetters, mapMutations} from 'vuex'
   import {getUserInfo} from 'common/js/cache'
   import tabsPan from 'components/tabs-pan/tabs-pan'
 
   export default {
     name: "index",
-    mixins: [eventMixin],
+    mixins: [faultsMixin],
     data() {
       return {
         sysTypeTypeUrl: getUrl("appType"),

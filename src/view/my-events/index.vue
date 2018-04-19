@@ -76,7 +76,7 @@
         let Parms = []
         // 普通用户tab切换附加参数
         if(getUserInfo().user.role == 5){
-          Parms = [{isMy: false,isTurn:false,processStatus:0}, {isMy: false,isTurn:false,processStatus:1}, {}]
+          Parms = [{status: '0,1',isMy: false,isTurn:false,processStatus:0}, {isMy: false,isTurn:false,processStatus:1}, {}]
         }else {
           Parms = [{status: '0,1',isTurn: true,isMy:true,isPass:false}, {status: '99',isMy: true,isTurn:true,isPass:false},{}]
         }
@@ -102,7 +102,7 @@
       onItemClick(row){
             // 暂存数据跳往添加页面 否则跳往告警详情页面
           this.setHandleEvents(row)
-          this.$router.push({path: "/handleEvents",query:{id: row.id}})
+          this.$router.push({path: "/handleEvents",query:{id: row.id,selectIndex:this.selectIndex}})
       },
       searchQuery(v){
         this.refresh.params.keyWord = v

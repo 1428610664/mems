@@ -19,7 +19,7 @@
   export default {
     name: "item-wrapper",
     props: {
-      row: Object,
+      row: '',
       showNunber: {
         type: Boolean,
         default: true

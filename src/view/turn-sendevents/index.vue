@@ -27,7 +27,7 @@
         console.log(this.$route.query.row)
         this.$vux.loading.show({text: '数据提交中...'})
 
-        request.post(actionJson(14, this.$route.query.id)[0], Object.assign({},{users: userNames.join(","),operatetype:1,isFault:true},this.$route.query.row)).then(res => {
+        request.post(actionJson(14, this.$route.query.id)[0], Object.assign({},{users: userNames.join(","),operatetype:1},this.$route.query.row)).then(res => {
           this.$vux.loading.hide()
           this.$vux.toast.text(res.desc, "bottom")
           if(res.success){

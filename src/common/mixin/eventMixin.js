@@ -110,7 +110,11 @@ export const  handleRequestMixin = {
   }
 }
 
-export const eventMixin = {
+/**
+ * 报障提交
+ * @type {{mixins: *[], methods: {submitEvent(*): undefined}}}
+ */
+export const faultsMixin = {
   mixins: [commonMixin],
   methods: {
     /**
@@ -142,7 +146,7 @@ export const eventMixin = {
         _this.$vux.toast.text(action.FlowActionName, "bottom")
 
         if(action.TypeId == 14){ // 转派
-           this.$router.push({path: "/turnSendwarning",query:{id: this.$route.query.id,type: "",row:Object.assign({}, this.bindData, action.params)}})
+          this.$router.push({path: "/turnSendwarning",query:{id: this.$route.query.id,type: "",row:Object.assign({}, this.bindData, action.params)}})
           return
         }
         if(!this._checkData()) return
@@ -154,7 +158,66 @@ export const eventMixin = {
             request[action.type ? action.type : "post"](actionJson(action.TypeId, action.id)[0],Object.assign({}, _this.bindData, action.params,
               action.FlowActionName=='再次提交'? {id: action.id,status:0}:{},
               action.TypeId== 19? {cacsi: _this.cacsiKey,evaluate:_this.evaluate}:{}  //提交评价
-              ) ).then((res) => {
+            ) ).then((res) => {
+              _this.$vux.loading.hide()
+              if(res.success)window.history.back()
+              _this.$vux.toast.text(res.desc, "bottom")
+            }, (error) => {
+              _this.$vux.loading.hide()
+              console.log("error ： "+JSON.stringify(error))
+            })
+          }
+        })
+      }
+    }
+  }
+}
+/**
+ * 事件提交
+ * @type {{mixins: *[], methods: {submitEvent(*): undefined}}}
+ */
+export const eventsMixin = {
+  mixins: [commonMixin],
+  methods: {
+    /**
+     * 事件提交
+     * @param i
+     */
+    submitEvent(action){
+      let _this = this
+      if(actionJson(action.TypeId, action.id)[2] == 1){ //不需要验证非空
+        this.$vux.confirm.show({
+          title: '提示',
+          content: '确认'+action.FlowActionName+'？',
+          onConfirm () {
+            _this.$vux.loading.show({text: '数据提交中...'})
+            request[action.type ? action.type : "post"](actionJson(action.TypeId, action.id)[0],Object.assign({}, _this.bindData, action.params,
+              action.FlowActionName=='再次提交'? {id: action.id,status:0}:{},
+              action.TypeId== 19? {cacsi: _this.cacsiKey,evaluate:_this.evaluate}:{}  //提交评价
+            ) ).then((res) => {
+              _this.$vux.loading.hide()
+              if(res.success)window.history.back()
+              _this.$vux.toast.text(res.desc, "bottom")
+            }, (error) => {
+              _this.$vux.loading.hide()
+              console.log("error ： "+JSON.stringify(error))
+            })
+          }
+        })
+      }else {
+        _this.$vux.toast.text(action.FlowActionName, "bottom")
+
+        if(action.TypeId == 26){ // 转派
+           this.$router.push({path: "/turnSendevents",query:{id: action.id,type: "",row:Object.assign({}, this.bindData)}})
+          return
+        }
+        if(!this._checkData()) return
+        this.$vux.confirm.show({
+          title: '提示',
+          content: '确认'+action.FlowActionName+'？',
+          onConfirm () {
+            _this.$vux.loading.show({text: '数据提交中...'})
+            request[action.type ? action.type : "post"](actionJson(action.TypeId, action.id)[0],Object.assign({}, _this.bindData) ).then((res) => {
               _this.$vux.loading.hide()
               if(res.success)window.history.back()
               _this.$vux.toast.text(res.desc, "bottom")

@@ -291,14 +291,32 @@ export default {
       }
     }
     /**
-     * 详情事件格式转义
+     * 详情时间格式转义
      * @param time
      * @returns {string}
      */
     Vue.prototype.getFormatTime = function (time) {
-       if(time.time){
+       if(time && time.time){
          return new Date(time.time).format('yyyy-MM-dd hh:mm:ss')
        }
+       return  ''
+    }
+    /**
+     * 关闭方式转义
+     * @param row
+     * @returns {string}
+     */
+    Vue.prototype.eventCloseType = function (row) {
+      if (row.status != '99') { return ''}
+      if (row.recoverTime != null) { return '自动恢复关闭'}
+
+      switch(row.suppressEscl+''){
+        case '0': return '正常关闭'
+        case '1': return '变更自动关闭'
+        case '2': return '维护期自动关闭'
+        case '3': return '屏蔽事件自动关闭'
+        default: return ""
+      }
     }
 
   }

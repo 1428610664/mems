@@ -40,7 +40,9 @@ export function actionJson(no, id){
     No32: [`turnsend/${id}/process`, "受理"],    	   // 受理事件
     No33: [`/events/${id}/update`, "修改"],    	     // 修改事件
     No34: [`/events/${id}/inquire`, "转问询"],    	 // 转问询事件
-    No35: [`/events/${id}/tags`, "标记"]    	         // 标记事件
+    No35: [`/events/${id}/tags`, "标记"],    	         // 标记事件
+    No36: [`turnsend/${id}/process`, "响应"],    	   // 受理事件
+    No37: [`/events/${id}/revert`, "取消误报"],	     // 取消误报
 
   }
   return urlJson["No"+no]

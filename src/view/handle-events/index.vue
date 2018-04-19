@@ -39,20 +39,17 @@
             <datetime v-if="bindData.type=='2'" v-model="bindData.serverBtime" :end-date="bindData.serverEtime" format="YYYY-MM-DD HH:mm:ss" title="服务开始时间" @on-change="serverTimeChange"></datetime>
             <datetime v-if="bindData.type=='2'" v-model="bindData.serverEtime" :start-date="bindData.serverBtime" format="YYYY-MM-DD HH:mm:ss" title="服务结束时间" @on-change="serverTimeChange"></datetime>
             <x-input v-if="bindData.type=='2'" title="服务影响时间" :readonly="true" v-model="bindData.serverAtime"></x-input>
-            <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
-            <x-input title="提交时间" :readonly="true" v-model="createTime"></x-input>
-            <div class="hr"></div>
-            <div class="hz-cell">
-              <div class="weui-cell__hd">
-                <span class="label c4 in-line">提交部门</span>
-              </div>
-              <div class="weui-cell__bd">
-                <span class="in-line" :title="departName">{{departName}}</span>
-              </div>
-            </div>
-            <!--<x-input title="提交人部门" :readonly="true" v-model="departName"></x-input>-->
-            <x-input title="满意度" :readonly="true" v-model="cacsi"></x-input>
-            <x-input title="处理评价" :readonly="true" v-model="evaluate"></x-input>
+            <x-input title="当前责任人" :readonly="true" v-model="handleEvents.handler"></x-input>
+            <!--<div class="hr"></div>-->
+            <!--<div class="hz-cell">-->
+              <!--<div class="weui-cell__hd">-->
+                <!--<span class="label c4 in-line">提交部门</span>-->
+              <!--</div>-->
+              <!--<div class="weui-cell__bd">-->
+                <!--<span class="in-line" :title="handleEvents.departName">{{handleEvents.departName}}</span>-->
+              <!--</div>-->
+            <!--</div>-->
+            <x-input v-if="status == '99'" title="关闭方式" :readonly="true" v-model="closeType"></x-input>
             <div class="hr"></div>
             <tabs-pan :id="rowId"></tabs-pan>
 
@@ -72,14 +69,14 @@
   import appSelect from 'components/multi-select/app-select'
   import datetime from 'components/datetime/index'
   import {getUrl} from 'common/js/Urls'
-  import {eventMixin} from "common/mixin/eventMixin"
+  import {eventsMixin} from "common/mixin/eventMixin"
   import {mapGetters, mapMutations} from 'vuex'
   import {getUserInfo} from 'common/js/cache'
   import tabsPan from 'components/tabs-pan/tabs-pan'
 
   export default {
     name: "index",
-    mixins: [eventMixin],
+    mixins: [eventsMixin],
     data() {
       return {
         sysTypeTypeUrl: getUrl("appType"),
@@ -87,10 +84,12 @@
         sysTypeComponentUrl: getUrl("component"),
         readonly:false,
         rowId:this.$route.query.id,
+        selectIndex:this.$route.query.selectIndex,
         rows:{},
         firstOccurrence: '',
-        lastOccurrence:'',
-        sourceAgent:'',
+        lastOccurrence: '',
+        sourceAgent: '',
+        closeType: '',
         status: '',       // 状态
         bindData: {
           appType: '',   // 系统分类
@@ -137,54 +136,87 @@
       },
       FlowActions(){
         if(!this.handleEvents) return []
-        let actions = []
-        let createUser = this.handleEvents.createUser.split("/")[1], handler = this.handleEvents.handler.split("/")[1];
         let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
-        this.readonly = false
-        // if(this.status == 0){// 未处理
-        //   if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
-        //     actions = [
-        //       {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
-        //     ]
-        //   }else{
-        //     actions = [
-        //       {TypeId: 15, FlowActionName: "驳回", id: this.$route.query.id},
-        //       {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
-        //       {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id},
-        //     ]
-        //   }
-        // }else if(this.status == 1) { // 处理中
-        //   if(handler == userName || (toUser && toUser.split(",").indexOf(handler) != -1)){
-        //     actions = [
-        //       {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
-        //       {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id},
-        //     ]
-        //   }else{
-        //     // edti 不可编辑
-        //     this.readonly = true
-        //   }
-        // }else if(this.status == 2) {  // 被驳回
-        //   if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
-        //     actions = [
-        //       {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
-        //       {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
-        //     ]
-        //   }else{
-        //     this.readonly = true
-        //   }
-        // }else if(this.status == 3){ // 待评价
-        //   if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
-        //     actions = [
-        //       {TypeId: 19, FlowActionName: "提交评价", id: this.$route.query.id},
-        //       {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
-        //     ]
-        //   }else{
-        //     this.readonly = true
-        //   }
-        // }else{ // status == 4 || status == 99 || status == 100
-        //   this.readonly = true
-        //   actions = []
-        // }
+        this.readonly = true
+        if(this.status == 99){
+          return []
+        }
+        let actions = []
+        const buttons = [
+          {TypeId: 30, FlowActionName: "关单", id: this.handleEvents.serial}, //0
+          {TypeId: 34, FlowActionName: "转问询单", id: this.handleEvents.serial},//1
+          {TypeId: 37, FlowActionName: "取消误报", id: this.handleEvents.serial},//2
+          {TypeId: 26, FlowActionName: "转派", id:this.handleEvents.serial}, //3
+          {TypeId: 32, FlowActionName: "受理", id: this.handleEvents.serial}, //4
+          {TypeId: 25, FlowActionName: "取消屏蔽", id: this.handleEvents.serial}, //5
+          {TypeId: 29, FlowActionName: "误报", id: this.handleEvents.serial}, //6
+          {TypeId: 24, FlowActionName: "屏蔽", id: this.handleEvents.serial}, //7
+          {TypeId: 36, FlowActionName: "响应", id: this.handleEvents.serial} //8
+        ]
+        switch (this.selectIndex + ''){
+          case '0': //带处理 未响应
+           switch (role+""){
+             case "5": //服务台
+               if(this.handleEvents.handler == '' ){
+                 actions = [buttons[8],buttons[3]]
+               }else {
+                 actions = [buttons[8]]
+               }
+               break
+             case "2": //二线人工告警待处理
+               this.readonly = false
+               if(this.handleEvents["suppressEscl"] == "5"){
+                 actions =  [buttons[2],buttons[0]];
+               }else if(this.handleEvents["suppressEscl"] == "3"){
+                 actions = [buttons[5],buttons[0]];
+               }else{
+                 switch (this.status + "") {
+                   case "0":
+                     if(this.handleEvents.sourceAgent == "user"){
+                       if(this.handleEvents.handler == "" || this.handleEvents.handler == null){
+                         actions = [buttons[4],buttons[3]];
+                       }else {
+                         actions = [buttons[4],buttons[3],buttons[0]];
+                       }
+                     }else{
+                       if(this.handleEvents.handler == "" || this.handleEvents.handler == null){
+                         actions = [buttons[4],buttons[3],buttons[7]];
+                       }else {
+                         actions = [buttons[4],buttons[3],buttons[7],buttons[0]];
+                       }
+                     }
+                     break;
+                   case "1":
+                     if(this.handleEvents.handler == "" || this.handleEvents.handler == null){
+                       if(this.handleEvents.sourceAgent == "user"){
+                         actions = [buttons[4],buttons[3],buttons[0]];
+                       }else{
+                         actions = [buttons[4],buttons[3],buttons[0],buttons[7]];
+                       }
+                     }else{
+                       if(this.handleEvents.sourceAgent == "user"){
+                         actions = [buttons[3],buttons[0]];
+                       }else{
+                         actions = [buttons[3],buttons[7],buttons[0]];
+                       }
+                     }
+                     break;
+                   default:
+                     this.readonly = true
+                 }
+               }
+               break
+             default:
+
+           }
+            break
+          case '1': //已响应
+            if(role == 5 && this.handleEvents.handler == '' ){ //服务台 已响应 没有处理人 可以转派
+              actions = [buttons[3]]
+            }
+            break
+        }
+
         return actions
       }
     },
@@ -200,22 +232,17 @@
       },
       _initEvent(){
         if (this.handleEvents) {
-            for (var k in this.bindData) {
-              this.bindData[k] = this.handleEvents[k]
+          for (var k in this.bindData) {
+              this.bindData[k] = k == 'serverBtime' ||  k == 'serverEtime' ? this.getFormatTime(this.handleEvents[k]) :this.handleEvents[k]
             }
-            this.rowKey.forEach((item)=>{
-              this.bindData[item.key] = isNaN(+this.handleEvents[item.key])?  this.handleEvents[item] + '': item.value
-            })
-            this.serial = this.handleEvents.serial
-            this.createTime = new Date(this.handleEvents.createTime.time).format("yyyy-MM-dd hh:mm:ss")
-            this.createUser = this.handleEvents.createUser
-            this.departName = this.handleEvents.departName
-            this.cacsi = this.getCacsi(this.handleEvents.cacsi)
-            this.status = this.handleEvents.status
-            this.evaluate = this.handleEvents.evaluate
+          this.rowKey.forEach((item)=>{
+              this.bindData[item.key] = isNaN(+this.handleEvents[item.key])?  this.handleEvents[item.key] + '': item.value
+          })
+          this.status = this.handleEvents.status
           this.firstOccurrence =  this.getFormatTime(this.handleEvents.firstOccurrence)
           this.lastOccurrence =  this.getFormatTime(this.handleEvents.lastOccurrence)
           this.sourceAgent =  this.getSourceAgent(this.handleEvents.sourceAgent)
+          this.closeType =  this.eventCloseType(this.handleEvents)
         }else {
           this.$router.replace('/myEvents')
         }
