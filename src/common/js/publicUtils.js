@@ -240,6 +240,66 @@ export default {
     Vue.prototype.weekArray = function () {
       return [{key: "1", value: '星期一'}, {key: "2", value: '星期二'},{key: "3", value: '星期三'},{key: "4", value: '星期四'},{key: "5", value: '星期五'},{key: "6", value: '星期六'},{key: "0", value: '星期天'}]
     }
+    /**
+     * 事件告警状态转义
+     * @param number
+     * @returns {*}
+     */
+    Vue.prototype.getEventStatusType = function (row) {
+
+      if(row.status == 99){
+        return {title: '已关闭', class: 'status-default'}
+      }else if(row["recoverTime"]){
+        // 如果【recover_time】有值，事件状态改为：已恢复
+        return {title: '已恢复', class: 'status-success'}
+      }else if(row["firstHandler"] && row.role == 5){
+        return {title: '处理中', class: 'status-success'}
+      }else{
+        switch (row["suppressEscl"]+""){
+          case "1":return {title: '变更', class: 'status-success'}
+          case "2":return {title: '维护期', class: 'status-success'}
+          case "3":return {title: '已屏蔽', class: 'status-success'}
+          case "5":return {title: '误报', class: 'status-success'}
+          default :{
+            // 处理中的事件【handler】为空时，事件状态为：未受理
+            if(row.handler == "" || row.handler == null){
+              return {title: '未受理', class: 'status-danger'}
+            }else{
+              // 【0:未受理】【1:处理中】【5:驳回】
+              switch (row.status){
+                case "0":return {title: '未受理', class: 'status-danger'}
+                case "5":return {title: '驳回', class: 'status-danger'}
+                default: return {title: '处理中', class: 'status-success'}
+              }
+            }
+          }
+        }
+      }
+    }
+    /**
+     * 事件来源转义
+     * @param str
+     * @returns {*}
+     */
+    Vue.prototype.getSourceAgent = function (str) {
+      switch (str + "") {
+        case 'yingyan': return '鹰眼'
+        case 'user': return '人工报障'
+        case 'snmptrap': return 'VMWare'
+        case 'http': return 'zabbix'
+        default : return str
+      }
+    }
+    /**
+     * 详情事件格式转义
+     * @param time
+     * @returns {string}
+     */
+    Vue.prototype.getFormatTime = function (time) {
+       if(time.time){
+         return new Date(time.time).format('yyyy-MM-dd hh:mm:ss')
+       }
+    }
 
   }
 }

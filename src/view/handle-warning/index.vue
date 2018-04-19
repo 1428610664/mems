@@ -238,6 +238,9 @@
             }
           }
       },
+      /**
+       *计算服务影响时间
+       */
       serverTimeChange (){
         if(this.bindData.serverEtime != '' &&this.bindData.serverBtime != ''){
           this.bindData.serverAtime =  Date.timeOfDuration(new Date(this.bindData.serverEtime.replace(/-/g, "/")).getTime() - new Date(this.bindData.serverBtime.replace(/-/g, "/")).getTime())

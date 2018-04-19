@@ -10,6 +10,10 @@
             <x-input title="事件编号" :readonly="true" v-model="handleEvents.serial"></x-input>
             <x-input title="主机名" :readonly="true" v-model="handleEvents.hostName"></x-input>
             <x-input title="主机IP" :readonly="true" v-model="handleEvents.ip"></x-input>
+            <x-input title="首次发生时间" :readonly="true" v-model="firstOccurrence"></x-input>
+            <x-input title="最后发生时间" :readonly="true" v-model="lastOccurrence"></x-input>
+            <x-input title="发生次数" :readonly="true" v-model="handleEvents.tally"></x-input>
+            <x-input title="事件来源" :readonly="true" v-model="sourceAgent"></x-input>
             <div class="hr"></div>
             <div class="hz-cell">
               <span class="label c4">状态</span>
@@ -30,9 +34,11 @@
             </div>
             <selector v-model="bindData.influence" title="影响度" :options="select.influence" @on-change="severityChange"  :readonly="readonly"></selector>
             <selector v-model="bindData.urgency" title="紧急度" :options="select.urgency" @on-change="severityChange"  :readonly="readonly"></selector>
-            <selector v-model="bindData.type" title="事件类别" :options="select.type" :readonly="readonly"></selector>
             <selector v-model="bindData.attributes" title="事件属性" :options="select.attributes" :readonly="readonly"></selector>
-            <x-input title="事件时间" :readonly="true" v-model="bindData.faultTime"></x-input>
+            <selector v-model="bindData.type" title="事件类别" :options="select.type" :readonly="readonly"></selector>
+            <datetime v-if="bindData.type=='2'" v-model="bindData.serverBtime" :end-date="bindData.serverEtime" format="YYYY-MM-DD HH:mm:ss" title="服务开始时间" @on-change="serverTimeChange"></datetime>
+            <datetime v-if="bindData.type=='2'" v-model="bindData.serverEtime" :start-date="bindData.serverBtime" format="YYYY-MM-DD HH:mm:ss" title="服务结束时间" @on-change="serverTimeChange"></datetime>
+            <x-input v-if="bindData.type=='2'" title="服务影响时间" :readonly="true" v-model="bindData.serverAtime"></x-input>
             <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
             <x-input title="提交时间" :readonly="true" v-model="createTime"></x-input>
             <div class="hr"></div>
@@ -64,6 +70,7 @@
   import {XHeader, Group, Scroller, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
   import appSelect from 'components/multi-select/app-select'
+  import datetime from 'components/datetime/index'
   import {getUrl} from 'common/js/Urls'
   import {eventMixin} from "common/mixin/eventMixin"
   import {mapGetters, mapMutations} from 'vuex'
@@ -81,12 +88,9 @@
         readonly:false,
         rowId:this.$route.query.id,
         rows:{},
-        serial: '',    // 请求编号
-        createTime: '',// 提交时间
-        createUser: '', // 提交人
-        departName: '', // 提交人部门
-        cacsi: '',      // 满意度
-        evaluate: '',   // 处理评价
+        firstOccurrence: '',
+        lastOccurrence:'',
+        sourceAgent:'',
         status: '',       // 状态
         bindData: {
           appType: '',   // 系统分类
@@ -97,6 +101,9 @@
           urgency:'4' ,  //紧急度
           type:'1' ,  //事件类别
           attributes:'1' ,  //事件属性
+          serverBtime:'', //服务开始时间
+          serverEtime:'', //服务结束时间
+          serverAtime:'', //服务影响时长
         },
         rowKey: [
           {key:'severity',value:'0'},
@@ -206,6 +213,9 @@
             this.cacsi = this.getCacsi(this.handleEvents.cacsi)
             this.status = this.handleEvents.status
             this.evaluate = this.handleEvents.evaluate
+          this.firstOccurrence =  this.getFormatTime(this.handleEvents.firstOccurrence)
+          this.lastOccurrence =  this.getFormatTime(this.handleEvents.lastOccurrence)
+          this.sourceAgent =  this.getSourceAgent(this.handleEvents.sourceAgent)
         }else {
           this.$router.replace('/myEvents')
         }
@@ -232,11 +242,22 @@
                 this.bindData.severity = 4
             }
           }
+      },
+      /**
+       *计算服务影响时间
+       */
+      serverTimeChange (){
+        if(this.bindData.serverEtime != '' &&this.bindData.serverBtime != ''){
+          this.bindData.serverAtime =  Date.timeOfDuration(new Date(this.bindData.serverEtime.replace(/-/g, "/")).getTime() - new Date(this.bindData.serverBtime.replace(/-/g, "/")).getTime())
+        }else {
+          this.bindData.serverAtime = ''
+        }
       }
     },
     components: {
       commFooter,
       appSelect,
+      datetime,
       tabsPan,
 
       XHeader,
