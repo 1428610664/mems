@@ -78,11 +78,14 @@ export default new Router({
           children: [
             {
               path: '/addMaintain',
-              component: (resolve) => require(['view/addMaintain'], resolve)
+              component: (resolve) => require(['view/add-maintain'], resolve)
+            },
+            {
+              path: '/maintainDetails',
+              component: (resolve) => require(['view/maintain-details'], resolve)
             }
           ]
         },
-        ,
         {
           path: '/change',
           component: (resolve) => require(['view/change'], resolve)

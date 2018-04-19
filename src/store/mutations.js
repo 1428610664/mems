@@ -33,6 +33,9 @@ const mutations = {
   },
   [types.SET_HANDLE_EVENTS](state, data) {
     state.handleEvents = data
+  },
+  [types.SET_MAINTAIN](state, data) {
+    state.maintain = data
   }
 }
 

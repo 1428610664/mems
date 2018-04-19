@@ -226,18 +226,4 @@
     width: 100%;
   }
 
-  .hz-cell {
-    padding: 10px 15px;
-    position: relative;
-    display: flex;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-    align-items: center;
-  }
-
-  .hz-cell .label {
-    width: 4.5em;
-    text-align: right;
-    margin-right: 2em;
-  }
 </style>

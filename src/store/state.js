@@ -15,6 +15,8 @@ const state = {
 
   temporaryWarning: null,   //人工报障暂存item数据
   handleWarning: null,      //人工报障处理item数据
+
+  maintain: null          // 维护期item数据
 }
 
 export default state
