@@ -53,7 +53,7 @@
       return {
         sysTypeTypeUrl: getUrl("appType"),
         sysTypeNameUrl: getUrl("appName"),
-
+        isEdit: false,
         serial: '',    // 请求编号
         createTime: '',// 提交事件
         handler: '',    // 当前处理人
@@ -85,20 +85,25 @@
         return {appType: this.bindData.appType}
       },
       // 是否不可编辑
-      isEdit() {
+      /*isEdit() {
         let handler = this.handleRequest.handler.split("/")[1]
         return this.status == 2 && handler == getUserInfo().user.userName ? false : true
-      },
+      },*/
       FlowActions() {
         if (!this.handleRequest) return []
         let actions = []
         let createUser = this.handleRequest.createUser.split("/")[1], handler = this.handleRequest.handler.split("/")[1]
         let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
-        console.log("====getUserInfo()===" + JSON.stringify(getUserInfo()))
+        /*console.log("====getUserInfo()===" + JSON.stringify(getUserInfo()))
         console.log("createUser：" + createUser + "-----------------handler：" + handler)
         console.log("userName：" + userName + "-----------------toUser：" + toUser + "------------------role：" + role)
+        console.log("-------handleRequest--------" + JSON.stringify(this.handleRequest))*/
 
-        console.log("-------handleRequest--------" + JSON.stringify(this.handleRequest))
+        if(this.status == 2 && handler == userName){
+          this.isEdit = false
+        }else{
+          this.isEdit = true
+        }
 
         if (this.status == 0) {// 未处理
           if (createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)) {

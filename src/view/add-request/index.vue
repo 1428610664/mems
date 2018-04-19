@@ -57,17 +57,7 @@
       }
     },
     created() {
-      setTimeout(() => {
-        if(this.$route.query.id && this.temporaryRequest){
-          this.bindData.name = this.temporaryRequest.name
-          this.bindData.summary = this.temporaryRequest.summary
-          this.bindData.type = this.temporaryRequest.type
-          this.bindData.appType = this.temporaryRequest.appType
-          this.bindData.appName = this.temporaryRequest.appName
-        }else{
-          this.setTemporaryRequest(null)
-        }
-      }, 20)
+      this.init()
     },
     computed: {
       ...mapGetters([
@@ -97,6 +87,17 @@
       }),
       footerEvent(action) {
         this.submitEvent(action)
+      },
+      init(){
+        if(this.$route.query.id && this.temporaryRequest){
+          this.bindData.name = this.temporaryRequest.name
+          this.bindData.summary = this.temporaryRequest.summary
+          this.bindData.type = this.temporaryRequest.type
+          this.bindData.appType = this.temporaryRequest.appType
+          this.bindData.appName = this.temporaryRequest.appName
+        }else{
+          this.setTemporaryRequest(null)
+        }
       }
     },
     components: {

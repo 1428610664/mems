@@ -20,7 +20,10 @@
           <selector v-model="bindData.loopEndTime" v-show="bindData.winType != '0'" title="循环结束时间" :options="loopTimeArray()"></selector>
 
           <x-textarea title="描述" v-model="bindData.desc" placeholder="请输入文字" :show-counter="false" :rows="5" :max="200"></x-textarea>
+
+
         </group>
+        <v-tree ref="tree2" :data='treeData2'/>
       </div>
 
       <select-day v-model="bindData.daysOfWeek" :options="weekArray()" ref="selectDay"></select-day>
@@ -43,6 +46,13 @@
     name: "index",
     data() {
       return {
+
+        treeData2: [{
+          title: 'node1',
+          expanded: true,
+          children: [{title: 'node 1-1',children: [{title: 'node 1-1'}, {title: 'node 1-2'}]}, {title: 'node 1-2',children: [{title: 'node 1-1'}, {title: 'node 1-2'}]}]
+        }],
+
         bTime1: '',     // 开始时间YYYY-MM-DD HH:mm:ss
         eTime1: '',     // 结束时间YYYY-MM-DD HH:mm:ss
         bTime2: '',     // 开始时间YYYY-MM-DD
@@ -171,6 +181,14 @@
     height: 100%;
     z-index: 40;
     overflow-y: auto;
+  }
+
+  .wrapper-content {
+    position: absolute;
+    top: 46px;
+    bottom: 45px;
+    overflow: auto;
+    width: 100%;
   }
 
 </style>

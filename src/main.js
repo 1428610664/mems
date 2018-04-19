@@ -11,11 +11,15 @@ import router from './router'
 import 'common/styles/common.css'
 import  { ToastPlugin,ConfirmPlugin,LoadingPlugin  } from 'vux'
 
+import VTree from 'components/vue-tree'
+Vue.use(VTree)
+
 Vue.use(VueRouter)
 Vue.use(ToastPlugin)
 Vue.use(LoadingPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(publicUtils)
+
 
 // 调试 正式环境去除
 eruda.init()
