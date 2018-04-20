@@ -2,8 +2,7 @@
   <transition name="move">
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">变更白板
-        <!--<router-link to="/addRequest" tag="a" slot="right" class="iconfont icon-tianjia"></router-link>-->
-        <a slot="right" class="iconfont icon-tianjia"></a>
+        <router-link to="/addChange" tag="a" slot="right" class="iconfont icon-tianjia"></router-link>
       </x-header>
       <tab>
         <tab-item v-for="(item, index) in tab" :key='index' :selected="index == selectIndex" @on-item-click="onTabItemClick">{{item}}</tab-item>

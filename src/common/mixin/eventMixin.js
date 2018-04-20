@@ -15,7 +15,7 @@ const commonMixin = {
         if(utils[this.checkData[k].check](this.bindData[k])){
           mark = false
           this.$vux.toast.text(this.checkData[k].message, "bottom")
-          continue
+          break
         }
       }
       return mark
