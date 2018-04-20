@@ -203,6 +203,22 @@ textarea{overflow:auto;resize:none;vertical-align:top;}
 .cell{padding: 6px 10px;}
 .cell:before{content: ''; display: inline-block;width: 3px;height: 16px;background: #3D5C99;vertical-align: text-bottom}
 
+.hz-cell {
+  padding: 10px 15px;
+  position: relative;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+
+.hz-cell .label {
+  width: 4.5em;
+  text-align: right;
+  margin-right: 2em;
+}
+
+
 /*头布局*/
 header{position: fixed;top: 0;left: 0;z-index: 10;width: 100%;height: 46px;}
 header .head-lef,header .head-rig{-webkit-flex: 0 0 46px;-ms-flex: 0 0 46px;flex: 0 0 46px;height: 46px;line-height: 46px;text-align: center;}

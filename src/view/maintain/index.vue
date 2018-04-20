@@ -39,7 +39,7 @@
   import Scroller from 'components/scroll/scroller'
   import request from 'common/js/request'
   import {getUrl} from 'common/js/Urls'
-
+  import {mapMutations} from 'vuex'
 
   export default {
     name: "index",
@@ -75,6 +75,9 @@
       }, 800)
     },
     methods: {
+      ...mapMutations({
+        setMaintain: 'SET_MAINTAIN'
+      }),
       onTabItemClick(index) {
         this.selectIndex = index
         this.refresh.params = this.getTabParms[index]
@@ -85,7 +88,8 @@
         this.getList(false, true)
       },
       onItemClick(row) {
-        console.log(JSON.stringify(row))
+        this.setMaintain(this.content[this._findIndex(row.id, this.content)])
+        this.$router.push({path: "/maintainDetails",query:{id: row.id}})
       },
       pullRefresh() {
         setTimeout(() => {

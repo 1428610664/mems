@@ -1,7 +1,7 @@
 <template>
   <transition name="move">
     <div class="wrapper b">
-      <x-header :left-options="{backText: ''}">添加维护期{{bindData.daysOfWeek}}</x-header>
+      <x-header :left-options="{backText: ''}">添加维护期</x-header>
       <div class="wrapper-content">
         <group label-width="4.5em" label-margin-right="2em" label-align="right">
 

@@ -213,6 +213,20 @@ export default {
       return [{key: "1", value: '星期一'}, {key: "2", value: '星期二'},{key: "3", value: '星期三'},{key: "4", value: '星期四'},{key: "5", value: '星期五'},{key: "6", value: '星期六'},{key: "0", value: '星期天'}]
     }
 
+    Vue.prototype.getWinType = function (type) {
+      switch (type){
+        case 0:
+          return '非周期'
+        case 10:
+          return '按天'
+        case 20:
+          return '按周'
+        case 30:
+          return '按月'
+        default:
+          return ''
+      }
+    }
 
     /**
      * 获取时点["00:00", "00:30','01:00'...]
