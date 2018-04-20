@@ -170,7 +170,7 @@ export const eventMixin = {
 }
 
 /**
- * 处理维护变更事件提交
+ * 处理维护、变更事件提交
  * @type {{mixins: *[], methods: {}}}
  */
 export const maintainMixin = {

@@ -91,8 +91,16 @@ export default new Router({
           component: (resolve) => require(['view/change'], resolve),
           children: [
             {
+              path: '/addChange',
+              component: (resolve) => require(['view/add-change'], resolve)
+            },
+            {
               path: '/changeDetails',
               component: (resolve) => require(['view/change-details'], resolve)
+            },
+            {
+              path: '/changnEnd',
+              component: (resolve) => require(['view/change-end'], resolve)
             }
           ]
         }

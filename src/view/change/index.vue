@@ -37,6 +37,7 @@
   import Scroller from 'components/scroll/scroller'
   import request from 'common/js/request'
   import {getUrl} from 'common/js/Urls'
+  import {mapMutations} from 'vuex'
 
 
   export default {
@@ -71,6 +72,9 @@
       }, 800)
     },
     methods: {
+      ...mapMutations({
+        setChange: 'SET_CHANGE'
+      }),
       onTabItemClick(index) {
         this.selectIndex = index
         this.refresh.params = this.getTabParms[index]
@@ -81,8 +85,8 @@
         this.getList(false, true)
       },
       onItemClick(row) {
-        console.log(JSON.stringify(row))
-        //this.setMaintain(this.content[this._findIndex(row.id, this.content)])
+        console.log(JSON.stringify(this.content[this._findIndex(row.id, this.content)]))
+        this.setChange(this.content[this._findIndex(row.id, this.content)])
         this.$router.push({path: "/changeDetails",query:{id: row.id}})
       },
       pullRefresh() {
