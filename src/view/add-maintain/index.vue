@@ -1,7 +1,7 @@
 <template>
   <transition name="move">
     <div class="wrapper b">
-      <x-header :left-options="{backText: ''}">添加维护期</x-header>
+      <x-header :left-options="{backText: ''}">{{isModify ? "修改维护期" : "添加维护期"}}</x-header>
       <div class="wrapper-content">
         <group label-width="4.5em" label-margin-right="2em" label-align="right">
 
@@ -40,6 +40,7 @@
   import SelectDay from 'components/select-day'
   import datetime from 'components/datetime'
   import {getUrl} from 'common/js/Urls'
+  import {mapGetters} from 'vuex'
   import utils from 'common/js/utils'
 
   export default {
@@ -75,11 +76,15 @@
       }
     },
     created() {
-      setTimeout(() => {
-
-      }, 20)
+      this.init()
     },
     computed: {
+      ...mapGetters([
+        'maintain',
+      ]),
+      isModify() {
+        return this.maintain && this.$route.query.id ? true : false
+      },
       FlowActions() {
         let actions = [
           {TypeId: 0, FlowActionName: "关闭"},
@@ -143,11 +148,8 @@
         return arr.join("|")
       },
       _checkData(){
-        console.log(JSON.stringify(this.checkData))
-        console.log(JSON.stringify(this.bindData))
         let mark = true
         for(var k in this.checkData){
-          console.log("====="+this.bindData[k])
           if(utils[this.checkData[k].check](this.bindData[k])){
             mark = false
             this.$vux.toast.text(this.checkData[k].message, "bottom")
@@ -155,6 +157,20 @@
           }
         }
         return mark
+      },
+      init(){
+        if(!this.isModify) return
+        console.log(JSON.stringify(this.maintain))
+
+        for(let k in this.bindData){
+          this.bindData[k] = this.maintain[k]
+        }
+        // 其它属性赋值
+        this.bindData.desc = this.maintain.cdesc
+        this.bTime1 = new Date(this.maintain.beginTime.time).format("yyyy-MM-dd hh:mm:ss")
+        this.eTime1 = new Date(this.maintain.endTime.time).format("yyyy-MM-dd hh:mm:ss")
+        this.bTime2 = new Date(this.maintain.beginTime.time).format("yyyy-MM-dd")
+        this.eTime2 = new Date(this.maintain.endTime.time).format("yyyy-MM-dd")
       }
     },
     components: {

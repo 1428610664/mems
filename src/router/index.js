@@ -88,7 +88,13 @@ export default new Router({
         },
         {
           path: '/change',
-          component: (resolve) => require(['view/change'], resolve)
+          component: (resolve) => require(['view/change'], resolve),
+          children: [
+            {
+              path: '/changeDetails',
+              component: (resolve) => require(['view/change-details'], resolve)
+            }
+          ]
         }
       ]
     }, {

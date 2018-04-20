@@ -20,5 +20,7 @@ export const SET_HANDLE_EVENTS= 'SET_HANDLE_EVENTS'
 
 export const SET_MAINTAIN= 'SET_MAINTAIN'
 
+export const SET_CHANGE= 'SET_CHANGE'
+
 
 

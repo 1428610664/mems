@@ -6,13 +6,10 @@
         <a slot="right" class="iconfont icon-tianjia"></a>
       </x-header>
       <tab>
-        <tab-item v-for="(item, index) in tab" :key='index' :selected="index == selectIndex"
-                  @on-item-click="onTabItemClick">{{item}}
-        </tab-item>
+        <tab-item v-for="(item, index) in tab" :key='index' :selected="index == selectIndex" @on-item-click="onTabItemClick">{{item}}</tab-item>
       </tab>
-      <div class="search-box">
-        <search-box @query="searchQuery" placeholder="搜索"></search-box>
-      </div>
+      <div class="search-box"><search-box @query="searchQuery" placeholder="搜索"></search-box></div>
+
       <scroller class="list-wrapper" ref="scroll"
                 :data="refresh.content"
                 :totalCount="refresh.totalCount"
@@ -64,8 +61,6 @@
     computed: {
       getTabParms() {
         let Parms = [{type: 1, isMy: true,sort: "createTime",order: "desc"}, {type: 1,sort: "createTime",order: "desc"}]
-
-
         return Parms
       }
     },
@@ -87,6 +82,8 @@
       },
       onItemClick(row) {
         console.log(JSON.stringify(row))
+        //this.setMaintain(this.content[this._findIndex(row.id, this.content)])
+        this.$router.push({path: "/changeDetails",query:{id: row.id}})
       },
       pullRefresh() {
         setTimeout(() => {

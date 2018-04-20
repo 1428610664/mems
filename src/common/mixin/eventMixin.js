@@ -168,3 +168,32 @@ export const eventMixin = {
     }
   }
 }
+
+/**
+ * 处理维护变更事件提交
+ * @type {{mixins: *[], methods: {}}}
+ */
+export const maintainMixin = {
+  mixins: [commonMixin],
+  methods: {
+    submitEvent(action){
+      console.log(JSON.stringify(action.params))
+      let _this = this
+      this.$vux.confirm.show({
+        title: '提示',
+        content: '确认'+action.FlowActionName+'？',
+        onConfirm () {
+          _this.$vux.loading.show({text: '数据提交中...'})
+          request[action.type ? action.type : "post"](actionJson(action.TypeId, action.id)[0], action.params).then((res) => {
+            _this.$vux.loading.hide()
+            if(res.success)window.history.back()
+            _this.$vux.toast.text(res.desc, "bottom")
+          }, (error) => {
+            _this.$vux.loading.hide()
+            console.log("error ： "+JSON.stringify(error))
+          })
+        }
+      })
+    }
+  }
+}
