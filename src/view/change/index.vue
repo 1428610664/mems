@@ -2,17 +2,13 @@
   <transition name="move">
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">变更白板
-        <!--<router-link to="/addRequest" tag="a" slot="right" class="iconfont icon-tianjia"></router-link>-->
-        <a slot="right" class="iconfont icon-tianjia"></a>
+        <router-link to="/addChange" tag="a" slot="right" class="iconfont icon-tianjia"></router-link>
       </x-header>
       <tab>
-        <tab-item v-for="(item, index) in tab" :key='index' :selected="index == selectIndex"
-                  @on-item-click="onTabItemClick">{{item}}
-        </tab-item>
+        <tab-item v-for="(item, index) in tab" :key='index' :selected="index == selectIndex" @on-item-click="onTabItemClick">{{item}}</tab-item>
       </tab>
-      <div class="search-box">
-        <search-box @query="searchQuery" placeholder="搜索"></search-box>
-      </div>
+      <div class="search-box"><search-box @query="searchQuery" placeholder="搜索"></search-box></div>
+
       <scroller class="list-wrapper" ref="scroll"
                 :data="refresh.content"
                 :totalCount="refresh.totalCount"
@@ -40,6 +36,7 @@
   import Scroller from 'components/scroll/scroller'
   import request from 'common/js/request'
   import {getUrl} from 'common/js/Urls'
+  import {mapMutations} from 'vuex'
 
 
   export default {
@@ -64,8 +61,6 @@
     computed: {
       getTabParms() {
         let Parms = [{type: 1, isMy: true,sort: "createTime",order: "desc"}, {type: 1,sort: "createTime",order: "desc"}]
-
-
         return Parms
       }
     },
@@ -76,6 +71,9 @@
       }, 800)
     },
     methods: {
+      ...mapMutations({
+        setChange: 'SET_CHANGE'
+      }),
       onTabItemClick(index) {
         this.selectIndex = index
         this.refresh.params = this.getTabParms[index]
@@ -86,7 +84,9 @@
         this.getList(false, true)
       },
       onItemClick(row) {
-        console.log(JSON.stringify(row))
+        console.log(JSON.stringify(this.content[this._findIndex(row.id, this.content)]))
+        this.setChange(this.content[this._findIndex(row.id, this.content)])
+        this.$router.push({path: "/changeDetails",query:{id: row.id}})
       },
       pullRefresh() {
         setTimeout(() => {

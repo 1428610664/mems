@@ -166,7 +166,20 @@ export default {
       children: numId
     }));
     return aaa;
+  },
+  getTreeDate(tempArr){
+    let zNodes =[];
+    let _arrSys=this.screenSys(tempArr,"sys");//提取系统
+    let  _assembly=this.screenSys(tempArr,"assembly");//提取组件
+    let _this = this
+    _assembly=this.screenCom(tempArr,_assembly);//组件,集群
+    _arrSys=this.mergeSys(_arrSys,_assembly);//组件,系统合并
+    _arrSys.forEach(function (v,i) {
+      let _zNodes=_this.loadText(v,i);
+      _zNodes.forEach(function (v, item) {
+        zNodes.push(JSON.parse(v));
+      });
+    });
+    return zNodes
   }
-
-
 }

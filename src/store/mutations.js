@@ -36,7 +36,10 @@ const mutations = {
   },
   [types.SET_MAINTAIN](state, data) {
     state.maintain = data
-  }
+  },
+  [types.SET_CHANGE](state, data) {
+  state.change = data
+}
 }
 
 export default mutations

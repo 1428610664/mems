@@ -20,3 +20,5 @@ export const faultsNumber = state => state.faultsNumber
 export const eventsNumber = state => state.eventsNumber
 
 export const maintain = state => state.maintain
+
+export const change = state => state.change
