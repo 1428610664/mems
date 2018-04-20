@@ -154,7 +154,7 @@
           {TypeId: 36, FlowActionName: "响应", id: this.handleEvents.serial} //8
         ]
         switch (this.selectIndex + ''){
-          case '0': //带处理 未响应
+          case '0': //待处理 未响应
            switch (role+""){
              case "5": //服务台
                if(this.handleEvents.handler == '' ){
@@ -165,39 +165,39 @@
                break
              case "2": //二线人工告警待处理
                this.readonly = false
-               if(this.handleEvents["suppressEscl"] == "5"){
-                 actions =  [buttons[2],buttons[0]];
-               }else if(this.handleEvents["suppressEscl"] == "3"){
-                 actions = [buttons[5],buttons[0]];
+               if(this.handleEvents["suppressEscl"] == "5"){  //误报： 取消误报 关单
+                 actions =  [buttons[2],buttons[0]]
+               }else if(this.handleEvents["suppressEscl"] == "3"){ //已屏蔽：: 取消屏蔽 关单
+                 actions = [buttons[5],buttons[0]]
                }else{
                  switch (this.status + "") {
-                   case "0":
-                     if(this.handleEvents.sourceAgent == "user"){
-                       if(this.handleEvents.handler == "" || this.handleEvents.handler == null){
-                         actions = [buttons[4],buttons[3]];
+                   case "0": //未处理：:
+                     if(this.handleEvents.sourceAgent == "user"){ //人工报障
+                       if(this.handleEvents.handler == "" || this.handleEvents.handler == null){ //没有处理人
+                         actions = [buttons[4],buttons[3]]  //受理 转派
                        }else {
-                         actions = [buttons[4],buttons[3],buttons[0]];
+                         actions = [buttons[4],buttons[3],buttons[0]]  //受理 转派 关单
                        }
-                     }else{
-                       if(this.handleEvents.handler == "" || this.handleEvents.handler == null){
-                         actions = [buttons[4],buttons[3],buttons[7]];
+                     }else{ //非人工报障
+                       if(this.handleEvents.handler == "" || this.handleEvents.handler == null){ //没有处理人
+                         actions = [buttons[4],buttons[3],buttons[7]] //受理 转派 屏蔽
                        }else {
-                         actions = [buttons[4],buttons[3],buttons[7],buttons[0]];
+                         actions = [buttons[4],buttons[3],buttons[7],buttons[0]] //受理 转派 屏蔽 关单
                        }
                      }
                      break;
-                   case "1":
-                     if(this.handleEvents.handler == "" || this.handleEvents.handler == null){
-                       if(this.handleEvents.sourceAgent == "user"){
-                         actions = [buttons[4],buttons[3],buttons[0]];
+                   case "1": //处理中
+                     if(this.handleEvents.handler == "" || this.handleEvents.handler == null){  //没有处理人
+                       if(this.handleEvents.sourceAgent == "user"){ //人工报障
+                         actions = [buttons[4],buttons[3],buttons[0]]  //受理 转派 关单
                        }else{
-                         actions = [buttons[4],buttons[3],buttons[0],buttons[7]];
+                         actions = [buttons[4],buttons[3],buttons[7],buttons[0]] //受理 转派 屏蔽 关单
                        }
                      }else{
-                       if(this.handleEvents.sourceAgent == "user"){
-                         actions = [buttons[3],buttons[0]];
+                       if(this.handleEvents.sourceAgent == "user"){  //人工报障
+                         actions = [buttons[3],buttons[0]] //转派 关单
                        }else{
-                         actions = [buttons[3],buttons[7],buttons[0]];
+                         actions = [buttons[3],buttons[7],buttons[0]] //转派 屏蔽 关单
                        }
                      }
                      break;

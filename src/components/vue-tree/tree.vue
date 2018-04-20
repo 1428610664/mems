@@ -353,18 +353,54 @@ export default {
       return res
     },
 
+    /*
+    *@method get Nodes by options method
+    *@param data nodes
+    *@param opt the options that filter the node
+    */
+    getNewNodes (opt, data) {
+      data = data || this.data
+      let res = []
+      for (const node of data) {
+        for (const [key, value] of Object.entries(opt)) {
+          if (node[key] === value) {
+              if (node.children && node.children.length) {
+                let n = Object.assign({}, node)
+                n.children  = this.getNewNodes(opt, node.children)
+                delete n['parent']
+                res.push(n)
+              }else {
+                let n = Object.assign({}, node)
+                delete n['parent']
+                res.push(n)
+              }
+
+          }else{
+            if (node.children && node.children.length && this.getNewNodes(opt, node.children).length != 0) {
+              if(res.length == 0) {
+                res = (this.getNewNodes(opt, node.children))
+              }else {
+                res.push(this.getNewNodes(opt, node.children))
+              }
+            }
+          }
+        }
+      }
+      return res
+    },
+
      /*
      *@method get Nodes that selected
      */
-    getSelectedNodes (isOriginal) {
-      return this.getNodes({selected: true}, this.data, isOriginal)
+    getSelectedNodes () {
+      return this.getNewNodes({selected: true}, this.data)
     },
 
     /*
      *@method get Nodes that checked
      */
-    getCheckedNodes (isOriginal) {
-      return this.getNodes({checked: true}, this.data, isOriginal)
+    getCheckedNodes () {
+      return this.getNewNodes({checked: true}, this.data)
     },
 
       /*

@@ -21,9 +21,11 @@
 
           <x-textarea title="描述" v-model="bindData.desc" placeholder="请输入文字" :show-counter="false" :rows="5" :max="200"></x-textarea>
 
-
+           <check-tree></check-tree>
         </group>
-        <v-tree ref="tree2" :data='treeData2'/>
+         <!--<v-tree ref="tree2" :data='treeData2'/>-->
+
+
       </div>
 
       <select-day v-model="bindData.daysOfWeek" :options="weekArray()" ref="selectDay"></select-day>
@@ -37,6 +39,7 @@
 
   import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
+  import checkTree from 'components/check-tree'
   import SelectDay from 'components/select-day'
   import datetime from 'components/datetime'
   import {getUrl} from 'common/js/Urls'
@@ -161,6 +164,7 @@
       commFooter,
       datetime,
       SelectDay,
+      checkTree,
 
       XHeader,
       Group,
