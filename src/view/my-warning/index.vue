@@ -18,7 +18,7 @@
           <app-select :url="sysTypeTypeUrl" title="系统分类" v-model="bindData.appType" :search="true" :readonly="readonly"></app-select>
           <div class="hr"></div>
           <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :search="true" :param="sysTypeParam"
-                      :isFirstRequest="false" :readonly="readonly"></app-select>
+                      :readonly="readonly"></app-select>
           <x-input title="报障编号" :readonly="true" placeholder="请输入文字" v-model="serial"></x-input>
           <x-input title="报障时间" :readonly="true" v-model="bindData.faultTime"></x-input>
           <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>

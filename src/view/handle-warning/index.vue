@@ -16,8 +16,7 @@
             <div class="hr"></div>
             <app-select :url="sysTypeTypeUrl" title="系统分类" v-model="bindData.appType" :readonly="readonly"></app-select>
             <div class="hr"></div>
-            <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :search="true" :param="sysTypeParam"
-                        :isFirstRequest="false" :readonly="readonly"></app-select>
+            <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :search="true" :param="sysTypeParam" :readonly="readonly"></app-select>
             <div class="hr"></div>
             <div class="hz-cell">
               <span class="label c4">优先级</span>

@@ -1,8 +1,8 @@
 <template>
   <div>
     <div @click="checkTreeShow">
-       <div>测试树形控件</div>
-       <slot></slot>
+      <div>测试树形控件</div>
+      <slot></slot>
     </div>
     <div v-transfer-dom>
       <popup v-model="dropDown" position="bottom" max-height="80%">
@@ -38,20 +38,58 @@
         treeData2:[
           {
             "title": "核心交易系统",
-            'type':'一级菜单',
+            "nocheck":true,
+            'type':'appType',
             "children": [
               {
                 "title": "资管资金清算系统",
-                "clickNode": true,
-                'type':'二级菜单',
+                'type':'appName',
                 "children": [
                   {
                     "title": "WEB应用服务器",
-                    'type':'三级菜单',
+                    'type':'component',
                     "children": [
                       {
                         "title": "证通",
-                        'type':'四级菜单',
+                        'type':'colony',
+                        "children": [
+                          {
+                            "title": "192.168.4.131",
+                            'type':'ip'
+                          },
+                          {
+                            "title": "192.168.4.132",
+                            'type':'ip'
+                          }
+                        ]
+                      },
+                      {
+                        "title": "default",
+                        'type':'colony',
+                        "children": [
+                          {
+                            "title": "192.168.4.132",
+                            'type':'ip'
+                          },
+                          {
+                            "title": "192.168.4.134",
+                            'type':'ip'
+                          }
+                        ]
+                      }
+                    ]}]},
+              {
+                "title": "清算系统",
+                "clickNode": true,
+                'type':'appName',
+                "children": [
+                  {
+                    "title": "应用服务器",
+                    'type':'component',
+                    "children": [
+                      {
+                        "title": "证通",
+                        'type':'colony',
                         "children": [
                           {
                             "title": "192.168.4.135",
@@ -65,20 +103,21 @@
                       },
                       {
                         "title": "default",
-                        'type':'四级菜单',
+                        'type':'colony',
                         "children": [
                           {
-                            "title": "192.168.4.135",
+                            "title": "192.168.4.137",
                             'type':'ip'
                           },
                           {
-                            "title": "192.168.4.136",
+                            "title": "192.168.4.138",
                             'type':'ip'
                           }
                         ]
                       }
-                      ]}]}]}
-                      ],
+                    ]}]}
+            ]}
+        ],
         style:{
           height: 'inherit'
         },
@@ -127,7 +166,7 @@
     },
     mounted() {
       this.$nextTick(function () {
-          if(this.isFirstRequest)this.getRows()
+        if(this.isFirstRequest)this.getRows()
       })
     },
     methods: {
@@ -155,12 +194,8 @@
       },
       onOk() {
         this.dropDown = false
-        console.log('getSelectedNodes')
-        console.log(this.$refs.zTree.getSelectedNodes(true))
-        console.log('getCheckedNodes')
-        console.log(this.$refs.zTree.getCheckedNodes(true))
-        console.log('getNewNodes')
-        console.log(JSON.stringify(this.$refs.zTree.getNewNodes({selected:true})))
+        console.log('getNodesRule')
+        console.log(this.$refs.zTree.getNodesRule())
         this.$emit('input', this.checkValue.join(","))
         this.$emit('on-ok', this.checkValue.join(","))
       }

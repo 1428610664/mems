@@ -7,7 +7,7 @@
 
           <app-select :url="sysTypeTypeUrl" title="系统分类" v-model="bindData.appType" :search="true"></app-select>
           <div class="hr"></div>
-          <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :search="true" :param="sysTypeParam" :isFirstRequest="false"></app-select>
+          <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :search="true" :param="sysTypeParam"></app-select>
 
           <datetime v-model="bindData.faultTime" format="YYYY-MM-DD HH:mm:ss" title="报障时间"></datetime>
           <x-input title="标题" placeholder="请输入文字" v-model="bindData.name"></x-input>
