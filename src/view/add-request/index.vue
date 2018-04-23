@@ -5,9 +5,9 @@
       <div class="wrapper-content">
         <group label-width="4.5em" label-margin-right="2em" label-align="right">
 
-          <app-select :url="sysTypeTypeUrl" title="系统分类" v-model="bindData.appType"></app-select>
+          <app-select :url="sysTypeTypeUrl" title="系统分类" :search="true" v-model="bindData.appType"></app-select>
           <div class="hr"></div>
-          <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :param="sysTypeParam" :isFirstRequest="false"></app-select>
+          <app-select title="所属系统" :url="sysTypeNameUrl" v-model="bindData.appName" :param="sysTypeParam" :search="true"></app-select>
 
           <selector v-model="bindData.type" title="是否查数" :options="checkNumberArray"></selector>
           <x-input title="标题" placeholder="请输入文字" v-model="bindData.name"></x-input>

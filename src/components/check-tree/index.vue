@@ -160,7 +160,7 @@
         console.log('getCheckedNodes')
         console.log(this.$refs.zTree.getCheckedNodes(true))
         console.log('getNewNodes')
-        console.log(this.$refs.zTree.getNewNodes({selected:true}))
+        console.log(JSON.stringify(this.$refs.zTree.getNewNodes({selected:true})))
         this.$emit('input', this.checkValue.join(","))
         this.$emit('on-ok', this.checkValue.join(","))
       }

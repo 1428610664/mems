@@ -2,7 +2,7 @@
   <transition name="move">
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">处理服务请求</x-header>
-      <div class="wrapper-content">
+      <div class="wrapper-content" :class="FlowActions.length ? '' : 'bom'">
         <group label-width="5em" label-margin-right="2em" label-align="right">
           <x-input title="请求标题" :readonly="isEdit" placeholder="请输入文字" v-model="bindData.name"></x-input>
           <x-textarea title="请求描述" :readonly="isEdit" v-model="bindData.summary" placeholder="请输入文字"
@@ -20,7 +20,7 @@
           <div class="hr"></div>
           <app-select title="所属系统" :readonly="isEdit" :url="sysTypeNameUrl" v-model="bindData.appName"
                       :param="sysTypeParam"
-                      :isFirstRequest="false"></app-select>
+                      ></app-select>
           <x-input title="提交时间" :readonly="true" v-model="createTime"></x-input>
           <x-input title="当前处理人" :readonly="true" v-model="handler"></x-input>
           <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
@@ -226,6 +226,10 @@
     bottom: 45px;
     overflow: auto;
     width: 100%;
+  }
+
+  .wrapper-content.bom{
+    bottom: 0px;
   }
 
 </style>

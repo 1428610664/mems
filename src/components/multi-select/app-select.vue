@@ -5,13 +5,13 @@
     </div>
     <div v-transfer-dom>
       <popup v-model="dropDown" position="bottom" max-height="60%">
-        <div class="select_keyWorld" v-show="search">
-          <x-input type="text" :placeholder="placeholder" v-model="params.keyWord" @on-change="onEnter"
-                   @on-enter="onEnter"></x-input>
+        <div class="search-wrapper b" v-show="search">
+          <search-box @query="searchQuery" :placeholder="placeholder"></search-box>
         </div>
-        <div class="select_item" :style="style">
+
+        <div class="select_item" :class="rows.length == 0 ? 'posct': ''" :style="style">
           <div class="loaded ct" v-if="rows.length == 0">- 查无选项 -</div>
-          <checklist :options="rows" v-model="selectValue" :max=max @on-change="change"></checklist>
+          <checklist :options="rows" v-model="selectValue" :max=max ></checklist>
         </div>
         <!--<div class="select_button">
           <x-button @click.native="onOk" plain type="primary">确认</x-button>
@@ -22,14 +22,15 @@
 </template>
 
 <script>
-  import {XInput, Cell, Checklist, Actionsheet, TransferDom, Popup, XButton} from 'vux'
+  import {Cell, Checklist, Actionsheet, TransferDom, Popup, XButton} from 'vux'
   import request from 'common/js/request'
+  import SearchBox from 'components/search-box/search-box'
 
   export default {
     data() {
       return {
         rows: [],
-        selectValue: [],
+        selectValue: [this.value],
         params: {
           keyWord: '',
           offset: 0,
@@ -44,7 +45,7 @@
       }
     },
     components: {
-      XInput,
+      SearchBox,
       Checklist,
       Cell,
       Actionsheet,
@@ -92,6 +93,15 @@
     watch: {
       url(url) {
         if(this.isFirstRequest) this.getRows()
+      },
+      param(v){
+        this.$emit('input', '')
+        this.rows = []
+        this.dateRow = []
+        if(v.appType || v.appName)this.getRows()
+      },
+      selectValue(v){
+        this.$emit('input', v.join(","))
       }
     },
     mounted() {
@@ -101,30 +111,19 @@
         }
       })
     },
-    watch:{
-      param(v){
-        this.$emit('input', '')
-        this.rows = []
-        this.dateRow = []
-        if(v.appType || v.appName)this.getRows()
-      }
-    },
     methods: {
       selectShow() {
         if(this.readonly) return
         this.dropDown = true
         this.style.height =  window.screen.height * 0.6 -117 + "px"
       },
-      onEnter() {
+      searchQuery(v){
         this.rows = []
         this.dateRow.forEach((item)=>{
-          if(item.key.indexOf(this.params.keyWord) != -1){
-              this.rows.push(item)
+          if(item.key.indexOf(v) != -1){
+            this.rows.push(item)
           }
         })
-      },
-      change(val, label) {
-        this.$emit('input', this.selectValue.join(","))
       },
       clickActionSheet() {
       },
@@ -148,7 +147,9 @@
 </script>
 
 <style scoped>
-  .select_keyWorld{height: 42px;}
-  .select_button{padding:15px; height:45px; }
+
+  .search-wrapper {
+    padding: 5px 3%;
+  }
   .select_item{overflow: auto;background-color: #ffffff;}
 </style>
