@@ -4,7 +4,7 @@
       <div class="tag-box-container">
         <div class="tag-box"  v-clickoutside ref="txtbox" @click="open = !open" @mouseleave="leaveTextTag">
           <div class="tag blank" v-show="!selectedItems.length">{{pleasechoosetext}}</div>
-          <div class="tag"  @click="tagClick($event)" ref='txttag' @mouseenter="sel_node_Index = idx"  @mouseleave="sel_node_Index = -1" 
+          <div class="tag"  @click="tagClick($event)" ref='txttag' @mouseenter="sel_node_Index = idx"  @mouseleave="sel_node_Index = -1"
              v-for="(node,idx) in selectedItems" :key="idx">
             <span v-html='node'></span><span class="rmNode" @click.stop="rmNode(node)" v-show="sel_node_Index === idx">x</span>
           </div>

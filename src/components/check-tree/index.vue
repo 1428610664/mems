@@ -38,38 +38,47 @@
         treeData2:[
           {
             "title": "核心交易系统",
+            'type':'一级菜单',
             "children": [
               {
                 "title": "资管资金清算系统",
                 "clickNode": true,
+                'type':'二级菜单',
                 "children": [
                   {
                     "title": "WEB应用服务器",
+                    'type':'三级菜单',
                     "children": [
                       {
                         "title": "证通",
+                        'type':'四级菜单',
                         "children": [
                           {
-                            "title": "192.168.4.135"
+                            "title": "192.168.4.135",
+                            'type':'ip'
                           },
                           {
-                            "title": "192.168.4.136"
+                            "title": "192.168.4.136",
+                            'type':'ip'
                           }
                         ]
                       },
                       {
                         "title": "default",
+                        'type':'四级菜单',
                         "children": [
                           {
-                            "title": "192.168.4.135"
+                            "title": "192.168.4.135",
+                            'type':'ip'
                           },
                           {
-                            "title": "192.168.4.136"
+                            "title": "192.168.4.136",
+                            'type':'ip'
                           }
                         ]
                       }
-                      ]}]}]}]
-                        ,
+                      ]}]}]}
+                      ],
         style:{
           height: 'inherit'
         },
@@ -163,5 +172,4 @@
   .check_keyWorld{height: 42px;}
   .check_button{padding:15px; height:45px; }
   .check_item{overflow: auto;background-color: #ffffff;}
-  .halo-tree{font-size: 12px !important;}
 </style>

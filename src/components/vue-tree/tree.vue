@@ -321,7 +321,8 @@ export default {
         this.$emit('cancelSelected', root)
       }
       if (this.multiple) this.$set(node, 'checked', !node.selected)
-      this.$set(node, 'selected', !node.selected)
+     // this.$set(node, 'selected', !node.selected)
+      this.$emit('nodeChecked', node, !node.selected)
       this.$emit('node-click', node)
     },
 
@@ -370,6 +371,7 @@ export default {
                 delete n['parent']
                 res.push(n)
               }else {
+              //  console.log(node)
                 let n = Object.assign({}, node)
                 delete n['parent']
                 res.push(n)
@@ -377,11 +379,11 @@ export default {
 
           }else{
             if (node.children && node.children.length && this.getNewNodes(opt, node.children).length != 0) {
-              if(res.length == 0) {
-                res = (this.getNewNodes(opt, node.children))
-              }else {
+              // if(res.length == 0) {
+              //   res.push(this.getNewNodes(opt, node.children))
+              // }else {
                 res.push(this.getNewNodes(opt, node.children))
-              }
+             // }
             }
           }
         }
@@ -454,7 +456,7 @@ export default {
     opacity:0;
 }
 .halo-tree {
-    font-size:14px;
+    font-size:12px;
 }
 .halo-tree ul,.halo-tree li {
     list-style-type:none;
