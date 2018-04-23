@@ -16,11 +16,10 @@
           </div>
           <selector v-model="bindData.type" :readonly="isEdit" title="是否查数" :options="checkNumberArray"></selector>
           <div class="hr"></div>
-          <app-select :url="sysTypeTypeUrl" :readonly="isEdit" title="系统分类" v-model="bindData.appType"></app-select>
+          <app-select :url="sysTypeTypeUrl" :readonly="isEdit" title="系统分类" :search="true" v-model="bindData.appType"></app-select>
           <div class="hr"></div>
-          <app-select title="所属系统" :readonly="isEdit" :url="sysTypeNameUrl" v-model="bindData.appName"
-                      :param="sysTypeParam"
-                      ></app-select>
+          <app-select title="所属系统" :readonly="isEdit" :url="sysTypeNameUrl" :search="true" v-model="bindData.appName"
+                      :param="sysTypeParam"></app-select>
           <x-input title="提交时间" :readonly="true" v-model="createTime"></x-input>
           <x-input title="当前处理人" :readonly="true" v-model="handler"></x-input>
           <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>

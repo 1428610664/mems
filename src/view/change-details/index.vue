@@ -46,6 +46,7 @@
   import SysAppUtils from 'common/js/SysAppUtils'
   import {mapGetters} from 'vuex'
   import {maintainMixin} from "common/mixin/eventMixin"
+  import {getUserInfo} from 'common/js/cache'
 
   export default {
     name: "index",
@@ -78,6 +79,12 @@
       ]),
       FlowActions() {
         let actions = []
+        // 校验创建者是否是当前用户 或 toUser里包含创建者
+        let createUser = this.change.createUser.split("/")[1], userName = getUserInfo().user.userName, toUser = getUserInfo().toUser
+        if(createUser != userName || (toUser && toUser.split(",").indexOf(createUser) == -1)){
+          return []
+        }
+
         if (this.bindData.status == 0) {
           actions = [// 修改、删除、禁用
             {TypeId: -1, FlowActionName: "修改", id: this.$route.query.id},

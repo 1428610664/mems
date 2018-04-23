@@ -7,7 +7,7 @@
         <group label-width="5em" label-margin-right="2em" label-align="right">
 
           <x-input title="维护期名称" :readonly="true" v-model="bindData.cname"></x-input>
-          <x-textarea title="描述" v-model="bindData.cdesc" :show-counter="false" :rows="1" autosize></x-textarea>
+          <x-textarea title="描述" v-model="bindData.cdesc" :show-counter="false" :rows="1" autosize :readonly="true"></x-textarea>
           <x-input title="维护期单号" :readonly="true" v-model="bindData.cid"></x-input>
           <div class="hr"></div>
           <div class="hz-cell"><span class="label c4">状态</span><span :class="getStateType(bindData.status).class">{{getStateType(bindData.status).title}}</span></div>
@@ -48,6 +48,7 @@
   import SysAppUtils from 'common/js/SysAppUtils'
   import {mapGetters} from 'vuex'
   import {maintainMixin} from "common/mixin/eventMixin"
+  import {getUserInfo} from 'common/js/cache'
 
   export default {
     name: "index",
@@ -84,6 +85,11 @@
       ]),
       FlowActions() {
         let actions = []
+        // 校验创建者是否是当前用户 或 toUser里包含创建者
+        let createUser = this.maintain.createUser.split("/")[1], userName = getUserInfo().user.userName, toUser = getUserInfo().toUser
+        if(createUser != userName || (toUser && toUser.split(",").indexOf(createUser) == -1)){
+          return []
+        }
         if (this.bindData.status == 0) {
           actions = [// 修改、删除、禁用
             {TypeId: -1, FlowActionName: "修改", id: this.$route.query.id},
@@ -110,6 +116,7 @@
         this.submitEvent(action)
       },
       init() {
+        console.log(JSON.stringify(this.maintain))
         if(!this.maintain || !this.$route.query.id){
           history.go(-1)
           return
