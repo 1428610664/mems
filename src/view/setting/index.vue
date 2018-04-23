@@ -3,7 +3,7 @@
     <div class="seting-wrapper b">
       <x-header :left-options="{backText: ''}">设置</x-header>
 
-      <scroller class="wrapper-content" ref="scroll">
+      <div class="wrapper-content">
         <group label-width="4.5em" label-margin-right="2em" label-align="right">
           <x-input title="账号"  :readonly="true" v-model="bindData.userName"></x-input>
           <x-input title="名称" v-model="bindData.name"></x-input>
@@ -16,7 +16,7 @@
           <x-textarea title="备注" v-model="bindData.memo" placeholder="请输入..." :show-counter="false" :rows="5"
                       :max="200"></x-textarea>
         </group>
-      </scroller>
+      </div>
       <comm-footer :FlowActions="acitons" @event="footerEvent"></comm-footer>
     </div>
   </transition>
@@ -26,7 +26,6 @@
 
   import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
-  import Scroller from 'components/scroll/scroller'
   import {getUserInfo} from 'common/js/cache'
   import request from 'common/js/request'
   import {getUrl} from 'common/js/Urls'
@@ -56,9 +55,6 @@
     },
     created() {
       this.init()
-      setTimeout(() => {
-        this.$refs.scroll.setLoadingState(1)
-      }, 20)
     },
     methods: {
       init() {
@@ -89,7 +85,6 @@
       Selector,
 
       commFooter,
-      Scroller
     }
   }
 </script>

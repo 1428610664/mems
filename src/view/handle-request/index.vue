@@ -2,7 +2,7 @@
   <transition name="move">
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">处理服务请求</x-header>
-      <scroller class="wrapper-content" ref="scroll">
+      <div class="wrapper-content">
         <group label-width="5em" label-margin-right="2em" label-align="right">
           <x-input title="请求标题" :readonly="isEdit" placeholder="请输入文字" v-model="bindData.name"></x-input>
           <x-textarea title="请求描述" :readonly="isEdit" v-model="bindData.summary" placeholder="请输入文字"
@@ -27,7 +27,7 @@
           <x-input title="满意度" :readonly="true" v-model="cacsi"></x-input>
           <x-input title="处理评价" :readonly="true" v-model="evaluate"></x-input>
         </group>
-      </scroller>
+      </div>
 
       <comm-footer :FlowActions="FlowActions" @event="footerEvent"></comm-footer>
       <router-view></router-view>
@@ -39,7 +39,6 @@
 
   import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
-  import Scroller from 'components/scroll/scroller'
   import appSelect from 'components/multi-select/app-select'
   import {getUrl} from 'common/js/Urls'
   import {handleRequestMixin} from "common/mixin/eventMixin"
@@ -165,9 +164,6 @@
     },
     created() {
       this._initRequest()
-      setTimeout(() => {
-        this.$refs.scroll.setLoadingState(1)
-      }, 20)
     },
     methods: {
       ...mapMutations({
@@ -195,7 +191,6 @@
     },
     components: {
       commFooter,
-      Scroller,
       appSelect,
 
       XHeader,

@@ -3,7 +3,7 @@
     <div class="search-box">
       <search-box @query="searchQuery" placeholder="搜索"></search-box>
     </div>
-    <scroller class="wrapper-content" ref="scroll" :data="turnUser">
+    <div class="wrapper-content">
       <div class="cell c1">
         系统运行部
       </div>
@@ -14,7 +14,7 @@
           </checker-item>
         </checker>
       </div>
-    </scroller>
+    </div>
     <comm-footer v-if="FlowActions" :FlowActions="FlowActions" @event="footerEvent"></comm-footer>
   </div>
 </template>
@@ -24,7 +24,6 @@
   import {XHeader, Checker, CheckerItem} from 'vux'
   import SearchBox from 'components/search-box/search-box'
   import commFooter from 'components/comm-footer'
-  import Scroller from 'components/scroll/scroller'
 
   import request from 'common/js/request'
   import {getUrl} from 'common/js/Urls'
@@ -57,9 +56,6 @@
     },
     created() {
       this._getTurnUser()
-      setTimeout(() => {
-        this.$refs.scroll.setLoadingState(1)
-      }, 20)
     },
     methods: {
       searchQuery(v) {
@@ -106,7 +102,6 @@
       CheckerItem,
 
       commFooter,
-      Scroller,
       SearchBox
     }
   }
