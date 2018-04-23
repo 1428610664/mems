@@ -13,9 +13,9 @@
           <div class="loaded ct" v-if="rows.length == 0">- 查无选项 -</div>
           <checklist :options="rows" v-model="selectValue" :max=max @on-change="change"></checklist>
         </div>
-        <div class="select_button">
+        <!--<div class="select_button">
           <x-button @click.native="onOk" plain type="primary">确认</x-button>
-        </div>
+        </div>-->
       </popup>
     </div>
   </div>
@@ -124,7 +124,7 @@
         })
       },
       change(val, label) {
-        //console.log('change', val, label)
+        this.$emit('input', this.selectValue.join(","))
       },
       clickActionSheet() {
       },
@@ -142,11 +142,6 @@
         }, (error) => {
           console.log(JSON.stringify('error===' + error))
         })
-      },
-      onOk() {
-        this.dropDown = false
-        this.$emit('input', this.selectValue.join(","))
-        this.$emit('on-ok', this.selectValue.join(","))
       }
     }
   }

@@ -2,7 +2,7 @@
   <transition name="move">
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">处理服务请求</x-header>
-      <scroller class="wrapper-content" ref="scroll">
+      <div class="wrapper-content">
         <group label-width="5em" label-margin-right="2em" label-align="right">
           <x-input title="请求标题" :readonly="isEdit" placeholder="请输入文字" v-model="bindData.name"></x-input>
           <x-textarea title="请求描述" :readonly="isEdit" v-model="bindData.summary" placeholder="请输入文字"
@@ -26,8 +26,11 @@
           <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
           <x-input title="满意度" :readonly="true" v-model="cacsi"></x-input>
           <x-input title="处理评价" :readonly="true" v-model="evaluate"></x-input>
+
+          <div class="hr"></div>
+          <tabs-pan :id="rowId" :opinionUrl="opinionUrl"></tabs-pan>
         </group>
-      </scroller>
+      </div>
 
       <comm-footer :FlowActions="FlowActions" @event="footerEvent"></comm-footer>
       <router-view></router-view>
@@ -39,7 +42,7 @@
 
   import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
-  import Scroller from 'components/scroll/scroller'
+  import TabsPan from 'components/tabs-pan/tabs-pan'
   import appSelect from 'components/multi-select/app-select'
   import {getUrl} from 'common/js/Urls'
   import {handleRequestMixin} from "common/mixin/eventMixin"
@@ -53,6 +56,8 @@
       return {
         sysTypeTypeUrl: getUrl("appType"),
         sysTypeNameUrl: getUrl("appName"),
+        rowId: this.$route.query.id,
+        opinionUrl: getUrl("serviceOpinion", this.$route.query.id), // 处理事件请求Url
         isEdit: false,
         serial: '',    // 请求编号
         createTime: '',// 提交事件
@@ -165,9 +170,6 @@
     },
     created() {
       this._initRequest()
-      setTimeout(() => {
-        this.$refs.scroll.setLoadingState(1)
-      }, 20)
     },
     methods: {
       ...mapMutations({
@@ -195,8 +197,8 @@
     },
     components: {
       commFooter,
-      Scroller,
       appSelect,
+      TabsPan,
 
       XHeader,
       Group,

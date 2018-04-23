@@ -45,6 +45,10 @@ const requestUrl = {
     url: "/services",
     pre: preUrl
   },
+  serviceOpinion: {
+    url: "/services/opinion/{id}",
+    pre: preUrl
+  },
   // 系统分类
   appType: {
     url: "/ips/findAppType",

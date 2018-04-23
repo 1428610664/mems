@@ -92,6 +92,14 @@
       id: {
         type: String,
         default: '',
+      },
+      opinionUrl: {
+        type: String,
+        default: '',
+      },
+      messagesUrl: {
+        type: String,
+        default: '',
       }
     },
     watch: {
@@ -102,7 +110,7 @@
     },
     methods: {
       loadTasOpinions() {
-        request.get(getUrl('opinion',this.id), {status:0}).then((res) => {
+        request.get(this.opinionUrl ? this.opinionUrl : getUrl('opinion',this.id), {status:0}).then((res) => {
           this.numberMsg.key0 = res.data.rows.length
           if (res.data.rows.length == "0") {
             this.opinions = ""
@@ -114,7 +122,7 @@
         })
       },
       loadTasMessages() {
-        request.get(getUrl('messages'), {refId:this.id, status:0}).then((res) => {
+        request.get(this.messagesUrl ? this.messagesUrl : getUrl('messages'), {refId:this.id, status:0}).then((res) => {
           this.numberMsg.key1 = res.data.rows.length
           if (res.data.rows.length == "0") {
             this.messages = ""
