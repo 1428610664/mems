@@ -2,7 +2,7 @@
 
   <transition name="move">
     <div class="wrapper b">
-      <x-header :left-options="{backText: ''}">添加变更</x-header>
+      <x-header :left-options="{backText: ''}">{{isModify ? "修改变更" : "添加变更"}}</x-header>
       <div class="wrapper-content">
         <group label-width="5em" label-margin-right="2em" label-align="right">
 
@@ -30,6 +30,7 @@
   import datetime from 'components/datetime'
   import {getUrl} from 'common/js/Urls'
   import {maintainMixin} from "common/mixin/eventMixin"
+  import {mapGetters} from "vuex"
 
   export default {
     name: "index",
@@ -55,16 +56,31 @@
       }
     },
     computed: {
+      ...mapGetters([
+        'change',
+      ]),
+      isModify() {
+        return this.change && this.$route.query.id ? true : false
+      },
       FlowActions() {
         let actions = [
           {TypeId: -1, FlowActionName: "关闭"},
-          {TypeId: 50, FlowActionName: "保存", id: this.$route.query.id, params: {type: 1}}
+          {TypeId: 52, FlowActionName: "保存", id: this.$route.query.id, params: {type: 1}}
         ]
+        // 修改变更
+        if(this.isModify){
+          actions = [
+            {TypeId: -1, FlowActionName: "关闭"},
+            {TypeId: 50, FlowActionName: "保存", id: this.$route.query.id, params: {type: 1, cid: this.$route.query.id}}
+          ]
+        }
+
         return actions
       }
     },
     created() {
 
+      this.init()
     },
     methods: {
       footerEvent(action) {
@@ -74,9 +90,21 @@
         }
         if(!this._checkData()) return
 
+        console.log(JSON.stringify(action))
         return
         Object.assign(action.params, this.bindData)
         this.submitEvent(action)
+      },
+      init(){
+        if(!this.isModify) return
+        console.log("==========="+JSON.stringify(this.change))
+
+        for(let k in this.bindData){
+          if(this.change[k]) this.bindData[k] = this.change[k]
+        }
+        this.bindData.bTime =  new Date(this.change.beginTime.time).format("yyyy-MM-dd hh:mm:ss")
+        this.bindData.eTime =  new Date(this.change.endTime.time).format("yyyy-MM-dd hh:mm:ss")
+        this.bindData.desc =  this.change.cdesc
       }
     },
     components: {

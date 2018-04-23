@@ -26,6 +26,9 @@
           <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
           <x-input title="满意度" :readonly="true" v-model="cacsi"></x-input>
           <x-input title="处理评价" :readonly="true" v-model="evaluate"></x-input>
+
+          <div class="hr"></div>
+          <tabs-pan :id="rowId" :opinionUrl="opinionUrl"></tabs-pan>
         </group>
       </div>
 
@@ -39,6 +42,7 @@
 
   import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
+  import TabsPan from 'components/tabs-pan/tabs-pan'
   import appSelect from 'components/multi-select/app-select'
   import {getUrl} from 'common/js/Urls'
   import {handleRequestMixin} from "common/mixin/eventMixin"
@@ -52,6 +56,8 @@
       return {
         sysTypeTypeUrl: getUrl("appType"),
         sysTypeNameUrl: getUrl("appName"),
+        rowId: this.$route.query.id,
+        opinionUrl: getUrl("serviceOpinion", this.$route.query.id), // 处理事件请求Url
         isEdit: false,
         serial: '',    // 请求编号
         createTime: '',// 提交事件
@@ -192,6 +198,7 @@
     components: {
       commFooter,
       appSelect,
+      TabsPan,
 
       XHeader,
       Group,

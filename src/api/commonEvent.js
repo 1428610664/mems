@@ -42,10 +42,6 @@ export function actionJson(no, id){
     No34: [`/events/${id}/inquire`, "转问询"],    	 // 转问询事件
     No35: [`/events/${id}/tags`, "标记"],    	         // 标记事件
 
-    // 维护期、变更
-    No50: [`/changes/${id}/update`, "更新"],        // 更新
-    No51: [`/changes/${id}`, "删除"],                // 删除
-
     No35: [`/events/${id}/tags`, "标记"],    	         // 标记事件
     No36: [`turnsend/${id}/process`, "响应"],    	   // 受理事件
     No37: [`/events/${id}/revert`, "取消误报"],	     // 取消误报
@@ -54,6 +50,7 @@ export function actionJson(no, id){
     // 维护期、变更
     No50: [`/changes/${id}/update`, "更新"],        // 更新
     No51: [`/changes/${id}`, "删除"],                // 删除
+    No52: [`/changes`, "添加"],                       // 添加
 
 
   }
