@@ -134,7 +134,7 @@
       },
       FlowActions(){
         if(!this.handleEvents) return []
-        let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
+        let userName = getUserInfo().user.userName, role = getUserInfo().user.role
         this.readonly = true
         if(this.status == 99){
           return []
@@ -208,7 +208,7 @@
 
            }
             break
-          case '1': //已响应
+           case '1': //已响应
             if(role == 5 && this.handleEvents.handler == '' ){ //服务台 已响应 没有处理人 可以转派
               actions = [buttons[3]]
             }

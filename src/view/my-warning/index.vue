@@ -105,46 +105,35 @@
       FlowActions(){
         if(!this.handleWarning) return []
         let actions = []
-        let createUser = this.handleWarning.createUser.split("/")[1], handler = this.handleWarning.handler.split("/")[1];
-        let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
+        let createUser = this.handleWarning.createUser.split("/")[1]
+        let userName = getUserInfo().user.userName, role = getUserInfo().user.role
         this.readonly = false
         if(role != 4){ //普通用户报障详情
           this.readonly = true
           return []
         }
-        if(this.status == 0){// 未处理
-          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
-            actions = [
-              {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
-            ]
-          }else{
-            this.readonly = true
-            actions = []
+        if(createUser == userName) {// 未处理
+          switch (this.status + "") {
+            case '0': //未处理
+              actions = [{TypeId: 16, FlowActionName: "取消报障", id: this.$route.query.id}]
+              break
+            case '2':  // 被驳回
+              actions = [
+                {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
+                {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id}
+              ]
+              break
+            case '3': // 待评价
+              actions = [
+                {TypeId: 19, FlowActionName: "提交评价", id: this.$route.query.id},
+                {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
+              ]
+              break
+            default:
+              this.readonly = true
+              actions = []
           }
-        }
-        else if(this.status == 2) {  // 被驳回
-          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
-            actions = [
-              {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
-              {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
-            ]
-          }else{
-            this.readonly = true
-            // edti 不可编辑
-          }
-        }else if(this.status == 3){ // 待评价
-          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
-          //  this.cacsiSelect = 'show'
-            actions = [
-              {TypeId: 19, FlowActionName: "提交评价", id: this.$route.query.id},
-              {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
-            ]
-          }else{
-            this.readonly = true
-            // edti 不可编辑
-          }
-        }else{ // status == 4 || status == 99 || status == 100
-          // edti 不可编辑
+        }else {
           this.readonly = true
           actions = []
         }
@@ -152,9 +141,9 @@
       },
       evaluateObj(){
         if (!this.handleWarning) return {isShow : false, isEvaluate: false}
-        let toUser = getUserInfo().toUser, createUser = this.handleWarning.createUser.split("/")[1]
+        let createUser = this.handleWarning.createUser.split("/")[1]
         let isShow = this.status == 99
-        let isEvaluate = createUser == getUserInfo().user.userName || (toUser && toUser.split(",").indexOf(createUser) != -1)
+        let isEvaluate = createUser == getUserInfo().user.userName
         return {isShow : isShow, isEvaluate: isEvaluate}
       }
     },

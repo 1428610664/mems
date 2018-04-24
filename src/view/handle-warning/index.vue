@@ -134,54 +134,31 @@
       FlowActions(){
         if(!this.handleWarning) return []
         let actions = []
-        let createUser = this.handleWarning.createUser.split("/")[1], handler = this.handleWarning.handler.split("/")[1];
-        let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
+        let createUser = this.handleWarning.createUser.split("/")[1], handler = this.handleWarning.handler
+        let userName = getUserInfo().user.userName, role = getUserInfo().user.role
+        let _userName =getUserInfo().user.name + '/' +userName
         this.readonly = false
         if(role != 5){
           this.readonly = true
           return []
         }
         if(this.status == 0){// 未处理
-          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
-            actions = [
-              {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
-            ]
-          }else{
             actions = [
               {TypeId: 15, FlowActionName: "驳回", id: this.$route.query.id},
               {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
-              {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id},
+              {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id}
             ]
-          }
         }else if(this.status == 1) { // 处理中
-          if(handler == userName || (toUser && toUser.split(",").indexOf(handler) != -1)){
+          if(handler == _userName || (handler && handler.indexOf(_userName) >= 0)){
             actions = [
               {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
-              {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id},
-            ]
-          }else{
-            // edti 不可编辑
-            this.readonly = true
-          }
-        }else if(this.status == 2) {  // 被驳回
-          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
-            actions = [
-              {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
-              {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
+              {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id}
             ]
           }else{
             this.readonly = true
+            actions = []
           }
-        }else if(this.status == 3){ // 待评价
-          if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
-            actions = [
-              {TypeId: 19, FlowActionName: "提交评价", id: this.$route.query.id},
-              {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
-            ]
-          }else{
-            this.readonly = true
-          }
-        }else{ // status == 4 || status == 99 || status == 100
+        }else{
           this.readonly = true
           actions = []
         }
