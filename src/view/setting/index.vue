@@ -73,6 +73,7 @@
         request.post(getUrl("users"), Object.assign({}, {id: getUserInfo().user.id}, this.bindData)).then(res => {
           this.$vux.loading.hide()
           this.$vux.toast.text(res.desc, "bottom")
+          if(res.success) history.go(-1)
         }, error => {
           this.$vux.loading.hide()
         })
