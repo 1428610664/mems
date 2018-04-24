@@ -93,6 +93,13 @@ export default {
 		var ref = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
 		return ref.test(val);
 	},
+  /*
+    ip校验 可多个：【,】隔开
+   */
+  isIp: function(val){
+    var ipRegex = /^(?:(?:^|,)(?:[0-9]|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])(?:\.(?:[0-9]|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])){3})+$/;
+    return ipRegex.test(val);
+  },
 	/*
 		是否为图片类型
 	*/
