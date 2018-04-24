@@ -6,15 +6,15 @@
     </div>
     <div v-transfer-dom>
       <popup v-model="dropDown" position="bottom" max-height="80%">
-        <div class="check_keyWorld" v-show="search">
-          <x-input type="text" :placeholder="placeholder" v-model="params.keyWord" @on-change="onEnter"
-                   @on-enter="onEnter"></x-input>
-        </div>
+          <div class="check_keyWorld search-wrapper b" v-show="search">
+            <search-box @query="searchTree" :placeholder="placeholder"></search-box>
+          </div>
         <div class="check_item" :style="style">
-          <v-tree ref="zTree" :data='treeData2' :multiple='multiple' :halfcheck='halfcheck'/>
+          <v-tree ref="zTree" :data='treeData' :multiple='multiple' :halfcheck='halfcheck'/>
         </div>
         <div class="check_button">
-          <x-button @click.native="onOk" plain type="primary">确认</x-button>
+          <x-button @click.native="onConfirm" plain type="primary">确认</x-button>
+          <!--<x-button @click.native="setValue" plain type="primary">设置选中值</x-button>-->
         </div>
       </popup>
     </div>
@@ -23,6 +23,8 @@
 
 <script>
   import {XInput, Cell, Checklist, Actionsheet, TransferDom, Popup, XButton} from 'vux'
+
+  import SearchBox from 'components/search-box/search-box'
   import request from 'common/js/request'
 
   export default {
@@ -30,15 +32,11 @@
       return {
         rows: [],
         checkValue: [],
-        params: {
-          keyWord: '',
-          offset: 0,
-          limit: 20
-        },
-        treeData2:[
+        treeData:[
           {
             "title": "核心交易系统",
-            "nocheck":true,
+          //  "nocheck":true,
+          //  "clickNode": true,
             'type':'appType',
             "children": [
               {
@@ -80,7 +78,7 @@
                     ]}]},
               {
                 "title": "清算系统",
-                "clickNode": true,
+            //    "clickNode": true,
                 'type':'appName',
                 "children": [
                   {
@@ -125,6 +123,8 @@
       }
     },
     components: {
+      SearchBox,
+
       XInput,
       Checklist,
       Cell,
@@ -136,8 +136,7 @@
       TransferDom
     },
     props: {
-      value:'',
-      param: '',
+      value:[],
       search: {
         type: Boolean,
         default: false
@@ -161,12 +160,12 @@
     },
     watch: {
       value(val){
-
+        this.$refs.zTree.setAppTypeChecked(val)
       }
     },
     mounted() {
       this.$nextTick(function () {
-        if(this.isFirstRequest)this.getRows()
+        if(this.isFirstRequest)this.getTreeData()
       })
     },
     methods: {
@@ -174,31 +173,33 @@
         this.dropDown = true
         this.style.height =  window.screen.height * 0.8 -117 + "px"
       },
-      onEnter() {
-        this.rows = []
+      searchTree(val) {
+          this.$refs.zTree.searchNodes(val)
       },
-      clickActionSheet() {
+      getTreeData() {
+        // request.get("url", Object.assign({})).then((data) => {
+        //   this.rows = []
+        //   if (data.success) {
+        //    // this.treeData = data.data.rows
+        //     this.$nextTick(function () {
+        //       this.$refs.zTree.setAppTypeChecked(this.value)
+        //     })
+        //   }
+        // }, (error) => {
+        //   console.log(JSON.stringify('error===' + error))
+        // })
       },
-      getRows() {
-        request.get("url", Object.assign({}, this.params, this.param)).then((data) => {
-          this.params.keyWord = ''
-          this.rows = []
-          if (data.success) {
-            data.data.rows.forEach((item) => {
-              this.rows.push({key: item, value: item})
-            })
-          }
-        }, (error) => {
-          console.log(JSON.stringify('error===' + error))
-        })
-      },
-      onOk() {
+      onConfirm() {
         this.dropDown = false
         console.log('getNodesRule')
-        console.log(this.$refs.zTree.getNodesRule())
+        console.log(JSON.stringify(this.$refs.zTree.getNodesRule()))
         this.$emit('input', this.checkValue.join(","))
-        this.$emit('on-ok', this.checkValue.join(","))
-      }
+        this.$emit('on-confirm', this.checkValue.join(","))
+      },
+      // setValue() {
+      //  let aa =[{"appName":"资管资金清算系统","appType":"核心交易系统","objName":"WEB应用服务器","clu":{"default":"192.168.4.132"},"ips":"192.168.4.132","opt":"包含"},{"appName":"清算系统","appType":"核心交易系统","objName":"应用服务器","clu":{"证通":"192.168.4.135"},"ips":"192.168.4.135","opt":"包含"}]
+      //   this.$refs.zTree.setAppTypeChecked(aa)
+      // }
     }
   }
 </script>

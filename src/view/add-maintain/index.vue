@@ -21,7 +21,7 @@
 
           <x-textarea title="描述" v-model="bindData.desc" placeholder="请输入文字" :show-counter="false" :rows="5" :max="200"></x-textarea>
 
-           <check-tree></check-tree>
+           <check-tree :search="true"></check-tree>
         </group>
          <!--<v-tree ref="tree2" :data='treeData2'/>-->
 

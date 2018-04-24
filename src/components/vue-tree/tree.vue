@@ -4,7 +4,7 @@
       <li v-for="(item, index) in data"
           @drop="drop(item, $event)"
           @dragover="dragover($event)"
-          :key="item.id ? item.id : item.title"
+          :key="item.id ? item.id : item.title+'_'+index"
           :class="{leaf: isLeaf(item), 'first-node': !parent && index === 0, 'only-node': !parent && data.length === 1, 'second-node': !parent && index === 1}"
           v-show="item.hasOwnProperty('visible') ? item.visible : true">
         <div class="tree-node-el" :draggable="draggable" @dragstart="drag(item, $event)">
@@ -223,6 +223,7 @@
       isLeaf (node) {
         return !(node.children && node.children.length) && node.parent
       },
+
       /* @method adding child node
        * @param node parent node
        * @param newnode  new node
@@ -309,6 +310,7 @@
      *@param node current node
      */
       nodeSelected (node) {
+        if(!node.clickNode && node.clickNode != undefined) return
         const getRoot = (el) => {
           if (el.$parent.$el.nodeName === 'UL') {
             el = el.$parent
@@ -389,6 +391,40 @@
         }
         return res
       },
+
+      /*
+      *@method get Nodes that selected
+      */
+      getSelectedNodes () {
+        return this.getNewNodes({selected: true}, this.data)
+      },
+
+      /*
+       *@method get Nodes that checked
+       */
+      getCheckedNodes () {
+        return this.getNewNodes({checked: true}, this.data)
+      },
+
+      /*
+     *@method filter nessary nodes methods
+     *@param filter string or predicate expression
+     *@param data current nodes
+     */
+      searchNodes (filter, data) {
+        data = data || this.data
+        for (const node of data) {
+          let searched = filter ? (typeof filter === 'function' ? filter(node) : node.title.indexOf(filter) > -1) : false
+          this.$set(node, 'searched', searched)
+          this.$set(node, 'visible', false)
+          this.$emit('toggleshow', node, filter ? searched : true)
+          if (node.children && node.children.length) {
+            if (searched) this.$set(node, 'expanded', true)
+            this.searchNodes(filter, node.children)
+          }
+        }
+      },
+
       //获取选中值开始入口
       getNodesRule (data) {
         data = data || this.data
@@ -467,37 +503,81 @@
         return res
       },
 
-      /*
-      *@method get Nodes that selected
-      */
-      getSelectedNodes () {
-        return this.getNewNodes({selected: true}, this.data)
-      },
-
-      /*
-       *@method get Nodes that checked
+      /**
+       * 设置默认系统分类、所属系统选中值
+       * @param data
+       * @param value
        */
-      getCheckedNodes () {
-        return this.getNewNodes({checked: true}, this.data)
-      },
-
-      /*
-     *@method filter nessary nodes methods
-     *@param filter string or predicate expression
-     *@param data current nodes
-     */
-      searchNodes (filter, data) {
-        debugger
-        data = data || this.data
-        for (const node of data) {
-          let searched = filter ? (typeof filter === 'function' ? filter(node) : node.title.indexOf(filter) > -1) : false
-          this.$set(node, 'searched', searched)
-          this.$set(node, 'visible', false)
-          this.$emit('toggleshow', node, filter ? searched : true)
-          if (node.children && node.children.length) {
-            if (searched) this.$set(node, 'expanded', true)
-            this.searchNodes(filter, node.children)
+      setAppTypeChecked (value){
+         let data = this.data
+        for (const item of data) {
+          for (const node of item.children){
+            for (const selectedItem of value) {
+              if(selectedItem.appType == item.title && selectedItem.appName == node.title){
+                if(selectedItem.objName == ''){
+                  this.$emit('nodeChecked', node, true)
+                  break
+                }else if(node.children && node.children.length && selectedItem.objName != '' ){
+                  this.setComponentChecked(node.children,value,{appName:node.title,appType:item.title})
+                  break
+                }
+              }
+            }
           }
+        }
+      },
+      /**设置组件默认选中
+       * setColonyChecked
+       * @param data
+       * @param value
+       * @param obj
+       */
+      setComponentChecked (data, value,obj) {
+        for (const node of data) {
+          for (const selectedItem of value) {
+            if(selectedItem.appType == obj.appType && selectedItem.appName == obj.appName && selectedItem.objName == node.title){
+              if(node.children && node.children.length){
+                this.setColonyChecked(node.children, value, Object.assign({},obj, {objName:node.title}))
+                break
+              }else {
+                this.$emit('nodeChecked', node, true)
+                break
+              }
+            }
+          }
+        }
+      },
+      /**
+       * 设置集群默认选中
+       * @param data
+       * @param value
+       * @param obj
+       */
+      setColonyChecked(data, value,obj){
+        for (const node of data) {
+          for (const selectedItem of value) {
+            for(const [key , val] of Object.entries(selectedItem.clu)){
+              if(selectedItem.appType == obj.appType && selectedItem.appName == obj.appName && selectedItem.objName == obj.objName && key == node.title){
+                if(node.children && node.children.length){
+                  this.setIpsChecked(node.children, val)
+                  break
+                }else {
+                  this.$emit('nodeChecked', node, true)
+                  break
+                }
+              }
+            }
+          }
+        }
+      },
+      setIpsChecked (data,value) {
+        let res = value.split(',')
+        for (const node of data) {
+           res.forEach((item)=>{
+             if(item == node.title){
+               this.$emit('nodeChecked', node, true)
+             }
+           })
         }
       }
     }
