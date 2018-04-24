@@ -58,6 +58,15 @@
         },
       }
     },
+    watch:{
+      "$route"(to , from){
+        if(to.path == "/myEvents"){
+          console.log("....刷新")
+          this.refresh.params.keyWord = ''
+          this.getList(false,true)
+        }
+      }
+    },
     computed: {
       ...mapGetters([
         'userData',
@@ -119,7 +128,7 @@
           this.refresh.pageNo = 1
           this.refresh.pageSize = 10
         }
-        let param = {offset: (this.refresh.pageNo - 1) * this.refresh.pageSize,limit: this.refresh.pageSize}
+        let param = {offset: (this.refresh.pageNo - 1) * this.refresh.pageSize,limit: this.refresh.pageSize,sort:'createTime',order:'desc'}
         request.get(getUrl(this.selectIndex == 2 ? "history" : "events"), Object.assign({}, this.refresh.params, param)).then(data => {
           if (data.data) {
             this.refresh.isPullLoaded = false

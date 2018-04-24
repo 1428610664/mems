@@ -23,13 +23,16 @@
           <x-input title="报障时间" :readonly="true" v-model="bindData.faultTime"></x-input>
           <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
           <x-input title="提交时间" :readonly="true" v-model="createTime"></x-input>
-          <x-input  v-show="cacsiSelect=='hide'"title="满意度" :readonly="true" v-model="cacsi"></x-input>
-          <selector v-show="cacsiSelect=='show'" v-model="cacsiKey" title="满意度" :options="select.cacsi"></selector>
-          <x-input title="处理评价" :readonly="cacsiSelect=='show'? false:true" v-model="evaluate"></x-input>
+          <x-input  v-show="evaluateObj.isShow" title="满意度" :readonly="true" v-model="cacsi"></x-input>
+          <!--<selector v-show="cacsiSelect=='show'" v-model="cacsiKey" title="满意度" :options="select.cacsi"></selector>-->
+          <x-input v-show="evaluateObj.isShow" title="处理评价" :readonly="true" v-model="evaluate"></x-input>
           <div class="hr"></div>
           <!--<div class="tab_div_height">-->
             <tabs-pan :id="rowId"></tabs-pan>
           <!--</div>-->
+          <div v-if="evaluateObj.isEvaluate && status == 3">
+            <evaluate-wrapper ref="evaluateWrapper"></evaluate-wrapper>
+          </div>
         </group>
       </div>
       <!--</scroller>-->
@@ -43,6 +46,7 @@
 <script>
 
   import {XHeader, Group, Scroller, XTextarea, XInput, Selector} from 'vux'
+  import EvaluateWrapper from 'components/evaluate-wrapper'
   import commFooter from 'components/comm-footer'
   import appSelect from 'components/multi-select/app-select'
   import {getUrl} from 'common/js/Urls'
@@ -65,8 +69,8 @@
         createUser: '', // 提交人
 
         cacsi: '',      // 满意度
-        cacsiKey:'30', // 满意度
-        cacsiSelect:'hide',
+        //cacsiKey:'30', // 满意度
+        //cacsiSelect:'hide',
 
         evaluate: '',   // 处理评价
         status: '',       // 状态
@@ -104,7 +108,6 @@
         let createUser = this.handleWarning.createUser.split("/")[1], handler = this.handleWarning.handler.split("/")[1];
         let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
         this.readonly = false
-        console.log(this.handleWarning)
         if(role != 4){ //普通用户报障详情
           this.readonly = true
           return []
@@ -119,17 +122,6 @@
             actions = []
           }
         }
-        // else if(this.status == 1) { // 处理中
-        //   if(handler == userName || (toUser && toUser.split(",").indexOf(handler) != -1)){
-        //     actions = [
-        //       {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
-        //       {TypeId: 18, FlowActionName: "关闭", id: this.$route.query.id},
-        //     ]
-        //   }else{
-        //     this.readonly = true
-        //     // edti 不可编辑
-        //   }
-        // }
         else if(this.status == 2) {  // 被驳回
           if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
             actions = [
@@ -142,7 +134,7 @@
           }
         }else if(this.status == 3){ // 待评价
           if(createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)){
-            this.cacsiSelect = 'show'
+          //  this.cacsiSelect = 'show'
             actions = [
               {TypeId: 19, FlowActionName: "提交评价", id: this.$route.query.id},
               {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
@@ -157,6 +149,13 @@
           actions = []
         }
         return actions
+      },
+      evaluateObj(){
+        if (!this.handleWarning) return {isShow : false, isEvaluate: false}
+        let toUser = getUserInfo().toUser, createUser = this.handleWarning.createUser.split("/")[1]
+        let isShow = this.status == 99
+        let isEvaluate = createUser == getUserInfo().user.userName || (toUser && toUser.split(",").indexOf(createUser) != -1)
+        return {isShow : isShow, isEvaluate: isEvaluate}
       }
     },
     created() {
@@ -167,6 +166,11 @@
         setHandleWarning: 'SET_HANDLE_WARNING',
       }),
       footerEvent(action) {
+        if(action.TypeId == 19){
+          let evaluate = this.$refs.evaluateWrapper.getEvaluate()
+          if(!evaluate) return
+          action.params = {evaluate: evaluate.evaluate, cacsi: evaluate.cacsi.key}
+        }s
         this.submitEvent(action)
       },
       _initWarning(){
@@ -178,7 +182,7 @@
             this.createTime = new Date(this.handleWarning.createTime.time).format("yyyy-MM-dd hh:mm:ss")
             this.createUser = this.handleWarning.createUser
             this.cacsi = this.getCacsi(this.handleWarning.cacsi)
-            this.cacsiKey =  this.handleWarning.cacsi== 0 ?  "30":this.handleWarning.cacsi + ''
+           // this.cacsiKey =  this.handleWarning.cacsi== 0 ?  "30":this.handleWarning.cacsi + ''
             this.status = this.handleWarning.status
             this.evaluate = this.handleWarning.evaluate
         }else {
@@ -187,6 +191,7 @@
       }
     },
     components: {
+      EvaluateWrapper,
       commFooter,
       appSelect,
       tabsPan,

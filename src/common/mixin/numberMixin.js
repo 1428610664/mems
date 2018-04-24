@@ -1,6 +1,7 @@
 import request from 'common/js/request'
 import {getUrl} from 'common/js/Urls'
 import {mapMutations} from 'vuex'
+import {getUserInfo} from 'common/js/cache'
 
 export const numberMixin = {
   methods: {
@@ -19,7 +20,10 @@ export const numberMixin = {
       })
     },
     getFaultsNumber() {
-      request.get(getUrl("faultsNumber"), {isMy:false, status: 0}).then(res => {
+      let Parms = {status: '0'}
+      if(getUserInfo().user.role == 2)  Parms = {isTurn: true, status: '<=1'}
+      if(getUserInfo().user.role == 4 )Parms = {status: '0,1,2,3,100',isMy: true}
+      request.get(getUrl("faultsNumber"), Parms).then(res => {
         if(res.success){
           this.setFaultsNumber(res.data.number)
         }
@@ -28,7 +32,8 @@ export const numberMixin = {
       })
     },
     getEventsNumber() {
-      request.get(getUrl("eventsNumber"), {isMy:false, status: 0}).then(res => {
+      let Parms = getUserInfo().user.role == 5?  {status: '0,1',isMy: false,isTurn:false,processStatus:0} :{status: '0,1',isTurn: true,isMy:true,isPass:false}
+      request.get(getUrl("eventsNumber"), Parms).then(res => {
         if(res.success){
           this.setEventsNumber(res.data.number)
         }

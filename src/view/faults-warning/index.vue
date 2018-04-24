@@ -89,6 +89,15 @@
         return Parms
       }
     },
+    watch:{
+      "$route"(to , from){
+        if(to.path == "/faultsWarning"){
+          console.log("....刷新")
+          this.refresh.params.keyWord = ''
+          this.getList(false,true)
+        }
+      }
+    },
     created() {
       setTimeout(() => {
         this.refresh.params = this.getTabParms[this.selectIndex]
@@ -136,7 +145,7 @@
           this.refresh.pageNo = 1
           this.refresh.pageSize = 10
         }
-        let param = {offset: (this.refresh.pageNo - 1) * this.refresh.pageSize,limit: this.refresh.pageSize}
+        let param = {sort:'faultTime', order:'desc', offset: (this.refresh.pageNo - 1) * this.refresh.pageSize, limit: this.refresh.pageSize}
         request.get(getUrl("faultsWarning"), Object.assign({}, this.refresh.params, param)).then(data => {
           if (data.data) {
             this.refresh.isPullLoaded = false

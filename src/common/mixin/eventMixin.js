@@ -130,8 +130,7 @@ export const faultsMixin = {
           onConfirm () {
             _this.$vux.loading.show({text: '数据提交中...'})
             request[action.type ? action.type : "post"](actionJson(action.TypeId, action.id)[0],Object.assign({}, _this.bindData, action.params,
-              action.FlowActionName=='再次提交'? {id: action.id,status:0}:{},
-              action.TypeId== 19? {cacsi: _this.cacsiKey,evaluate:_this.evaluate}:{}  //提交评价
+              action.FlowActionName=='再次提交'? {id: action.id,status:0}:{}
             ) ).then((res) => {
               _this.$vux.loading.hide()
               if(res.success)window.history.back()

@@ -16,7 +16,7 @@
       </router-link>
       <router-link to="/myEvents" tag="li" class="grid posct">
         <div>
-          <div class="icon iconfont posct icon-shijiantai fz22 mb3"></div>
+          <div class="icon iconfont posct icon-shijiantai fz22 mb3"><i class="number fz12">{{eventsNumber}}</i></div>
           <div class="name ct">告警事件</div>
         </div>
       </router-link>
