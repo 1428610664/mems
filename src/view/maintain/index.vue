@@ -63,8 +63,6 @@
     computed: {
       getTabParms() {
         let Parms = [{type: 2, isMy: true,sort: "createTime",order: "desc"}, {type: 2,sort: "createTime",order: "desc"}]
-
-
         return Parms
       }
     },
@@ -73,6 +71,14 @@
         this.refresh.params = this.getTabParms[this.selectIndex]
         this.getList()
       }, 800)
+    },
+    watch: {
+      '$route' (to, from) {
+        if(to.path == "/maintain"){
+          this.refresh.params.keyWord = ''
+          this.getList(false, true)
+        }
+      }
     },
     methods: {
       ...mapMutations({

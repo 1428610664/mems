@@ -94,32 +94,18 @@
       sysTypeParam() {
         return {appType: this.bindData.appType}
       },
-      // 是否不可编辑
-      /*isEdit() {
-        let handler = this.handleRequest.handler.split("/")[1]
-        return this.status == 2 && handler == getUserInfo().user.userName ? false : true
-      },*/
       FlowActions() {
         if (!this.handleRequest) return []
         let actions = []
         let createUser = this.handleRequest.createUser.split("/")[1], handler = this.handleRequest.handler.split("/")[1]
         let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
-        /*console.log("====getUserInfo()===" + JSON.stringify(getUserInfo()))
-        console.log("createUser：" + createUser + "-----------------handler：" + handler)
-        console.log("userName：" + userName + "-----------------toUser：" + toUser + "------------------role：" + role)
-        console.log("-------handleRequest--------" + JSON.stringify(this.handleRequest))*/
 
-        if(this.status == 2 && handler == userName){
-          this.isEdit = false
-        }else{
-          this.isEdit = true
-        }
+        // 是否可编辑 状态为被驳回，处理人、创建者、指派人为当前用户
+        this.isEdit = !(this.status == 2 && (handler == userName || createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)))
 
         if (this.status == 0) {// 未处理
           if (createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)) {
-            actions = [
-              {TypeId: 5, FlowActionName: "取消", id: this.$route.query.id},
-            ]
+            actions = [{TypeId: 5, FlowActionName: "取消", id: this.$route.query.id}]
           } else if (role == 5) {
             actions = [
               {TypeId: 4, FlowActionName: "驳回", id: this.$route.query.id},
@@ -142,27 +128,14 @@
           if (createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)) {
             actions = [
               {TypeId: 5, FlowActionName: "取消请求", id: this.$route.query.id},
-              {
-                TypeId: 1,
-                FlowActionName: "再次提交",
-                params: {status: 0, id: this.$route.query.id},
-                id: this.$route.query.id
-              },
+              {TypeId: 1, FlowActionName: "再次提交", params: {status: 0, id: this.$route.query.id}, id: this.$route.query.id},
             ]
           } else {
             // edti 不可编辑
           }
         } else if (this.status == 3) { // 待评价
           if (createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)) {
-            actions = [
-              {TypeId: 8, FlowActionName: "提交评价", id: this.$route.query.id},
-              /*{
-                TypeId: 11,
-                FlowActionName: "再次提交",
-                params: {status: 0, id: this.$route.query.id},
-                id: this.$route.query.id
-              },*/
-            ]
+            actions = [{TypeId: 8, FlowActionName: "提交评价", id: this.$route.query.id}]
           } else {
             // edti 不可编辑
           }
@@ -180,7 +153,7 @@
         if (!this.handleRequest) return {isShow : false, isEvaluate: false}
         let toUser = getUserInfo().toUser, createUser = this.handleRequest.createUser.split("/")[1]
         let isShow = this.status == 99
-        let isEvaluate = createUser == getUserInfo().user.userName || (toUser && toUser.split(",").indexOf(createUser) != -1)
+        let isEvaluate = (createUser == getUserInfo().user.userName || (toUser && toUser.split(",").indexOf(createUser) != -1)) && this.status == 3
         return {isShow : isShow, isEvaluate: isEvaluate}
       }
     },

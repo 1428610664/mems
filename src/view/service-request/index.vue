@@ -95,6 +95,14 @@
         this.getList()
       }, 800)
     },
+    watch: {
+      '$route' (to, from) {
+        if(to.path == "/serviceRequest"){
+          this.refresh.params.keyWord = ''
+          this.getList(false, true)
+        }
+      }
+    },
     methods: {
       ...mapMutations({
         setTemporaryRequest: 'SET_TEMPORARY_REQUEST',

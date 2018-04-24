@@ -70,6 +70,14 @@
         this.getList()
       }, 800)
     },
+    watch: {
+      '$route' (to, from) {
+        if(to.path == "/change"){
+          this.refresh.params.keyWord = ''
+          this.getList(false, true)
+        }
+      }
+    },
     methods: {
       ...mapMutations({
         setChange: 'SET_CHANGE'

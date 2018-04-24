@@ -4,13 +4,13 @@
     <ul class="grid-wrapper clear">
       <router-link to="/serviceRequest" tag="li" class="grid posct">
         <div>
-          <div class="icon iconfont posct icon-fuwuqingqiu fz24 mb1"><i class="number fz12">{{servicesNumber}}</i></div>
+          <div class="icon iconfont posct icon-fuwuqingqiu fz24 mb1"><i class="number fz12" v-if="servicesNumber > 0">{{servicesNumber}}</i></div>
           <div class="name ct">服务请求</div>
         </div>
       </router-link>
       <router-link to="/faultsWarning" tag="li" class="grid posct">
         <div>
-          <div class="icon iconfont posct icon-xitongguzhang fz22 mb2"><i class="number fz12">{{faultsNumber}}</i></div>
+          <div class="icon iconfont posct icon-xitongguzhang fz22 mb2"><i class="number fz12" v-if="faultsNumber > 0">{{faultsNumber}}</i></div>
           <div class="name ct">人工报障</div>
         </div>
       </router-link>
