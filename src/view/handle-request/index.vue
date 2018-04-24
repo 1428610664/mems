@@ -14,7 +14,8 @@
             <span class="label c4">状态</span>
             <span :class="getStatusType(status).class">{{getStatusType(status).title}}</span>
           </div>
-          <selector v-model="bindData.type" :readonly="isEdit" title="是否查数" :options="checkNumberArray"></selector>
+          <x-input v-model="bindData.type == 1 ? '是' : '否'" v-if="isEdit" :readonly="true" title="是否查数"></x-input>
+          <selector v-model="bindData.type" v-if="!isEdit" title="是否查数" :options="checkNumberArray"></selector>
           <div class="hr"></div>
           <app-select :url="sysTypeTypeUrl" :readonly="isEdit" title="系统分类" :search="true" v-model="bindData.appType"></app-select>
           <div class="hr"></div>

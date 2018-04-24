@@ -9,7 +9,8 @@
           <x-input title="名称" v-model="bindData.name"></x-input>
           <x-input title="手机" v-model="bindData.mobilePhone"></x-input>
           <x-input title="固定电话" v-model="bindData.tel"></x-input>
-          <selector v-model="bindData.type" :readonly="true" title="状态" :options="checkNumberArray"></selector>
+          <!--<selector v-model="bindData.type" :readonly="true" title="状态" :options="checkNumberArray"></selector>-->
+          <x-input v-model="bindData.type == 1 ? '可用' : '不可用'" :readonly="true" title="状态"></x-input>
           <x-input title="部门" v-model="bindData.depart"></x-input>
           <x-input title="微信" v-model="bindData.wechat"></x-input>
           <x-input title="email" v-model="bindData.email"></x-input>
