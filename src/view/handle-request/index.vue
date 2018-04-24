@@ -14,7 +14,8 @@
             <span class="label c4">状态</span>
             <span :class="getStatusType(status).class">{{getStatusType(status).title}}</span>
           </div>
-          <selector v-model="bindData.type" :readonly="isEdit" title="是否查数" :options="checkNumberArray"></selector>
+          <x-input v-model="bindData.type == 1 ? '是' : '否'" v-if="isEdit" :readonly="true" title="是否查数"></x-input>
+          <selector v-model="bindData.type" v-if="!isEdit" title="是否查数" :options="checkNumberArray"></selector>
           <div class="hr"></div>
           <app-select :url="sysTypeTypeUrl" :readonly="isEdit" title="系统分类" :search="true" v-model="bindData.appType"></app-select>
           <div class="hr"></div>
@@ -97,11 +98,11 @@
       FlowActions() {
         if (!this.handleRequest) return []
         let actions = []
-        let createUser = this.handleRequest.createUser.split("/")[1], handler = this.handleRequest.handler.split("/")[1]
+        let createUser = this.handleRequest.createUser.split("/")[1], handler = this._getHandler(this.handleRequest.handler)
         let userName = getUserInfo().user.userName, toUser = getUserInfo().toUser, role = getUserInfo().user.role
 
         // 是否可编辑 状态为被驳回，处理人、创建者、指派人为当前用户
-        this.isEdit = !(this.status == 2 && (handler == userName || createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)))
+        this.isEdit = !(this.status == 2 && (handler.indexOf(userName) !=-1 || createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)))
 
         if (this.status == 0) {// 未处理
           if (createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)) {
@@ -116,7 +117,7 @@
             actions = []
           }
         } else if (this.status == 1) { // 处理中
-          if (handler == userName || (toUser && toUser.split(",").indexOf(handler) != -1)) {
+          if (handler.indexOf(userName) !=-1 || (toUser && this._handlerInToUser(toUser, handler))) {
             actions = [
               {TypeId: 3, FlowActionName: "转派", id: this.$route.query.id},
               {TypeId: 7, FlowActionName: "关单", id: this.$route.query.id},
@@ -187,6 +188,24 @@
         } else {
           this.$router.replace('/serviceRequest')
         }
+      },
+      _getHandler(handler){
+        let handlers = handler.split(","), h = []
+        for(let k of handlers){
+          h.push(k.split("/")[1])
+        }
+        return h
+      },
+      _handlerInToUser(toUser, handlers){
+        // toUser.split(",").indexOf(handler) != -1)
+        let mark = false
+        for(let k of handlers){
+          if(toUser.split(",").indexOf(k) != -1){
+            mark = true
+            break
+          }
+        }
+        return mark
       }
     },
     components: {
