@@ -119,7 +119,7 @@
               break
             case '2':  // 被驳回
               actions = [
-                {TypeId: 16, FlowActionName: "取消", id: this.$route.query.id},
+                {TypeId: 16, FlowActionName: "取消报障", id: this.$route.query.id},
                 {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id}
               ]
               break
@@ -159,7 +159,7 @@
           let evaluate = this.$refs.evaluateWrapper.getEvaluate()
           if(!evaluate) return
           action.params = {evaluate: evaluate.evaluate, cacsi: evaluate.cacsi.key}
-        }s
+        }
         this.submitEvent(action)
       },
       _initWarning(){

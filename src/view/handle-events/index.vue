@@ -171,32 +171,16 @@
                  switch (this.status + "") {
                    case "0": //未处理：:
                      if(this.handleEvents.sourceAgent == "user"){ //人工报障
-                       // if(this.handleEvents.handler == "" || this.handleEvents.handler == null){ //没有处理人
                          actions = [buttons[4],buttons[3]]  //受理 转派
-                       // }else {
-                       //   actions = [buttons[4],buttons[3],buttons[0]]  //受理 转派 关单
-                       // }
                      }else{ //非人工报障
-                       // if(this.handleEvents.handler == "" || this.handleEvents.handler == null){ //没有处理人
                          actions = [buttons[4],buttons[3],buttons[7]] //受理 转派 屏蔽
-                       // }else {
-                       //   actions = [buttons[4],buttons[3],buttons[7],buttons[0]] //受理 转派 屏蔽 关单
-                       // }
                      }
                      break;
                    case "1": //处理中
                      if(this.handleEvents.sourceAgent == "user"){  //人工报障
-                       // if(this.handleEvents.handler == "" || this.handleEvents.handler == null){//没有处理人
-                       //   actions = [buttons[4],buttons[3],buttons[0]]  //受理 转派 关单
-                       // }else{
                          actions = [buttons[3],buttons[0]] //转派 关单
-                       // }
                      }else{
-                       // if(this.handleEvents.handler == "" || this.handleEvents.handler == null){ //没有处理人
-                       //   actions = [buttons[4],buttons[3],buttons[7],buttons[0]] //受理 转派 屏蔽 关单
-                       // }else{
                          actions = [buttons[3],buttons[7],buttons[0]] //转派 屏蔽 关单
-                       // }
                      }
                      break;
                    default:
@@ -205,7 +189,6 @@
                }
                break
              default:
-
            }
             break
            case '1': //已响应

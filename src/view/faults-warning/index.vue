@@ -77,14 +77,10 @@
         let Parms = []
         // 普通用户tab切换附加参数
         if(getUserInfo().user.role == 4){
-          Parms = [{status: '0,1,2,3,100',isMy: true}, {status: '4,99',isMy: true}]
+          Parms = [{status: '0,1,2,3,100',isMy: true}, {status: '4,99',passUser: getUserInfo().user.userName}]
         }else {
           // 其它用户tab切换附加参数
-          Parms = [{status: '0'}, {status: '>=1',isMy: true}, {isAll: true}]
-          // 二线用户tab切换附加参数
-          if(getUserInfo().user.role == 2){
-            Parms = [{isTurn: true, status: '<=1'}, {status: '>1',isMy: true, handler: "!=" + getUserInfo().user.userName, passUser: getUserInfo().user.userName},{}]
-          }
+          Parms = [{status: '0',passUser: getUserInfo().user.userName}, {status: '>=1',passUser: getUserInfo().user.userName}, {isAll: true}]
         }
         return Parms
       }
