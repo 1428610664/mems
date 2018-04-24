@@ -23,11 +23,15 @@
           <x-input title="提交时间" :readonly="true" v-model="createTime"></x-input>
           <x-input title="当前处理人" :readonly="true" v-model="handler"></x-input>
           <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
-          <x-input title="满意度" :readonly="true" v-model="cacsi"></x-input>
-          <x-input title="处理评价" :readonly="true" v-model="evaluate"></x-input>
+          <x-input title="满意度" v-if="evaluateObj.isShow" :readonly="true" v-model="cacsi"></x-input>
+          <x-input title="处理评价" v-if="evaluateObj.isShow" :readonly="true" v-model="evaluate"></x-input>
 
           <div class="hr"></div>
           <tabs-pan :id="rowId" :opinionUrl="opinionUrl"></tabs-pan>
+
+          <div v-if="evaluateObj.isEvaluate && status != 99">
+            <evaluate-wrapper ref="evaluateWrapper"></evaluate-wrapper>
+          </div>
         </group>
       </div>
 
@@ -41,6 +45,7 @@
 
   import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
+  import EvaluateWrapper from 'components/evaluate-wrapper'
   import TabsPan from 'components/tabs-pan/tabs-pan'
   import appSelect from 'components/multi-select/app-select'
   import {getUrl} from 'common/js/Urls'
@@ -78,7 +83,8 @@
           appType: {message: "请选择系统分类", check: "isEmpty"},
           appName: {message: "请选择所属系统", check: "isEmpty"},
         },
-        checkNumberArray: [{key: "1", value: '是'}, {key: "2", value: '否'}]
+        checkNumberArray: [{key: "1", value: '是'}, {key: "2", value: '否'}],
+
       }
     },
     computed: {
@@ -150,12 +156,12 @@
           if (createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)) {
             actions = [
               {TypeId: 8, FlowActionName: "提交评价", id: this.$route.query.id},
-              {
+              /*{
                 TypeId: 11,
                 FlowActionName: "再次提交",
                 params: {status: 0, id: this.$route.query.id},
                 id: this.$route.query.id
-              },
+              },*/
             ]
           } else {
             // edti 不可编辑
@@ -165,6 +171,17 @@
           actions = []
         }
         return actions
+      },
+      /**
+       * 评价相关
+       *
+       */
+      evaluateObj(){
+        if (!this.handleRequest) return {isShow : false, isEvaluate: false}
+        let toUser = getUserInfo().toUser, createUser = this.handleRequest.createUser.split("/")[1]
+        let isShow = this.status == 99
+        let isEvaluate = createUser == getUserInfo().user.userName || (toUser && toUser.split(",").indexOf(createUser) != -1)
+        return {isShow : isShow, isEvaluate: isEvaluate}
       }
     },
     created() {
@@ -175,6 +192,11 @@
         setHandleRequest: 'SET_HANDLE_REQUEST',
       }),
       footerEvent(action) {
+        if(action.TypeId == 8){
+          let evaluate = this.$refs.evaluateWrapper.getEvaluate()
+          if(!evaluate) return
+          action.params = {evaluate: evaluate.evaluate, cacsi: evaluate.cacsi.key}
+        }
         this.submitEvent(action)
       },
       _initRequest() {
@@ -198,6 +220,7 @@
       commFooter,
       appSelect,
       TabsPan,
+      EvaluateWrapper,
 
       XHeader,
       Group,

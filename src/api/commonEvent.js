@@ -1,4 +1,6 @@
 
+
+// 参数3： 1的值表示提交数据时不带上bindData
 export function actionJson(no, id){
   const urlJson = {
     //服务请求
@@ -8,8 +10,8 @@ export function actionJson(no, id){
     No4: [`/services/${id}/reject`, "驳回", 1],	      // 驳回请求
     No5: [`/services/${id}/cancel`, "取消", 1],				// 取消请求
     No6: [`/services/${id}`, "删除"],				        // 删除请求
-    No7: [`/services/${id}/close`, "关闭", 1],			  	// 关闭请求
-    No8: [`/services/${id}/evaluate`, "评价"],			// 评价请求
+    No7: [`/services/${id}/beEvaluate`, "关闭", 1],// 关闭请求
+    No8: [`/services/${id}/evaluate`, "评价", 1],			// 评价请求
     No9: ["/services/opinion", "添加"],				      // 添加请求处理意见
     No10: [`/services/${id}/update`, "修改"],			  // 修改请求
     No11: [`/services/${id}/beEvaluate`, "提交"],  // 待评价请求
