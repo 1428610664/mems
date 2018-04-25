@@ -53,7 +53,7 @@
     },
     created() {
       setTimeout(() => {
-        this.getList()
+        this.getList(false, true)
       }, 800)
     },
     activated() {

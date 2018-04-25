@@ -106,7 +106,7 @@
 
         if (this.status == 0) {// 未处理
           if (createUser == userName || (toUser && toUser.split(",").indexOf(createUser) != -1)) {
-            actions = [{TypeId: 5, FlowActionName: "取消", id: this.$route.query.id}]
+            actions = [{TypeId: 5, FlowActionName: "取消请求", id: this.$route.query.id}]
           } else if (role == 5) {
             actions = [
               {TypeId: 4, FlowActionName: "驳回", id: this.$route.query.id},

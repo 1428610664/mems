@@ -69,7 +69,7 @@ export default {
 	*/
 	isPhone : function(val){
 		var ref = /^0?1[3|4|5|7|8][0-9]\d{8}$/;
-		return ref.test(val);
+		return !ref.test(val);
 	},
 	/*
 		电话验证

@@ -1,4 +1,4 @@
-<template>
+ <template>
   <transition name="move">
     <div class="seting-wrapper b">
       <x-header :left-options="{backText: ''}">设置</x-header>
@@ -7,10 +7,9 @@
         <group label-width="4.5em" label-margin-right="2em" label-align="right">
           <x-input title="账号"  :readonly="true" v-model="bindData.userName"></x-input>
           <x-input title="名称" v-model="bindData.name"></x-input>
-          <x-input title="手机" v-model="bindData.mobilePhone"></x-input>
+          <x-input title="手机" v-model="bindData.mobilePhone" :max="11"></x-input>
           <x-input title="固定电话" v-model="bindData.tel"></x-input>
-          <!--<selector v-model="bindData.type" :readonly="true" title="状态" :options="checkNumberArray"></selector>-->
-          <x-input v-model="bindData.type == 1 ? '可用' : '不可用'" :readonly="true" title="状态"></x-input>
+          <cell title="状态" :value="bindData.type == 1 ? '可用' : '不可用'"></cell>
           <x-input title="部门" v-model="bindData.depart"></x-input>
           <x-input title="微信" v-model="bindData.wechat"></x-input>
           <x-input title="email" v-model="bindData.email"></x-input>
@@ -25,14 +24,16 @@
 
 <script>
 
-  import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
+  import {XHeader, Group, XTextarea,Cell, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
-  import {getUserInfo} from 'common/js/cache'
+  import {getUserInfo, setUserInfo} from 'common/js/cache'
   import request from 'common/js/request'
   import {getUrl} from 'common/js/Urls'
+  import {commonMixin} from "common/mixin/eventMixin"
 
   export default {
     name: "index",
+    mixins: [commonMixin],
     data() {
       return {
         bindData: {
@@ -46,8 +47,10 @@
           email: '',          // 邮箱
           memo: '',           // 备注
         },
-
-        checkNumberArray: [{key: "1", value: '可用'}, {key: "0", value: '不可用'}],
+        checkData: {
+          name: {message: "请输入变更名称", check: "isEmpty"},
+          mobilePhone: {message: "请填写正确的手机号码", check: "isPhone"},
+        },
         acitons: [
           {TypeId: 1, FlowActionName: "保存"},
           {TypeId: 0, FlowActionName: "取消"}
@@ -68,15 +71,27 @@
           history.go(-1)
           return
         }
+        if(!this._checkData()) return
+
         console.log(JSON.stringify(this.bindData))
         this.$vux.loading.show({text: '数据提交中...'})
         request.post(getUrl("users"), Object.assign({}, {id: getUserInfo().user.id}, this.bindData)).then(res => {
           this.$vux.loading.hide()
           this.$vux.toast.text(res.desc, "bottom")
-          if(res.success) history.go(-1)
+          if(res.success){
+            this._setUserInfo()
+            history.go(-1)
+          }
         }, error => {
           this.$vux.loading.hide()
         })
+      },
+      _setUserInfo(){
+        let userInfo = getUserInfo().user
+        for (var k in this.bindData) {
+          if(k != "type")userInfo[k] = this.bindData[k]
+        }
+        setUserInfo(Object.assign({}, getUserInfo(), {user: userInfo}))
       }
     },
     components: {
@@ -84,6 +99,7 @@
       Group,
       XTextarea,
       XInput,
+      Cell,
       Selector,
 
       commFooter,

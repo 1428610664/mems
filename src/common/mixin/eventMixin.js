@@ -2,7 +2,7 @@ import request from 'common/js/request'
 import {actionJson} from 'api/commonEvent'
 import utils from 'common/js/utils'
 
-const commonMixin = {
+export const commonMixin = {
   methods: {
     /**
      * 验证参数

@@ -83,7 +83,7 @@
           Parms = [{status: '0'}, {status: '>=1',  passUser: getUserInfo().user.userName, sort: "changeTime", order: "desc"}, {isAll: true}]
           // 二线用户tab切换附加参数
           if(getUserInfo().user.role == 2){
-            Parms = [{isTurn: true, status: '<=1'}, {status: '>1', handler: "!=" + getUserInfo().user.userName, passUser: getUserInfo().user.userName},{}]
+            Parms = [{isTurn: true, status: '<=1'}, {status: '>0', handler: "!=" + getUserInfo().user.userName, passUser: getUserInfo().user.userName},{}]
           }
         }
         return Parms
