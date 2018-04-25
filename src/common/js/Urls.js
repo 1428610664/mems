@@ -118,6 +118,11 @@ const requestUrl = {
   changes: {
     url: "/changes",
     pre: preUrl
+  },
+  //查询配置
+  obtainConfig:{
+    url: '/config/rule',
+    pre: preUrl
   }
 }
 

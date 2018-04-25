@@ -30,11 +30,11 @@
     data() {
       return {
         rows: [],
-        selectValue: [this.value],
+        selectValue: this.value == ''? [] :[this.value],
         params: {
           keyWord: '',
           offset: 0,
-          limit: 20
+          limit: 200
         },
         style:{
           height: 'inherit'
@@ -64,6 +64,7 @@
         type: String,
         default: ''
       },
+      field:'',
       param: '',
       title: {
         type: String,
@@ -101,6 +102,7 @@
         if(v.appType || v.appName)this.getRows()
       },
       selectValue(v){
+        console.log(v)
         this.$emit('input', v.join(","))
       }
     },
@@ -134,7 +136,13 @@
           this.dateRow = []
           if (data.success) {
             data.data.rows.forEach((item) => {
-              this.rows.push({key: item, value: item})
+              let _key = item
+              let _value= item
+              if(this.field != ''){
+                   _key = item[this.field]
+                   _value = item[this.field]
+              }
+              this.rows.push({key: _key, value: _value})
             })
             this.dateRow = this.rows
           }

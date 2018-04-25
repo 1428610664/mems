@@ -205,9 +205,12 @@ export const eventsMixin = {
         })
       }else {
         _this.$vux.toast.text(action.FlowActionName, "bottom")
-
         if(action.TypeId == 26){ // 转派
            this.$router.push({path: "/turnSendevents",query:{id: action.id,type: "",row:Object.assign({}, this.bindData)}})
+          return
+        }
+        if(action.TypeId == 30) {
+          this.$router.push({path: "/closeEvent",query:{id: action.id,type: "",row:Object.assign({}, this.bindData)}})
           return
         }
         if(!this._checkData()) return

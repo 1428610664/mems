@@ -67,6 +67,10 @@ export default new Router({
                 {
                   path: '/turnSendevents',
                   component: (resolve) => require(['view/turn-sendevents'], resolve)
+                },
+                {
+                  path: '/closeEvent',
+                  component: (resolve) => require(['view/close-events'], resolve)
                 }
               ]
             },
