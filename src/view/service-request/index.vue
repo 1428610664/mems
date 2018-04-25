@@ -75,16 +75,11 @@
       getTabParms(){
         // status：【0：未受理】【1：处理中】【2：被驳回】【3：待评价】【4：已取消】【99：已关闭】【100：暂存】
         let Parms = []
-        // 普通用户tab切换附加参数
-        if(getUserInfo().user.role == 4){
-          Parms = [{status: '0,1,2,3,100',isMy: true}, {status: '4,99',isMy: true}]
-        }else {
+        if(getUserInfo().user.role == 4){// 普通用户
+          Parms = [{status: '0,1,2,3,100',createUser: getUserInfo().user.userName}, {status: '4,99',createUser: getUserInfo().user.userName}]
+        }else{  // 服务台用户
           // 其它用户tab切换附加参数
-          Parms = [{status: '0'}, {status: '>=1',  passUser: getUserInfo().user.userName, sort: "changeTime", order: "desc"}, {isAll: true}]
-          // 二线用户tab切换附加参数
-          if(getUserInfo().user.role == 2){
-            Parms = [{isTurn: true, status: '<=1'}, {status: '>0', handler: "!=" + getUserInfo().user.userName, passUser: getUserInfo().user.userName},{}]
-          }
+          Parms = [{status: '0,1,2,3,100',handler: getUserInfo().user.userName }, {status: '>=1',  passUser: getUserInfo().user.userName, sort: "changeTime", order: "desc"}, {isAll: true}]
         }
         return Parms
       }

@@ -11,9 +11,12 @@ export const numberMixin = {
       setEventsNumber: 'SET_EVENTS_NUMBER'
     }),
     getServiceNumber() {
-      let Parms = {status: '0'}
-      if(getUserInfo().user.role == 2)  Parms = {isTurn: true, status: '<=1'}
-      if(getUserInfo().user.role == 4 )Parms = {status: '0,1,2,3,100',isMy: true}
+      let Parms = {}
+      if(getUserInfo().user.role == 4){
+        Parms = {status: '0,1,2,3,100',createUser: getUserInfo().user.userName}
+      }else{
+        Parms = {status: '0,1,2,3,100',handler: getUserInfo().user.userName }
+      }
       request.get(getUrl("servicesNumber"), Parms).then(res => {
         if(res.success){
           this.setServicesNumber(res.data.number)
@@ -23,8 +26,8 @@ export const numberMixin = {
       })
     },
     getFaultsNumber() {
-      let Parms ={status: '0',passUser: getUserInfo().user.userName}
-      if(getUserInfo().user.role == 4 )Parms = {status: '0,1,2,3,100',isMy: true}
+      let Parms ={status: '0,1,2,3,100',handler: getUserInfo().user.userName }
+      if(getUserInfo().user.role == 4 )Parms = {status: '0,1,2,3,100',createUser: getUserInfo().user.userName}
       request.get(getUrl("faultsNumber"), Parms).then(res => {
         if(res.success){
           this.setFaultsNumber(res.data.number)

@@ -83,7 +83,7 @@
       getTabParms(){
         // status：【0：未受理】【1：处理中】【2：被驳回】【3：待评价】【4：已取消】【99：已关闭】【100：暂存】
         let Parms = []
-        // 普通用户tab切换附加参数
+        // 服务台tab切换附加参数
         if(getUserInfo().user.role == 5){
           Parms = [{status: '0,1',processStatus:0}, {processStatus:1}, {}]
         }else {
