@@ -135,6 +135,7 @@
       FlowActions(){
         if(!this.handleEvents) return []
         let userName = getUserInfo().user.userName, role = getUserInfo().user.role
+        let _userName = getUserInfo().user.name +"/" + userName, handler =this.handleEvents.handler
         this.readonly = true
         if(this.status == 99){
           return []
@@ -162,6 +163,7 @@
                }
                break
              case "2": //二线人工告警待处理
+               if(handler && handler.indexOf(_userName) == -1) return []
                this.readonly = false
                if(this.handleEvents["suppressEscl"] == "5"){  //误报： 取消误报 关单
                  actions =  [buttons[2],buttons[0]]

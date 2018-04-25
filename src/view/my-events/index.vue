@@ -85,9 +85,9 @@
         let Parms = []
         // 普通用户tab切换附加参数
         if(getUserInfo().user.role == 5){
-          Parms = [{status: '0,1',isMy: false,isTurn:false,processStatus:0}, {isMy: false,isTurn:false,processStatus:1}, {}]
+          Parms = [{status: '0,1',processStatus:0}, {processStatus:1}, {}]
         }else {
-          Parms = [{status: '0,1',isTurn: true, passUser: getUserInfo().user.userName ,isPass:false}, {status: '99', passUser: getUserInfo().user.userName,isTurn:true,isPass:false},{}]
+          Parms = [{status: '0,1',isTurn: true, passUser: getUserInfo().user.userName}, {status: '99', passUser: getUserInfo().user.userName,isTurn:true},{}]
         }
         return Parms
       }
