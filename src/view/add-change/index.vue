@@ -88,9 +88,13 @@
           history.go(-1)
           return
         }
-        if(!this._checkData()) return
 
-        console.log(JSON.stringify(action))
+        if(!this._checkData()) return
+        if(this._trim(this.bindData.desc).length == 32){
+          this.$vux.toast.text("请填写变更内容", "bottom")
+          return
+        }
+
         return
         Object.assign(action.params, this.bindData)
         this.submitEvent(action)
@@ -98,13 +102,22 @@
       init(){
         if(!this.isModify) return
         console.log("==========="+JSON.stringify(this.change))
-
         for(let k in this.bindData){
           if(this.change[k]) this.bindData[k] = this.change[k]
         }
         this.bindData.bTime =  new Date(this.change.beginTime.time).format("yyyy-MM-dd hh:mm:ss")
         this.bindData.eTime =  new Date(this.change.endTime.time).format("yyyy-MM-dd hh:mm:ss")
         this.bindData.desc =  this.change.cdesc
+      },
+      /**
+       * 去除空格、html标签、换行
+       */
+      _trim(str){
+        str = str.replace(/<[^>]+>/g,"")
+        str = str.replace(/\s+/g, "")
+        str = str.replace(/<\/?.+?>/g,"")
+        str = str.replace(/[\r\n]/g, "")
+        return str
       }
     },
     components: {
