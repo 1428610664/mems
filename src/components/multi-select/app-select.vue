@@ -102,7 +102,6 @@
         if(v.appType || v.appName)this.getRows()
       },
       selectValue(v){
-        console.log(v)
         this.$emit('input', v.join(","))
       }
     },
@@ -138,7 +137,7 @@
             data.data.rows.forEach((item) => {
               let _key = item
               let _value= item
-              if(this.field != ''){
+              if(this.field && this.field != ''){
                    _key = item[this.field]
                    _value = item[this.field]
               }
