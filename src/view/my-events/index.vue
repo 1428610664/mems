@@ -82,13 +82,14 @@
       },
       getTabParms(){
         // status：【0：未受理】【1：处理中】【2：被驳回】【3：待评价】【4：已取消】【99：已关闭】【100：暂存】
-        let Parms = []
+        let Parms = [], toUser = getUserInfo().toUser
         // 服务台tab切换附加参数
         if(getUserInfo().user.role == 5){
           Parms = [{status: '0,1',processStatus:0}, {processStatus:1}, {}]
         }else {
-          Parms = [{status: '0,1,2,3,100',handler: getUserInfo().user.userName }, {status: '>=0',passUser: getUserInfo().user.userName, sort: "changeTime", order: "desc"}, {}]
+          //Parms = [{status: '0,1,2,3,100',handler: getUserInfo().user.userName +(toUser ? ","+toUser: "")}, {status: '>=0',passUser: getUserInfo().user.userName, sort: "changeTime", order: "desc"}, {}]
           //Parms = [{status: '0,1',isTurn: true, passUser: getUserInfo().user.userName}, {status: '99', passUser: getUserInfo().user.userName,isTurn:true},{}]
+          Parms = [{status: '0,1,3',handler: getUserInfo().user.userName +(toUser ? ","+toUser: "")}, {status: '0,1,3,99',passUser: getUserInfo().user.userName, sort: "changeTime", order: "desc"}, {}]
         }
         return Parms
       }

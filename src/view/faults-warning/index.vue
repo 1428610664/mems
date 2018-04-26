@@ -74,13 +74,13 @@
       },
       getTabParms(){
         // status：【0：未受理】【1：处理中】【2：被驳回】【3：待评价】【4：已取消】【99：已关闭】【100：暂存】
-        let Parms = []
+        let Parms = [], toUser = getUserInfo().toUser
         // 普通用户tab切换附加参数
         if(getUserInfo().user.role == 4){// 普通用户
-          Parms = [{status: '0,1,2,3,100',createUser: getUserInfo().user.userName}, {status: '4,99',createUser: getUserInfo().user.userName}]
+          Parms = [{status: '0,1,2,3,100',createUser: getUserInfo().user.userName+(toUser ? ","+toUser: "")}, {status: '4,99',createUser: getUserInfo().user.userName+(toUser ? ","+toUser: "")}]
         }else {
           // 其它用户tab切换附加参数
-          Parms = [{status: '0,1,2,3,100',handler: getUserInfo().user.userName }, {status: '>=1',passUser: getUserInfo().user.userName, sort: "changeTime", order: "desc"}, {isAll: true}]
+          Parms = [{status: '0,1,2,3,100',handler: getUserInfo().user.userName +(toUser ? ","+toUser: "")}, {status: '>=1',passUser: getUserInfo().user.userName, sort: "changeTime", order: "desc"}, {isAll: true}]
         }
         return Parms
       }

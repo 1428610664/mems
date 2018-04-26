@@ -11,11 +11,11 @@ export const numberMixin = {
       setEventsNumber: 'SET_EVENTS_NUMBER'
     }),
     getServiceNumber() {
-      let Parms = {}
+      let Parms = {}, toUser = getUserInfo().toUser
       if(getUserInfo().user.role == 4){
-        Parms = {status: '0,1,2,3,100',createUser: getUserInfo().user.userName}
+        Parms = {status: '0,1,2,3,100',createUser: getUserInfo().user.userName +(toUser ? ","+toUser: "")}
       }else{
-        Parms = {status: '0,1,2,3,100',handler: getUserInfo().user.userName }
+        Parms = {status: '0,1,2,3,100',handler: getUserInfo().user.userName  +(toUser ? ","+toUser: "")}
       }
       request.get(getUrl("servicesNumber"), Parms).then(res => {
         if(res.success){
@@ -26,8 +26,8 @@ export const numberMixin = {
       })
     },
     getFaultsNumber() {
-      let Parms ={status: '0,1,2,3,100',handler: getUserInfo().user.userName }
-      if(getUserInfo().user.role == 4 )Parms = {status: '0,1,2,3,100',createUser: getUserInfo().user.userName}
+      let toUser = getUserInfo().toUser, Parms = {status: '0,1,2,3,100',handler: getUserInfo().user.userName  +(toUser ? ","+toUser: "")}
+      if(getUserInfo().user.role == 4 )Parms = {status: '0,1,2,3,100',createUser: getUserInfo().user.userName  +(toUser ? ","+toUser: "")}
       request.get(getUrl("faultsNumber"), Parms).then(res => {
         if(res.success){
           this.setFaultsNumber(res.data.number)
@@ -37,7 +37,7 @@ export const numberMixin = {
       })
     },
     getEventsNumber() {
-      let Parms = getUserInfo().user.role == 5?  {status: '0,1',isTurn:false,processStatus:0} :{status: '0,1,2,3,100',handler: getUserInfo().user.userName }
+      let toUser = getUserInfo().toUser, Parms = getUserInfo().user.role == 5?  {status: '0,1',processStatus:0} :{status: '0,1,3',handler: getUserInfo().user.userName   +(toUser ? ","+toUser: "")}
       request.get(getUrl("eventsNumber"), Parms).then(res => {
         if(res.success){
           this.setEventsNumber(res.data.number)

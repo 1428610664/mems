@@ -260,8 +260,26 @@ export default {
      * @returns {*}
      */
     Vue.prototype.getEventStatusType = function (row) {
-
-      if(row.status == 99){
+      // 【0:未受理】【1:处理中】【2:恢复】【3:屏蔽】【4:变更】【5:维护期】【99:关闭】
+      switch (row.status){
+        case 0:
+          return {title: '未受理', class: 'status-danger'}
+        case 1:
+          return {title: '处理中', class: 'status-success'}
+        case 2:
+          return {title: '已恢复', class: 'status-success'}
+        case 3:
+          return {title: '已屏蔽', class: 'status-success'}
+        case 4:
+          return{title: '变更', class: 'status-success'}
+        case 5:
+          return {title: '维护期', class: 'status-success'}
+        case 99:
+          return {title: '已关闭', class: 'status-default'}
+        default:
+          return {title: '未知', class: 'status-danger'}
+      }
+      /*if(row.status == 99){
         return {title: '已关闭', class: 'status-default'}
       }else if(row["recoverTime"]){
         // 如果【recover_time】有值，事件状态改为：已恢复
@@ -288,7 +306,7 @@ export default {
             }
           }
         }
-      }
+      }*/
     }
     /**
      * 事件来源转义
