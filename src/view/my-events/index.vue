@@ -87,7 +87,8 @@
         if(getUserInfo().user.role == 5){
           Parms = [{status: '0,1',processStatus:0}, {processStatus:1}, {}]
         }else {
-          Parms = [{status: '0,1',isTurn: true, passUser: getUserInfo().user.userName}, {status: '99', passUser: getUserInfo().user.userName,isTurn:true},{}]
+          Parms = [{status: '0,1,2,3,100',handler: getUserInfo().user.userName }, {status: '>=0',passUser: getUserInfo().user.userName, sort: "changeTime", order: "desc"}, {}]
+          //Parms = [{status: '0,1',isTurn: true, passUser: getUserInfo().user.userName}, {status: '99', passUser: getUserInfo().user.userName,isTurn:true},{}]
         }
         return Parms
       }

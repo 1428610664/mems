@@ -428,6 +428,7 @@
       //获取选中值开始入口
       getNodesRule (data) {
         data = data || this.data
+        console.log(data)
         let res = []
         for (const item of data) {
           for (const node of item.children){

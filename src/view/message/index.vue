@@ -40,6 +40,7 @@
     data() {
       return {
         selectIndex: 0,
+        isInit: false,
 
         refresh: {
           content: [],
@@ -58,6 +59,7 @@
     },
     activated() {
       //this.$refs.scroll.refresh()
+      if(!this.isInit) return
       this.getList(false, true)
       this.$refs.scroll.scrollTo(0, 0, 200, "")
     },
@@ -95,6 +97,7 @@
         }
         request.get(getUrl("myMessage"), Object.assign({}, this.refresh.params, param)).then(data => {
           this.$vux.loading.hide()
+          this.isInit = true
           if (data.data) {
             this.refresh.isPullLoaded = false
             this.refresh.totalCount = data.data.total
@@ -104,6 +107,7 @@
           }
           this.$refs.scroll.requestSuccess(data.data, isUpload, pullRefresh, this.refresh.content, this.refresh.totalCount)
         }, error => {
+          this.isInit = true
           this.$vux.loading.hide()
           console.log("error=======" + JSON.stringify(error))
         })

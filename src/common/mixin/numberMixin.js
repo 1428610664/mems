@@ -37,7 +37,7 @@ export const numberMixin = {
       })
     },
     getEventsNumber() {
-      let Parms = getUserInfo().user.role == 5?  {status: '0,1',isTurn:false,processStatus:0} :{status: '0,1',isTurn: true,passUser: getUserInfo().user.userName,isPass:false}
+      let Parms = getUserInfo().user.role == 5?  {status: '0,1',isTurn:false,processStatus:0} :{status: '0,1,2,3,100',handler: getUserInfo().user.userName }
       request.get(getUrl("eventsNumber"), Parms).then(res => {
         if(res.success){
           this.setEventsNumber(res.data.number)

@@ -6,7 +6,7 @@
     </div>
     <div v-transfer-dom>
       <popup v-model="dropDown" position="bottom" max-height="80%">
-          <div class="check_keyWorld search-wrapper b" v-show="search">
+          <div class="check_keyWorld search-wrapper b " v-show="search">
             <search-box @query="searchTree" :placeholder="placeholder"></search-box>
           </div>
         <div class="check_item" :style="style">
@@ -205,7 +205,10 @@
 </script>
 
 <style scoped>
-  .check_keyWorld{height: 42px;}
   .check_button{padding:15px; height:45px; }
   .check_item{overflow: auto;background-color: #ffffff;}
+
+  .search-wrapper {
+    padding: 5px 3%;
+  }
 </style>

@@ -11,8 +11,9 @@
           <x-input :value="_paseWeek(bindData.daysOfWeek)" :readonly="true" title="日期" v-show="bindData.winType == '20'" is-link @click.native="$refs.selectDay.show()"></x-input>
           <x-input :value="bindData.daysOfMonth" :readonly="true" title="日期" v-show="bindData.winType == '30'" is-link @click.native="$refs.selectWeek.show()"></x-input>
 
-          <datetime v-model="bTime1" v-show="bindData.winType == '0'" format="YYYY-MM-DD HH:mm:ss" title="开始时间"></datetime>
-          <datetime v-model="eTime1" v-show="bindData.winType == '0'" format="YYYY-MM-DD HH:mm:ss" title="结束时间"></datetime>
+          <datetime v-model="bTime1" :end-date="eTime1" v-show="bindData.winType == '0'" format="YYYY-MM-DD HH:mm:ss" title="开始时间"></datetime>
+          <datetime v-model="eTime1" :start-date="bTime1" v-show="bindData.winType == '0'" format="YYYY-MM-DD HH:mm:ss" title="结束时间"></datetime>
+
           <datetime v-model="bTime2" v-show="bindData.winType != '0'" format="YYYY-MM-DD" title="开始时间"></datetime>
           <datetime v-model="eTime2" v-show="bindData.winType != '0'" format="YYYY-MM-DD" title="结束时间"></datetime>
 
@@ -20,12 +21,12 @@
           <selector v-model="bindData.loopEndTime" v-show="bindData.winType != '0'" title="循环结束时间" :options="loopTimeArray()"></selector>
 
           <x-textarea title="描述" v-model="bindData.desc" placeholder="请输入文字" :show-counter="false" :rows="5" :max="200"></x-textarea>
+          <div class="hr"></div>
 
-           <check-tree :search="true"></check-tree>
+          <rule ref="rule"></rule>
+
+          <check-tree :search="true"></check-tree>
         </group>
-         <!--<v-tree ref="tree2" :data='treeData2'/>-->
-
-
       </div>
 
       <select-day v-model="bindData.daysOfWeek" :options="weekArray()" ref="selectDay"></select-day>
@@ -42,6 +43,7 @@
   import checkTree from 'components/check-tree'
   import SelectDay from 'components/select-day'
   import datetime from 'components/datetime'
+  import Rule from 'components/rule'
   import {getUrl} from 'common/js/Urls'
   import {mapGetters} from 'vuex'
   import utils from 'common/js/utils'
@@ -50,13 +52,6 @@
     name: "index",
     data() {
       return {
-
-        treeData2: [{
-          title: 'node1',
-          expanded: true,
-          children: [{title: 'node 1-1',children: [{title: 'node 1-1'}, {title: 'node 1-2'}]}, {title: 'node 1-2',children: [{title: 'node 1-1'}, {title: 'node 1-2'}]}]
-        }],
-
         bTime1: '',     // 开始时间YYYY-MM-DD HH:mm:ss
         eTime1: '',     // 结束时间YYYY-MM-DD HH:mm:ss
         bTime2: '',     // 开始时间YYYY-MM-DD
@@ -127,7 +122,8 @@
       footerEvent(action) {
         console.log(JSON.stringify(action))
         if (action.TypeId == 0) {
-          history.go(-1)
+          //history.go(-1)
+          console.log("rule：" + JSON.stringify(this.$refs.rule.getData()))
           return
         }
         // 时间替换上
@@ -181,6 +177,7 @@
       datetime,
       SelectDay,
       checkTree,
+      Rule,
 
       XHeader,
       Group,
