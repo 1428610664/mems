@@ -80,7 +80,7 @@
         this.$refs.checkTree.showTreeModel(index)
       },
       treeConfirm(value, nodesRule){
-        console.log(v+"-------------"+nodesRule)
+        console.log(value+"-------------"+nodesRule)
       }
     },
     components: {
