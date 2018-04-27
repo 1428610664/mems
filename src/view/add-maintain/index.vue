@@ -24,8 +24,6 @@
           <div class="hr"></div>
 
           <rule ref="rule"></rule>
-
-          <check-tree :search="true"></check-tree>
         </group>
       </div>
 
@@ -40,7 +38,6 @@
 
   import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
-  import checkTree from 'components/check-tree'
   import SelectDay from 'components/select-day'
   import datetime from 'components/datetime'
   import Rule from 'components/rule'
@@ -176,7 +173,6 @@
       commFooter,
       datetime,
       SelectDay,
-      checkTree,
       Rule,
 
       XHeader,

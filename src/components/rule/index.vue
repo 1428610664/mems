@@ -6,8 +6,11 @@
         <i class="btn c1 iconfont icon-jia fz24" @click="onAdd(index)"></i>
         <i class="btn c2 iconfont icon-wuuiconsuoxiao fz24" @click="onSub(index)" v-if="index != 0"></i>
       </div>
-      <rule-item :rule="item" :index="index" @on-change="itemChange" :isChange="isChange"></rule-item>
+      <rule-item :rule="item" :index="index" @on-change="itemChange" :isChange="isChange" @showTreeModel="showTreeModel"></rule-item>
     </div>
+
+    <check-tree :search="true" ref="checkTree" @on-confirm="treeConfirm"></check-tree>
+
   </div>
 
 </template>
@@ -15,6 +18,7 @@
 <script>
 
   import RuleItem from 'components/rule-item'
+  import checkTree from 'components/check-tree'
   import utils from 'common/js/utils'
 
   export default {
@@ -70,10 +74,18 @@
           return false
         }
         return rule
+      },
+
+      showTreeModel(index){
+        this.$refs.checkTree.showTreeModel(index)
+      },
+      treeConfirm(value, nodesRule){
+        console.log(v+"-------------"+nodesRule)
       }
     },
     components: {
-      RuleItem
+      RuleItem,
+      checkTree
     }
   }
 </script>

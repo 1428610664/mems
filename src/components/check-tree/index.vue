@@ -14,7 +14,6 @@
         </div>
         <div class="check_button">
           <x-button @click.native="onConfirm" plain type="primary">确认</x-button>
-          <!--<x-button @click.native="setValue" plain type="primary">设置选中值</x-button>-->
         </div>
       </popup>
     </div>
@@ -22,14 +21,16 @@
 </template>
 
 <script>
-  import {XInput, Cell, Checklist, Actionsheet, TransferDom, Popup, XButton} from 'vux'
 
-  import SearchBox from 'components/search-box/search-box'
+  import {XInput, Cell, Checklist, Actionsheet, TransferDom, Popup, XButton} from 'vux'
   import request from 'common/js/request'
+  import {getUrl} from 'common/js/Urls'
+  import SearchBox from 'components/search-box/search-box'
 
   export default {
     data() {
       return {
+        index: 0, // 记录索引
         rows: [],
         checkValue: [],
         treeData:[
@@ -122,19 +123,6 @@
         dropDown: false
       }
     },
-    components: {
-      SearchBox,
-
-      XInput,
-      Checklist,
-      Cell,
-      Actionsheet,
-      Popup,
-      XButton
-    },
-    directives: {
-      TransferDom
-    },
     props: {
       value:[],
       search: {
@@ -177,30 +165,43 @@
           this.$refs.zTree.searchNodes(val)
       },
       getTreeData() {
-        // request.get("url", Object.assign({})).then((data) => {
-        //   this.rows = []
-        //   if (data.success) {
-        //    // this.treeData = data.data.rows
-        //     this.$nextTick(function () {
-        //       this.$refs.zTree.setAppTypeChecked(this.value)
-        //     })
-        //   }
-        // }, (error) => {
-        //   console.log(JSON.stringify('error===' + error))
-        // })
+        request.get(getUrl("findTree"), {}).then(res => {
+          console.log(JSON.stringify(res))
+          this.treeData = res.children
+        }, error =>{
+          console.log('error===' + error)
+        })
+      },
+      setCheckValue(v){
+        if(v)this.$refs.zTree.setAppTypeChecked(v)
+      },
+      showTreeModel(index, value){
+        this.index = index
+        this.dropDown = true
+        this.style.height =  window.screen.height * 0.8 -117 + "px"
+        this.setCheckValue(value)
       },
       onConfirm() {
         this.dropDown = false
         console.log('getNodesRule')
         console.log(JSON.stringify(this.$refs.zTree.getNodesRule()))
         this.$emit('input', this.checkValue.join(","))
-        this.$emit('on-confirm', this.checkValue.join(","))
-      },
-      // setValue() {
-      //  let aa =[{"appName":"资管资金清算系统","appType":"核心交易系统","objName":"WEB应用服务器","clu":{"default":"192.168.4.132"},"ips":"192.168.4.132","opt":"包含"},{"appName":"清算系统","appType":"核心交易系统","objName":"应用服务器","clu":{"证通":"192.168.4.135"},"ips":"192.168.4.135","opt":"包含"}]
-      //   this.$refs.zTree.setAppTypeChecked(aa)
-      // }
-    }
+        this.$emit('on-confirm', this.checkValue.join(","), this.$refs.zTree.getNodesRule())
+      }
+    },
+    components: {
+      SearchBox,
+
+      XInput,
+      Checklist,
+      Cell,
+      Actionsheet,
+      Popup,
+      XButton
+    },
+    directives: {
+      TransferDom
+    },
   }
 </script>
 

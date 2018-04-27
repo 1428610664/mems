@@ -64,6 +64,11 @@ const requestUrl = {
     url: "/ips/findComponent",
     pre: preUrl
   },
+  // 树数据
+  findTree: {
+    url: "/ips/findTree",
+    pre: preUrl
+  },
   // 人工报障
   faultsWarning: {
     url: "/faults",
