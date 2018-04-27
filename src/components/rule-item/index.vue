@@ -25,11 +25,22 @@
       index: {
         type: Number,
         default: 0
+      },
+      isChange : {
+        type: Boolean,
+        default: false
       }
     },
     data() {
       return {
-        winTypeArray: [{key: "0", value: '系统业务'}, {key: "10", value: 'IP地址'}, {key: "20", value: '事件标题'}, {key: "30",value: '事件描述'}]
+      }
+    },
+    computed: {
+      winTypeArray(){
+        if(this.isChange){
+          return  [{key: "0", value: '系统业务'}, {key: "10", value: 'IP地址'}]
+        }
+        return  [{key: "0", value: '系统业务'}, {key: "10", value: 'IP地址'}, {key: "20", value: '事件标题'}, {key: "30",value: '事件描述'}]
       }
     },
     methods: {

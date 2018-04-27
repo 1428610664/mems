@@ -6,7 +6,7 @@
         <i class="btn c1 iconfont icon-jia fz24" @click="onAdd(index)"></i>
         <i class="btn c2 iconfont icon-wuuiconsuoxiao fz24" @click="onSub(index)" v-if="index != 0"></i>
       </div>
-      <rule-item :rule="item" :index="index" @on-change="itemChange"></rule-item>
+      <rule-item :rule="item" :index="index" @on-change="itemChange" :isChange="isChange"></rule-item>
     </div>
   </div>
 
@@ -19,6 +19,12 @@
 
   export default {
     name: "index",
+    props: {
+      isChange : {
+        type: Boolean,
+        default: false
+      }
+    },
     data() {
       return {
         rule: [{type: 0, app: '', ip: '', title: '', summary: ''}]

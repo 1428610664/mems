@@ -14,6 +14,10 @@
           <user-select :url="userUrl" title="通知用户" v-model="bindData.owner" :search="true"></user-select>
 
           <x-textarea v-model="bindData.desc" :show-counter="false" :rows="1" autosize></x-textarea>
+
+          <div class="hr"></div>
+          <rule ref="rule" :isChange="true"></rule>
+
         </group>
       </div>
       <comm-footer :FlowActions="FlowActions" @event="footerEvent"></comm-footer>
@@ -27,6 +31,7 @@
   import {XHeader, Group, XTextarea, XInput, Selector} from 'vux'
   import commFooter from 'components/comm-footer'
   import userSelect from 'components/multi-select/user-select'
+  import Rule from 'components/rule'
   import datetime from 'components/datetime'
   import {getUrl} from 'common/js/Urls'
   import {maintainMixin} from "common/mixin/eventMixin"
@@ -85,7 +90,8 @@
     methods: {
       footerEvent(action) {
         if(action.TypeId == -1){ // 返回
-          history.go(-1)
+          //history.go(-1)
+          console.log("rule：" + JSON.stringify(this.$refs.rule.getData()))
           return
         }
 
@@ -124,6 +130,7 @@
       commFooter,
       datetime,
       userSelect,
+      Rule,
 
       XHeader,
       Group,
