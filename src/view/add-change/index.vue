@@ -102,7 +102,7 @@
         if(!this.$refs.rule.getData()) return
 
         Object.assign(action.params, this.bindData, {rule: this.$refs.rule.getData()})
-        action.params.owner = this._parseOwner(action.params.owner)
+        action.params.owner = this._parseOwner(action.params.owner) // 通知用户解析
 
         if(this.$route.query.id){ // 修改时
           action.params.cId = this.$route.query.id
