@@ -23,7 +23,7 @@
           <x-textarea title="描述" v-model="bindData.desc" placeholder="请输入文字" :show-counter="false" :rows="5" :max="200"></x-textarea>
           <div class="hr"></div>
 
-          <!--<rule ref="rule"></rule>-->
+          <rule ref="rule" :rule="rule"></rule>
         </group>
       </div>
 
@@ -43,10 +43,12 @@
   import Rule from 'components/rule'
   import {getUrl} from 'common/js/Urls'
   import {mapGetters} from 'vuex'
+  import {maintainMixin} from "common/mixin/eventMixin"
   import utils from 'common/js/utils'
 
   export default {
     name: "index",
+    mixins: [maintainMixin],
     data() {
       return {
         bTime1: '',     // 开始时间YYYY-MM-DD HH:mm:ss
@@ -54,6 +56,7 @@
         bTime2: '',     // 开始时间YYYY-MM-DD
         eTime2: '',     // 结束时间YYYY-MM-DD
 
+        rule: [{type: 0, app: '', ip: '', title: '', summary: ''}],
         bindData: {
           cname: '',       // 维护期名称
           winType: '0',    // 周期维护期【0:非周期维护期】【10:按天维护】【20:按周维护】【30:按月维护】
@@ -83,12 +86,12 @@
       FlowActions() {
         let actions = [
           {TypeId: 0, FlowActionName: "关闭"},
-          {TypeId: 1, FlowActionName: "保存"}
+          {TypeId: 52, FlowActionName: "保存", id: this.$route.query.id, params: {type: 2}}
         ]
         if (this.$route.query.id) {
           actions = [
             {TypeId: 0, FlowActionName: "关闭"},
-            {TypeId: 1, FlowActionName: "保存"}
+            {TypeId: 50, FlowActionName: "保存", id: this.$route.query.id, params: {type: 2, cid: this.$route.query.id}}
           ]
         }
         return actions
@@ -132,7 +135,30 @@
           this.bindData.eTime = this.eTime2
         }
 
-        if(this._checkData()) return
+        if(!this._checkData()) return
+        if(!this.$refs.rule.getData()) return
+
+        Object.assign(action.params, this.bindData, {rule: this.$refs.rule.getData()})
+
+        //  删除多余参数 周期维护期【0:非周期维护期】【10:按天维护】【20:按周维护】【30:按月维护】
+        if(this.bindData.winType == 0){
+          delete action.params.daysOfWeek
+          delete action.params.daysOfMonth
+          delete action.params.loopStartTime
+          delete action.params.loopEndTime
+        }else if(this.bindData.winType == 10){
+          delete action.params.daysOfWeek
+          delete action.params.daysOfMonth
+        }else if(this.bindData.winType == 20){
+          delete action.params.daysOfMonth
+        }else if(this.bindData.winType == 30){
+          delete action.params.daysOfWeek
+        }
+        if(this.$route.query.id){ // 修改时
+          action.params.cId = this.$route.query.id
+          action.params.status = 0
+        }
+        this.submitEvent(action)
       },
       _paseWeek(week) {
         let weekArr = ["星期天","星期一","星期二","星期三","星期四","星期五","星期六"], arr = []
@@ -142,17 +168,6 @@
           arr.push(weekArr[week[i]*1])
         }
         return arr.join("|")
-      },
-      _checkData(){
-        let mark = true
-        for(var k in this.checkData){
-          if(utils[this.checkData[k].check](this.bindData[k])){
-            mark = false
-            this.$vux.toast.text(this.checkData[k].message, "bottom")
-            break
-          }
-        }
-        return mark
       },
       init(){
         if(!this.isModify) return
@@ -167,6 +182,13 @@
         this.eTime1 = new Date(this.maintain.endTime.time).format("yyyy-MM-dd hh:mm:ss")
         this.bTime2 = new Date(this.maintain.beginTime.time).format("yyyy-MM-dd")
         this.eTime2 = new Date(this.maintain.endTime.time).format("yyyy-MM-dd")
+
+        // rule解析
+        let rule = JSON.parse(this.maintain.rule), ruleArr = []
+        if(rule.ip && rule.ip.length > 0 ) ruleArr.push({type: 10, app: '', ip: rule.ip[0].ip, title: '', summary: ''})
+        if(rule.title && rule.title.length > 0 ) ruleArr.push({type: 20, app: '', ip: '', title: rule.title[0].title, summary: ''})
+        if(rule.summary && rule.summary.length > 0 ) ruleArr.push({type: 30, app: '', ip: '', title: '', summary: rule.summary[0].summary})
+        this.rule = ruleArr
       }
     },
     components: {

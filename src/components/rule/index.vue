@@ -79,6 +79,9 @@
           return false
         }
         if(!rule.app) rule.app = []
+        if(!rule.ip) rule.ip = []
+        if(!rule.title) rule.title = []
+        if(!rule.summary) rule.summary = []
         rule.opt = "and"
         return rule
       },
