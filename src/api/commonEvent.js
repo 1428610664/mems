@@ -19,7 +19,7 @@ export function actionJson(no, id){
     //报障
     No12: ["/faults", "提交"],				                 // 提交报障
     No13: ["/faults", "暂存"],				                 // 暂存报障
-    No14: [`/turnsend/${id}/turn`, "转派"],				   // 转派报障
+    No14: [`/events/${id}/turn`, "转派"],				   // 转派报障
     No15: [`/faults/${id}/reject`, "驳回"],	         // 驳回报障
     No16: [`/faults/${id}/cancel`, "取消"],				   // 取消报障
     No17: [`/faults/${id}`, "删除"],				           // 删除报障
@@ -33,7 +33,7 @@ export function actionJson(no, id){
     No23: ["/events", "提交"],				                 // 提交事件
     No24: [`/events/${id}/shield`, "屏蔽"],				   // 屏蔽报障
     No25: [`/events/${id}/revert`, "取消屏蔽"],	     // 取消屏蔽
-    No26: [`/turnsend/${id}/turn`, "转派"],				   // 转派事件
+    No26: [`/events/${id}/turn`, "转派"],				   // 转派事件
     No27: [`/events/${id}`, "删除"],				           // 删除事件
     No28: [`/events/${id}/reject`, "驳回"],			     // 驳回事件
     No29: [`/events/${id}/distort`, "误报"],		     // 误报事件

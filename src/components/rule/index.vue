@@ -9,7 +9,7 @@
       <rule-item :rule="item" :index="index" @on-change="itemChange" :isChange="isChange" @showTreeModel="showTreeModel"></rule-item>
     </div>
 
-    <check-tree :search="true" ref="checkTree" @on-confirm="treeConfirm"></check-tree>
+    <!--<check-tree :search="true" ref="checkTree" @on-confirm="treeConfirm"></check-tree>-->
 
   </div>
 
@@ -27,11 +27,16 @@
       isChange : {
         type: Boolean,
         default: false
+      },
+      rule: {
+        type: Array,
+        default(){
+          return [{type: 0, app: '', ip: '', title: '', summary: ''}]
+        }
       }
     },
     data() {
       return {
-        rule: [{type: 0, app: '', ip: '', title: '', summary: ''}]
       }
     },
     created() {
@@ -73,11 +78,14 @@
           this.$vux.toast.text("必须选择IP或组件", "bottom")
           return false
         }
+        if(!rule.app) rule.app = []
+        rule.opt = "and"
         return rule
       },
 
       showTreeModel(index){
-        this.$refs.checkTree.showTreeModel(index)
+        this.$vux.toast.text("功能尚未实现", "bottom")
+        //this.$refs.checkTree.showTreeModel(index)
       },
       treeConfirm(value, nodesRule){
         console.log(value+"-------------"+nodesRule)

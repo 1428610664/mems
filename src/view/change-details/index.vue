@@ -81,6 +81,7 @@
         let actions = []
         // 校验创建者是否是当前用户 或 toUser里包含创建者
         let createUser = this.change.createUser.split("/")[1], userName = getUserInfo().user.userName, toUser = getUserInfo().toUser
+        console.log(createUser +"------------"+ userName)
         if(createUser != userName || (toUser && toUser.split(",").indexOf(createUser) == -1)){
           return []
         }

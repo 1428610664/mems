@@ -23,7 +23,7 @@
           <x-textarea title="描述" v-model="bindData.desc" placeholder="请输入文字" :show-counter="false" :rows="5" :max="200"></x-textarea>
           <div class="hr"></div>
 
-          <rule ref="rule"></rule>
+          <!--<rule ref="rule"></rule>-->
         </group>
       </div>
 

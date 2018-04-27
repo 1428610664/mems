@@ -16,7 +16,7 @@
           <x-textarea v-model="bindData.desc" :show-counter="false" :rows="1" autosize></x-textarea>
 
           <div class="hr"></div>
-          <rule ref="rule" :isChange="true"></rule>
+          <rule ref="rule" :rule="rule" :isChange="true"></rule>
 
         </group>
       </div>
@@ -43,7 +43,7 @@
     data() {
       return {
         userUrl: getUrl("users"),
-
+        rule: [{type: 0, app: '', ip: '', title: '', summary: ''}],
         bindData: {
           cname: '',           // 变更名称
           bTime: '',       // 开始时间
@@ -90,8 +90,7 @@
     methods: {
       footerEvent(action) {
         if(action.TypeId == -1){ // 返回
-          //history.go(-1)
-          console.log("rule：" + JSON.stringify(this.$refs.rule.getData()))
+          history.go(-1)
           return
         }
 
@@ -100,20 +99,31 @@
           this.$vux.toast.text("请填写变更内容", "bottom")
           return
         }
+        if(!this.$refs.rule.getData()) return
 
-        return
-        Object.assign(action.params, this.bindData)
+        Object.assign(action.params, this.bindData, {rule: this.$refs.rule.getData()})
+        action.params.owner = this._parseOwner(action.params.owner)
+
+        if(this.$route.query.id){ // 修改时
+          action.params.cId = this.$route.query.id
+          action.params.status = 0
+        }
         this.submitEvent(action)
       },
       init(){
         if(!this.isModify) return
-        console.log("==========="+JSON.stringify(this.change))
         for(let k in this.bindData){
           if(this.change[k]) this.bindData[k] = this.change[k]
         }
         this.bindData.bTime =  new Date(this.change.beginTime.time).format("yyyy-MM-dd hh:mm:ss")
         this.bindData.eTime =  new Date(this.change.endTime.time).format("yyyy-MM-dd hh:mm:ss")
         this.bindData.desc =  this.change.cdesc
+
+        // rule解析
+        let rule = JSON.parse(this.change.rule), ruleArr = []
+        if(rule.ip.length > 0 ) ruleArr.push({type: 10, app: '', ip: rule.ip[0].ip, title: '', summary: ''})
+        this.rule = ruleArr
+
       },
       /**
        * 去除空格、html标签、换行
@@ -124,6 +134,15 @@
         str = str.replace(/<\/?.+?>/g,"")
         str = str.replace(/[\r\n]/g, "")
         return str
+      },
+      // 解析通知用户
+      _parseOwner(user){
+        user = user.split(",")
+        let u = []
+        for(let item of user){
+          u.push(item.split("/")[0])
+        }
+        return u.join(",")
       }
     },
     components: {
