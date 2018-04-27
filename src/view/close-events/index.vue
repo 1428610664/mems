@@ -103,10 +103,10 @@
     },
     methods: {
       footerEvent(action) {
-        this.$vux.loading.show({text: '数据提交中...'})
         let _params = {}
         if(this.bindData.inquuire == '1'){
           if(!this._checkData()) return
+
           _params.rootCause = this.bindData.rootCause
           _params.closeTime = this.bindData.closeTime
           _params.eventCause = this.bindData.eventCause
@@ -115,7 +115,7 @@
             _params[item] = '1'
           })
         }
-
+        this.$vux.loading.show({text: '数据提交中...'})
         request.post(actionJson(this.bindData.inquuire == '2' ? 34 : 30, this.$route.query.id)[0], Object.assign({},_params)).then(res => {
           this.$vux.loading.hide()
           this.$vux.toast.text(res.desc, "bottom")
