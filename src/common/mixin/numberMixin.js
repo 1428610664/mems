@@ -26,7 +26,7 @@ export const numberMixin = {
       })
     },
     getFaultsNumber() {
-      let toUser = getUserInfo().toUser, Parms = {status: '0,1,2,3,100',handler: getUserInfo().user.userName  +(toUser ? ","+toUser: "")}
+      let toUser = getUserInfo().toUser, Parms = {status: '0,1,2,3',handler: getUserInfo().user.userName  +(toUser ? ","+toUser: "")}
       if(getUserInfo().user.role == 4 )Parms = {status: '0,1,2,3,100',createUser: getUserInfo().user.userName  +(toUser ? ","+toUser: "")}
       request.get(getUrl("faultsNumber"), Parms).then(res => {
         if(res.success){

@@ -48,6 +48,7 @@
               <!--</div>-->
             <!--</div>-->
             <x-input v-if="status == '99'" title="关闭方式" :readonly="true" v-model="closeType"></x-input>
+
             <div class="hr"></div>
             <tabs-pan :id="rowId"></tabs-pan>
 
@@ -62,7 +63,7 @@
 
 <script>
 
-  import {XHeader, Group, Scroller, XTextarea, XInput, Selector} from 'vux'
+  import {XHeader, Group, Scroller, XTextarea, XInput, Selector,XSwitch} from 'vux'
   import commFooter from 'components/comm-footer'
   import appSelect from 'components/multi-select/app-select'
   import datetime from 'components/datetime/index'
@@ -136,8 +137,9 @@
         if(!this.handleEvents) return []
         let userName = getUserInfo().user.userName, role = getUserInfo().user.role
         let _userName = getUserInfo().user.name +"/" + userName, handler =this.handleEvents.handler
+        let toUser = getUserInfo().toUser
         this.readonly = true
-        if(this.status == 99){
+        if(this.status == 99 || this.selectIndex == 2 ){
           return []
         }
         let actions = []
@@ -152,53 +154,73 @@
           {TypeId: 24, FlowActionName: "屏蔽", id: this.handleEvents.serial}, //7
           {TypeId: 36, FlowActionName: "响应", id: this.handleEvents.serial} //8
         ]
-        switch (this.selectIndex + ''){
-          case '0': //待处理 未响应
-           switch (role+""){
-             case "5": //服务台
-               if(this.handleEvents.handler == '' ){
-                 actions = [buttons[8],buttons[3]]
-               }else {
-                 actions = [buttons[8]]
-               }
-               break
-             case "2": //二线人工告警待处理
-               if(handler && handler.indexOf(_userName) == -1) return []
-               this.readonly = false
-               if(this.handleEvents["suppressEscl"] == "5"){  //误报： 取消误报 关单
-                 actions =  [buttons[2],buttons[0]]
-               }else if(this.handleEvents["suppressEscl"] == "3"){ //已屏蔽：: 取消屏蔽 关单
-                 actions = [buttons[5],buttons[0]]
-               }else{
-                 switch (this.status + "") {
-                   case "0": //未处理：:
-                     if(this.handleEvents.sourceAgent == "user"){ //人工报障
-                         actions = [buttons[4],buttons[3]]  //受理 转派
-                     }else{ //非人工报障
-                         actions = [buttons[4],buttons[3],buttons[7]] //受理 转派 屏蔽
-                     }
-                     break;
-                   case "1": //处理中
-                     if(this.handleEvents.sourceAgent == "user"){  //人工报障
-                         actions = [buttons[3],buttons[0]] //转派 关单
-                     }else{
-                         actions = [buttons[3],buttons[7],buttons[0]] //转派 屏蔽 关单
-                     }
-                     break;
-                   default:
-                     this.readonly = true
-                 }
-               }
-               break
-             default:
-           }
-            break
-           case '1': //已响应
-            if(role == 5 && this.handleEvents.handler == '' ){ //服务台 已响应 没有处理人 可以转派
-              actions = [buttons[3]]
-            }
-            break
+        if(role == '5' && (this.status == 0 || this.status == 1)){ //服务台 未受理 处理中
+          actions = [buttons[8],buttons[3]]
+        }else if( role !=  '5' && ((handler && handler.indexOf(_userName) != -1 ) || (toUser && toUser.split(",").indexOf(userName) != -1))){
+          this.readonly = false
+          switch (this.status + "") {
+            case "0": //未处理：:
+                actions = [buttons[4],buttons[3]]  //受理 转派
+              break;
+            case "1": //处理中
+                actions = [buttons[3],buttons[0],buttons[7]] //转派 关单 屏蔽
+              break;
+            case "3": //已屏蔽
+               actions = [buttons[5],buttons[0]]  //取消屏蔽 关单
+              break;
+            default:
+              this.readonly = true
+          }
+        }else {
+
         }
+        // switch (this.selectIndex + ''){
+        //   case '0': //待处理 未响应
+        //    switch (role+""){
+        //      case "5": //服务台
+        //        if(this.handleEvents.handler == '' ){
+        //          actions = [buttons[8],buttons[3]]
+        //        }else {
+        //          actions = [buttons[8]]
+        //        }
+        //        break
+        //      case "2": //二线人工告警待处理
+        //        if(handler && handler.indexOf(_userName) == -1) return []
+        //        this.readonly = false
+        //        if(this.handleEvents["suppressEscl"] == "5"){  //误报： 取消误报 关单
+        //          actions =  [buttons[2],buttons[0]]
+        //        }else if(this.handleEvents["suppressEscl"] == "3"){ //已屏蔽：: 取消屏蔽 关单
+        //          actions = [buttons[5],buttons[0]]
+        //        }else{
+        //          switch (this.status + "") {
+        //            case "0": //未处理：:
+        //              if(this.handleEvents.sourceAgent == "user"){ //人工报障
+        //                  actions = [buttons[4],buttons[3]]  //受理 转派
+        //              }else{ //非人工报障
+        //                  actions = [buttons[4],buttons[3],buttons[7]] //受理 转派 屏蔽
+        //              }
+        //              break;
+        //            case "1": //处理中
+        //              if(this.handleEvents.sourceAgent == "user"){  //人工报障
+        //                  actions = [buttons[3],buttons[0]] //转派 关单
+        //              }else{
+        //                  actions = [buttons[3],buttons[7],buttons[0]] //转派 屏蔽 关单
+        //              }
+        //              break;
+        //            default:
+        //              this.readonly = true
+        //          }
+        //        }
+        //        break
+        //      default:
+        //    }
+        //     break
+        //    case '1': //已响应
+        //     if(role == 5 && this.handleEvents.handler == '' ){ //服务台 已响应 没有处理人 可以转派
+        //       actions = [buttons[3]]
+        //     }
+        //     break
+        // }
 
         return actions
       }
@@ -275,7 +297,8 @@
       Scroller,
       XTextarea,
       XInput,
-      Selector
+      Selector,
+      XSwitch
     }
   }
 </script>

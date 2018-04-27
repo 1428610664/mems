@@ -115,6 +115,7 @@
         if(createUser == userName) {// 未处理
           switch (this.status + "") {
             case '0': //未处理
+              this.readonly = true
               actions = [{TypeId: 16, FlowActionName: "取消报障", id: this.$route.query.id}]
               break
             case '2':  // 被驳回

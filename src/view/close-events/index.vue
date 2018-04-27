@@ -54,12 +54,13 @@
   import appSelect from 'components/multi-select/app-select'
   import datetime from 'components/datetime/index'
   import {getUrl} from 'common/js/Urls'
-  import { addRequestMixin } from "common/mixin/eventMixin"
+  import request from 'common/js/request'
+  import utils from 'common/js/utils'
+  import {actionJson} from 'api/commonEvent'
   import {mapGetters, mapMutations} from 'vuex'
 
   export default {
     name: "index",
-    mixins: [addRequestMixin],
     data() {
       return {
         rootCauseUrl: getUrl("obtainConfig"),
@@ -102,7 +103,39 @@
     },
     methods: {
       footerEvent(action) {
-        this.submitEvent(action)
+        this.$vux.loading.show({text: '数据提交中...'})
+        let _params = {}
+        if(this.bindData.inquuire == '1'){
+          if(!this._checkData()) return
+          _params.rootCause = this.bindData.rootCause
+          _params.closeTime = this.bindData.closeTime
+          _params.eventCause = this.bindData.eventCause
+          _params.process = this.bindData.process
+           this.bindData.sign.forEach((item)=>{
+            _params[item] = '1'
+          })
+        }
+
+        request.post(actionJson(this.bindData.inquuire == '2' ? 34 : 30, this.$route.query.id)[0], Object.assign({},_params)).then(res => {
+          this.$vux.loading.hide()
+          this.$vux.toast.text(res.desc, "bottom")
+          if(res.success){
+            this.$router.replace({path:"/home"});
+          }
+        }, error => {
+          this.$vux.loading.hide()
+        })
+      },
+      _checkData(){
+        let mark = true
+        for(var k in this.checkData){
+          if(utils[this.checkData[k].check](this.bindData[k])){
+            mark = false
+            this.$vux.toast.text(this.checkData[k].message, "bottom")
+            break
+          }
+        }
+        return mark
       },
     },
     components: {

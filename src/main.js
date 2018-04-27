@@ -21,8 +21,8 @@ Vue.use(ConfirmPlugin)
 Vue.use(publicUtils)
 
 
-// 调试 正式环境去除
-eruda.init()
+// // 调试 正式环境去除
+// eruda.init()
 
 
 Vue.config.productionTip = false
