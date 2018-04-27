@@ -43,8 +43,8 @@
               </div>
             </div>
             <!--<x-input title="提交人部门" :readonly="true" v-model="departName"></x-input>-->
-            <x-input title="满意度" :readonly="true" v-model="cacsi"></x-input>
-            <x-input title="处理评价" :readonly="true" v-model="evaluate"></x-input>
+            <x-input v-show="status == 99 " title="满意度" :readonly="true" v-model="cacsi"></x-input>
+            <x-input  v-show="status == 99 "  title="处理评价" :readonly="true" v-model="evaluate"></x-input>
             <div class="hr"></div>
             <!--<div class="tab_div_height">-->
               <tabs-pan :id="rowId"></tabs-pan>
@@ -148,16 +148,11 @@
               {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
               {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id}
             ]
-        }else if(this.status == 1) { // 处理中
-          if(handler == _userName || (handler && handler.indexOf(_userName) >= 0)){
+        }else if(this.status == 1 && (handler == _userName || (handler && handler.indexOf(_userName) !=-1))) { // 处理中
             actions = [
               {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
-              {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id}
+            //  {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id}
             ]
-          }else{
-            this.readonly = true
-            actions = []
-          }
         }else{
           this.readonly = true
           actions = []
