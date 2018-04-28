@@ -94,7 +94,6 @@
     },
     watch: {
       isLogin(login){
-        console.log("登录状态改变："+login)
         if(login) {
           this.$router.replace({path:"/home"})
           this.getNumber()

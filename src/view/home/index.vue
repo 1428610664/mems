@@ -9,7 +9,7 @@
         </div>
       </router-link>-->
 
-      <router-link v-for="(item, index) in grid" :to="item.path" tag="li" class="grid posct">
+      <router-link v-for="(item, index) in grid" :key="index" :to="item.path" tag="li" class="grid posct">
         <div>
           <div class="icon iconfont posct fz22 " :class="item.class"><i class="number fz12" v-if="item.number && item.number > 0">{{item.number}}</i></div>
           <div class="name ct">{{item.name}}</div>
