@@ -22,7 +22,7 @@
 
         <div>
           <div class="cell-title c4 fz14">变更范围</div>
-          <div v-if="rule.ip" class="fz14" style="padding: 10px 15px">ip地址包含：{{rule.ip}}</div>
+          <div v-if="rule.ip" class="fz14" style="padding: 10px 15px">ip地址：{{rule.ip}}</div>
           <div v-if="rule.appTree.length">
             <div class="fz14" style="padding: 10px 15px">应用系统：</div>
             <v-tree ref="tree2" :data='rule.appTree'/>

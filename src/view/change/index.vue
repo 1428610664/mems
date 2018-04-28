@@ -37,6 +37,7 @@
   import request from 'common/js/request'
   import {getUrl} from 'common/js/Urls'
   import {mapMutations} from 'vuex'
+  import {getUserInfo} from 'common/js/cache'
 
 
   export default {
@@ -60,7 +61,8 @@
     },
     computed: {
       getTabParms() {
-        let Parms = [{type: 1, isMy: true,sort: "createTime",order: "desc"}, {type: 1,sort: "createTime",order: "desc"}]
+        let toUser = getUserInfo().toUser
+        let Parms = [{type: 1,createUser: getUserInfo().user.userName+(toUser ? ","+toUser: ""),sort: "createTime",order: "desc"}, {type: 1,sort: "createTime",order: "desc"}]
         return Parms
       }
     },

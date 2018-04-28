@@ -22,7 +22,7 @@
 
         <div>
           <div class="cell-title c4 fz14">维护期规则</div>
-          <div v-if="rule.ip" class="fz14" style="padding: 10px 15px">ip地址包含：{{rule.ip}}</div>
+          <div v-if="rule.ip" class="fz14" style="padding: 10px 15px">ip地址：{{rule.ip}}</div>
           <div class="fz14" v-if="rule.title" style="padding: 10px 15px">事件标题：{{rule.title}}</div>
           <div class="fz14" v-if="rule.summary" style="padding: 10px 15px">事件描述：{{rule.summary}}</div>
           <div v-if="rule.appTree.length">

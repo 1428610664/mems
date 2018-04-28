@@ -2,37 +2,21 @@
 
   <div>
     <ul class="grid-wrapper clear">
-      <router-link to="/serviceRequest" tag="li" class="grid posct">
+      <!--<router-link to="/serviceRequest" tag="li" class="grid posct">
         <div>
           <div class="icon iconfont posct icon-fuwuqingqiu fz24 mb1"><i class="number fz12" v-if="servicesNumber > 0">{{servicesNumber}}</i></div>
           <div class="name ct">服务请求</div>
         </div>
-      </router-link>
-      <router-link to="/faultsWarning" tag="li" class="grid posct">
+      </router-link>-->
+
+      <router-link v-for="(item, index) in grid" :key="index" :to="item.path" tag="li" class="grid posct">
         <div>
-          <div class="icon iconfont posct icon-xitongguzhang fz22 mb2"><i class="number fz12" v-if="faultsNumber > 0">{{faultsNumber}}</i></div>
-          <div class="name ct">人工报障</div>
-        </div>
-      </router-link>
-      <router-link to="/myEvents" tag="li" class="grid posct">
-        <div>
-          <div class="icon iconfont posct icon-shijiantai fz22 mb3"><i class="number fz12" v-if="eventsNumber > 0">{{eventsNumber}}</i></div>
-          <div class="name ct">告警事件</div>
-        </div>
-      </router-link>
-      <router-link to="/maintain" tag="li" class="grid posct">
-        <div>
-          <div class="icon iconfont posct icon-navicon-xxwh fz22 mb5"></div>
-          <div class="name ct">维护期</div>
-        </div>
-      </router-link>
-      <router-link to="/change" tag="li" class="grid posct">
-        <div>
-          <div class="icon iconfont posct icon-change fz22 mb4"></div>
-          <div class="name ct">变更白板</div>
+          <div class="icon iconfont posct fz22 " :class="item.class"><i class="number fz12" v-if="item.number && item.number > 0">{{item.number}}</i></div>
+          <div class="name ct">{{item.name}}</div>
         </div>
       </router-link>
     </ul>
+
     <router-view></router-view>
   </div>
 
@@ -40,26 +24,10 @@
 
 <script>
 
-  import {Grid, GridItem, GroupTitle} from 'vux'
-  import {mapGetters} from 'vuex'
+  import {configMixin} from "common/mixin/configMixin"
 
   export default {
-    data() {
-      return {}
-    },
-    computed:{
-      ...mapGetters([
-        'servicesNumber',
-        'faultsNumber',
-        'eventsNumber'
-      ]),
-    },
-    methods: {},
-    components: {
-      Grid,
-      GridItem,
-      GroupTitle
-    }
+    mixins: [configMixin]
   }
 
 </script>
