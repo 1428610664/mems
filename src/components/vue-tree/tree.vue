@@ -427,10 +427,11 @@
 
       //获取选中值开始入口
       getNodesRule (data) {
-        data = data || this.data
-        console.log(data)
+        data = data || this.data[0].children
         let res = []
         for (const item of data) {
+
+          if(!item.children) continue
           for (const node of item.children){
             if (node.checked === true) { //所属系统选中（即所属系统下的所有选中）
               res.push(Object.assign({}, {appName:node.title,objName:'',appType:item.title,clu:{},ips:'',opt:'包含'}))
@@ -450,7 +451,7 @@
           if (node.checked === true) { //选中组件（选中所有的集群和组件）
             if(node.children && node.children.length){
               let _obj = this.getNodesColony(node.children)
-              res.push(Object.assign({},obj, {objName:node.title,clu:_obj.clu,ips:_obj.clu.ips,opt:'包含'}))
+              res.push(Object.assign({},obj, {objName:node.title,clu:_obj.clu,ips:_obj.ips,opt:'包含'}))
             }else {
               res.push(Object.assign({},obj, {objName:node.title,clu:{},ips:'',opt:'包含'}))
             }
@@ -475,7 +476,7 @@
             if(node.children && node.children.length){
               let res = this.getNodesIps(node.children)
               _obj.clu[node.title] = res.join(",")
-              _obj.ips =  _obj.ips == '' ? res.join(",") : _obj.ips+ "," + res.join(",")
+              _obj.ips =  _obj.ips ? res.join(",") : _obj.ips+ "," + res.join(",")
             }else {
               _obj.clu[node.title] = ''
               _obj.ips = ''
@@ -486,7 +487,7 @@
               if(res.length != 0 ){
                 _obj.checked = true
                 _obj.clu[node.title] = res.join(",")
-                _obj.ips = _obj.ips == '' ? res.join(",") : _obj.ips + "," + res.join(",")
+                _obj.ips = _obj.ips ? res.join(",") : _obj.ips + "," + res.join(",")
               }
             }
           }

@@ -188,7 +188,36 @@
         if(rule.ip && rule.ip.length > 0 ) ruleArr.push({type: 10, app: '', ip: rule.ip[0].ip, title: '', summary: ''})
         if(rule.title && rule.title.length > 0 ) ruleArr.push({type: 20, app: '', ip: '', title: rule.title[0].title, summary: ''})
         if(rule.summary && rule.summary.length > 0 ) ruleArr.push({type: 30, app: '', ip: '', title: '', summary: rule.summary[0].summary})
+
+
+        let app = rule.app
+        if(app.length > 0){
+          for(let item of app){
+            ruleArr.push({type: 0, app: this._parseCheckData(item), appData: item, ip: '', title: '', summary: ''})
+          }
+        }
         this.rule = ruleArr
+      },
+      _parseCheckData(data){
+        let objS = data, appName = "", appAggregate = [];
+        if(Array.isArray(objS)){
+          objS.forEach(function (v,i) {
+            if(v.objName!=""&&v.objName!=null){
+              appName+="["+v.appName+"]包含组件["+v.objName+"]包含ip"+"["+v.ips+"],"
+            }else {
+              appName+="["+v.appName+"],"
+            }
+          })
+        }else{
+          if(objS.objName!=""&&objS.objName!=null){
+            appName+="["+objS.appName+"]包含组件["+objS.objName+"]包含ip"+"["+objS.ips+"]"
+          }else {
+            appName+="["+objS.appName+"]"
+          }
+        }
+        appAggregate=null
+        objS=null
+        return appName
       }
     },
     components: {

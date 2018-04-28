@@ -1,16 +1,16 @@
 <template>
   <div>
-    <div @click="checkTreeShow">
+    <!--<div @click="checkTreeShow">
       <div>测试树形控件</div>
       <slot></slot>
-    </div>
+    </div>-->
     <div v-transfer-dom>
       <popup v-model="dropDown" position="bottom" max-height="80%">
           <div class="check_keyWorld search-wrapper b " v-show="search">
             <search-box @query="searchTree" :placeholder="placeholder"></search-box>
           </div>
         <div class="check_item" :style="style">
-          <v-tree ref="zTree" :data='treeData' :multiple='multiple' :halfcheck='halfcheck'/>
+          <v-tree ref="zTree" :data='treeData' :multiple='multiple' :halfcheck='halfcheck'  @async-load-nodes='asyncLoadNodes'/>
         </div>
         <div class="check_button">
           <x-button @click.native="onConfirm" plain type="primary">确认</x-button>
@@ -33,90 +33,8 @@
         index: 0, // 记录索引
         rows: [],
         checkValue: [],
-        treeData:[
-          {
-            "title": "核心交易系统",
-          //  "nocheck":true,
-          //  "clickNode": true,
-            'type':'appType',
-            "children": [
-              {
-                "title": "资管资金清算系统",
-                'type':'appName',
-                "children": [
-                  {
-                    "title": "WEB应用服务器",
-                    'type':'component',
-                    "children": [
-                      {
-                        "title": "证通",
-                        'type':'colony',
-                        "children": [
-                          {
-                            "title": "192.168.4.131",
-                            'type':'ip'
-                          },
-                          {
-                            "title": "192.168.4.132",
-                            'type':'ip'
-                          }
-                        ]
-                      },
-                      {
-                        "title": "default",
-                        'type':'colony',
-                        "children": [
-                          {
-                            "title": "192.168.4.132",
-                            'type':'ip'
-                          },
-                          {
-                            "title": "192.168.4.134",
-                            'type':'ip'
-                          }
-                        ]
-                      }
-                    ]}]},
-              {
-                "title": "清算系统",
-            //    "clickNode": true,
-                'type':'appName',
-                "children": [
-                  {
-                    "title": "应用服务器",
-                    'type':'component',
-                    "children": [
-                      {
-                        "title": "证通",
-                        'type':'colony',
-                        "children": [
-                          {
-                            "title": "192.168.4.135",
-                            'type':'ip'
-                          },
-                          {
-                            "title": "192.168.4.136",
-                            'type':'ip'
-                          }
-                        ]
-                      },
-                      {
-                        "title": "default",
-                        'type':'colony',
-                        "children": [
-                          {
-                            "title": "192.168.4.137",
-                            'type':'ip'
-                          },
-                          {
-                            "title": "192.168.4.138",
-                            'type':'ip'
-                          }
-                        ]
-                      }
-                    ]}]}
-            ]}
-        ],
+        treeData:[{ title: 'root', expanded: true, children: [] }],   // 树显示数据
+        treeAllData: [],    // 一次性加载全部数据
         style:{
           height: 'inherit'
         },
@@ -166,28 +84,124 @@
       },
       getTreeData() {
         request.get(getUrl("findTree"), {}).then(res => {
-          console.log(JSON.stringify(res))
-          this.treeData = res.children
+          this.treeAllData = res.children
+          this.initTreeDta()
         }, error =>{
           console.log('error===' + error)
         })
       },
-      setCheckValue(v){
+      /*setCheckValue(v){
         if(v)this.$refs.zTree.setAppTypeChecked(v)
-      },
+      },*/
       showTreeModel(index, value){
         this.index = index
         this.dropDown = true
         this.style.height =  window.screen.height * 0.8 -117 + "px"
-        this.setCheckValue(value)
+        //this.checkValue = value
+        this._setTreeAppType()
       },
       onConfirm() {
         this.dropDown = false
-        console.log('getNodesRule')
-        console.log(JSON.stringify(this.$refs.zTree.getNodesRule()))
-        this.$emit('input', this.checkValue.join(","))
-        this.$emit('on-confirm', this.checkValue.join(","), this.$refs.zTree.getNodesRule())
-      }
+        //this.$emit('input', this.checkValue.join(","))
+        this.$emit('on-confirm', this.$refs.zTree.getNodesRule(), this.index)
+      },
+
+      async asyncLoadNodes(node){
+        let titles = this._getParentsTitles(node)
+        let children = this._getCurrentNodeChildren(titles)
+        this._setTreeNode(node, children)
+      },
+      /**
+       * 初始化tree
+       */
+      initTreeDta(sellectTree){
+        this._setTreeAppType()
+      },
+      _setTreeAppType(selectNode){
+        let appType = []
+        for(let i = 0, ilen = this.treeAllData.length; i< ilen; i++){
+          appType.push({title: this.treeAllData[i].title, type: this.treeAllData[i].type, async: true})
+        }
+        this.treeData[0].children = appType
+      },
+      /**
+       * 为节点设置children数据
+       * @param node
+       * @param children
+       * @returns {*[]}
+       * @private
+       */
+      _setTreeNode(node, children){
+        children.forEach((el, i) => {
+          if (!node.hasOwnProperty('children')) {
+            this.$set(node, 'children', [])
+          }
+          node.children.push({title: el.title, type: el.type, async: el.children ? true : false})
+        })
+      },
+      /**
+       * 获取节点的title及所有父级title
+        * @param node
+       * @returns {*[]}
+       * @private
+       */
+      _getParentsTitles(node){
+        let titleArr = []
+        function findeParen(n){
+          if(n.parent){
+            titleArr.push(n.title)
+            findeParen(n.parent)
+          }
+        }
+        findeParen(node)
+        return titleArr.reverse()
+      },
+      /**
+       * 根据title获取当前节点下的Children数据
+       * @param titles
+       * @returns {Array}
+       * @private
+       */
+      _getCurrentNodeChildren(titles){
+        let treeData = this.treeAllData
+        for(let item of titles){
+          let index = this._findIndex(item, treeData)
+          if(treeData[index].children && treeData[index].children.length > 0 && treeData[index].children[0].cluster) {
+            treeData = this._parseIp(treeData[index].children)
+          }else{
+            treeData = treeData[index].children
+          }
+        }
+        return treeData
+      },
+      /*
+        解析组件下的服务器ip
+      */
+      _parseIp(data){
+        let node = [], clusters = []
+        for(let item of data){
+          let cluIndex = clusters.indexOf(item.cluster)
+          if(cluIndex != -1){
+            node[cluIndex].children.push({title: item.title, type:'ip'})
+          }else{
+            node.push({title: item.cluster, type:'colony', children: [{title: item.title, type:'ip'}]})
+            clusters.push(item.cluster)
+          }
+        }
+        return node
+      },
+      /**
+       * 获取索引
+       * @param title
+       * @param data
+       * @returns {number | *}
+       * @private
+       */
+      _findIndex(title, data){
+        return data.findIndex((item) => {
+          return item.title == title
+        })
+      },
     },
     components: {
       SearchBox,

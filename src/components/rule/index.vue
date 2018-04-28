@@ -9,7 +9,7 @@
       <rule-item :rule="item" :index="index" @on-change="itemChange" :isChange="isChange" @showTreeModel="showTreeModel"></rule-item>
     </div>
 
-    <!--<check-tree :search="true" ref="checkTree" @on-confirm="treeConfirm"></check-tree>-->
+    <check-tree :search="true" ref="checkTree" @on-confirm="treeConfirm"></check-tree>
 
   </div>
 
@@ -31,7 +31,7 @@
       rule: {
         type: Array,
         default(){
-          return [{type: 0, app: '', ip: '', title: '', summary: ''}]
+          return [{type: 0, app: '', appData: [], ip: '', title: '', summary: ''}]
         }
       }
     },
@@ -46,7 +46,7 @@
     },
     methods: {
       onAdd(index) {
-        this.rule.push({type: 0,ip: '', app: '', title: '', summary: ''})
+        this.rule.push({type: 0,ip: '', app: '', appData: [], title: '', summary: ''})
       },
       onSub(index) {
         if (this.rule.length > 1) this.rule.splice(index, 1)
@@ -55,10 +55,13 @@
         this.rule[index] = value
       },
       getData(){
-        let rule = {}, ip = [], title = [], summary = []
+        let rule = {}, app = [], ip = [], title = [], summary = []
         // 数据拼接
         for(let item of this.rule){
-          if(item.type == 10){
+          if(item.type == 0){
+            console.log(1111+"============" + JSON.stringify(item.appData))
+            app = app.concat(item.appData)
+          }else if(item.type == 10){
             if(item.ip.trim())ip.push(item.ip)
           }else if(item.type == 20){
             if(item.title.trim())title.push(item.title)
@@ -66,6 +69,7 @@
             if(item.summary.trim())summary.push(item.summary)
           }
         }
+        if(app.length > 0 ) rule.app = app
         if(ip.length > 0) rule.ip = [{"ip": ip.join(","),"opt": "包含"}]
         if(title.length > 0) rule.title = [{"title": title.join(","),"opt": "包含"}]
         if(summary.length > 0) rule.summary = [{"summary": summary.join(","),"opt": "包含"}]
@@ -87,11 +91,39 @@
       },
 
       showTreeModel(index){
-        this.$vux.toast.text("功能尚未实现", "bottom")
-        //this.$refs.checkTree.showTreeModel(index)
+        // this.$vux.toast.text("功能尚未实现", "bottom")
+        this.$refs.checkTree.showTreeModel(index, this.rule[index].appData)
       },
-      treeConfirm(value, nodesRule){
-        console.log(value+"-------------"+nodesRule)
+      treeConfirm(nodesRule, index){
+        console.log("nodesRule==========="+JSON.stringify(nodesRule))
+        this.rule[index].app = this._parseCheckData(nodesRule)
+        this.rule[index].appData = nodesRule
+      },
+      /**
+       * 解析选中的值
+       * @param data
+       * @private
+       */
+      _parseCheckData(data){
+        let objS = data, appName = "", appAggregate = [];
+        if(Array.isArray(objS)){
+          objS.forEach(function (v,i) {
+            if(v.objName!=""&&v.objName!=null){
+              appName+="["+v.appName+"]包含组件["+v.objName+"]包含ip"+"["+v.ips+"],"
+            }else {
+              appName+="["+v.appName+"],"
+            }
+          })
+        }else{
+          if(objS.objName!=""&&objS.objName!=null){
+            appName+="["+objS.appName+"]包含组件["+objS.objName+"]包含ip"+"["+objS.ips+"]"
+          }else {
+            appName+="["+objS.appName+"]"
+          }
+        }
+        appAggregate=null
+        objS=null
+        return appName
       }
     },
     components: {
