@@ -104,9 +104,9 @@
     methods: {
       footerEvent(action) {
         let _params = {}
+        _params.opinion = this.$route.query.row.opinion
         if(this.bindData.inquuire == '1'){
           if(!this._checkData()) return
-
           _params.rootCause = this.bindData.rootCause
           _params.closeTime = this.bindData.closeTime
           _params.eventCause = this.bindData.eventCause
@@ -179,23 +179,19 @@
     text-align: right;
     margin-right: 2em;
   }
-  .radio_item {
-    border: 1px solid #ccc;
-    padding: 2px 15px;
-  }
-  .radio_selected {
-    border: 1px solid red;
-  }
-  .check_item {
+  .check_item,.radio_item {
     height: 30px;
-    border: 1px solid #ccc;
-    display: inline-block;
-    border-radius: 5%;
+    padding: 0 5px;
     line-height: 30px;
     text-align: center;
-    padding: 0 5px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    background-color: #fff;
   }
-  .check_selected {
-    border-color: red;
+  .check_selected,.radio_selected {
+    background: #3D5C99;
+    color: #fff;
+    border: 1px solid #3D5C99;
   }
+  .radio_item{padding: 0 10px;}
 </style>

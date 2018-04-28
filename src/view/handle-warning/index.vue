@@ -47,7 +47,8 @@
             <x-input  v-show="status == 99 "  title="处理评价" :readonly="true" v-model="evaluate"></x-input>
             <div class="hr"></div>
             <!--<div class="tab_div_height">-->
-              <tabs-pan :id="rowId"></tabs-pan>
+            <tabs-pan :id="rowId" ref="tabspan" :showComments="tabObj.showComments" :showMsg="tabObj.showMsg" :paramsMsg="tabObj.paramsMsg"></tabs-pan>
+              <!--<tabs-pan :id="rowId"></tabs-pan>-->
             <!--</div>-->
           </group>
         </div>
@@ -101,6 +102,7 @@
           serverBtime:'', //服务开始时间
           serverEtime:'', //服务结束时间
           serverAtime:'', //服务影响时长
+          opinion: ''  //处理意见
         },
         rowKey: [
           {key:'severity',value:'0'},
@@ -121,6 +123,14 @@
           urgency:[{key:"2",value:"高"},{key:"3",value:"中"},{key:"4",value:"低"}],
           type:[{key:"1",value:"普通"},{key:"2",value:"故障事件（可用性）"},{key:"3",value:"问询"}],
           attributes:[{key:"1",value:"一般事件"},{key:"2",value:"容量事件"},{key:"3",value:"信息安全事件"}],
+        },
+        tabObj:{
+          paramsMsg:{
+            refId: this.$route.query.id,
+            type:2
+          },
+          showComments:false,
+          showMsg:false,
         }
       }
     },
@@ -138,17 +148,23 @@
         let userName = getUserInfo().user.userName, role = getUserInfo().user.role
         let _userName =getUserInfo().user.name + '/' +userName
         this.readonly = false
+        this.tabObj.showComments= false
+        this.tabObj.showMsg= false
         if(role != 5){
           this.readonly = true
           return []
         }
         if(this.status == 0){// 未处理
+          this.tabObj.showComments= true
+          this.tabObj.showMsg= true
             actions = [
               {TypeId: 15, FlowActionName: "驳回", id: this.$route.query.id},
               {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
               {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id}
             ]
         }else if(this.status == 1 && (handler == _userName || (handler && handler.indexOf(_userName) !=-1))) { // 处理中
+          this.tabObj.showComments= true
+          this.tabObj.showMsg= true
             actions = [
               {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
             //  {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id}
@@ -168,6 +184,12 @@
         setHandleWarning: 'SET_HANDLE_WARNING',
       }),
       footerEvent(action) {
+        if(this.$refs.tabspan.getOpinionVal() == ''){
+          this.$vux.toast.text("请填写处理意见", "bottom")
+          return
+        }else {
+          this.bindData.opinion = this.$refs.tabspan.getOpinionVal()
+        }
         this.submitEvent(action)
       },
       _initWarning(){

@@ -30,50 +30,63 @@
   .tab_user_name {
     color: #00dd1c
   }
+  .msg_content{ position: relative}
+  .send_msg {position: absolute; bottom:4px; right: 2px}
+  .send_btn {line-height:20px; padding: 5px; border: none; border-radius: 5px;}
 </style>
 <template>
   <div class="tab_div">
     <tab :line-width=2 active-color='#fc378c' v-model="index">
       <tab-item class="vux-center"  v-for="(item, i) in list" :key="i">
-        {{item}}({{numberMsg['key'+i]}})
+        {{item.name}}({{numberMsg['key'+i]}})
       </tab-item>
     </tab>
-    <swiper v-model="index" height="180px" :show-dots="false">
-      <swiper-item v-for="(item, i) in list" :key="i">
-        <div v-if="i==0" class="p_content">
-          <div v-show="opinions!=''" v-for="row in opinions">
-            <div class="m-t15 fz12">
-              <span class="tab_user_name fz12">{{row.userName}}</span>
-              <span class="tab_time fz12">{{new Date(row.time.time).format("yyyy-MM-dd hh:mm:ss")}}</span>({{row.descs}})
-              <div class="xheditor-con-div tab_summary fz12" v-html="row.content"></div>
-            </div>
+    <div v-show="index == 0">
+      <div  class="p_content">
+        <div v-show="opinions!=''" v-for="row in opinions">
+          <div class="m-t15 fz12">
+            <span class="tab_user_name fz12">{{row.userName}}</span>
+            <span class="tab_time fz12">{{new Date(row.time.time).format("yyyy-MM-dd hh:mm:ss")}}</span>({{row.descs}})
+            <div class="xheditor-con-div tab_summary fz12" v-html="row.content"></div>
           </div>
-           <p class="fz12" v-show="opinions==''">暂无内容</p>
         </div>
-        <div v-if="i==1" class="p_content">
-          <div v-show="messages!=''" v-for="row in messages">
-            <div class="m-t15 fz12">
-              <span class="tab_user_name fz12">{{row.sendUser}}</span>
-              <span class="tab_time fz12">{{new Date(row.sendTime.time).format("yyyy-MM-dd hh:mm:ss")}}</span>
-              <div class="xheditor-con-div tab_summary fz12" v-html="row.summary"></div>
-            </div>
+        <p class="fz12" v-show="opinions==''">暂无内容</p>
+      </div>
+      <div v-show="showComments">
+        <edit-box placeholder="请填写处理意见" ref="opinionsContent"></edit-box>
+      </div>
+    </div>
+    <div v-show="index == 1">
+      <div class="p_content">
+        <div v-show="messages!=''" v-for="row in messages">
+          <div class="m-t15 fz12">
+            <span class="tab_user_name fz12">{{row.sendUser}}</span>
+            <span class="tab_time fz12">{{new Date(row.sendTime.time).format("yyyy-MM-dd hh:mm:ss")}}</span>
+            <div class="xheditor-con-div tab_summary fz12" v-html="row.message"></div>
           </div>
-          <p class="fz12" v-show="messages==''">暂无消息</p>
         </div>
-      </swiper-item>
-    </swiper>
+        <p class="fz12" v-show="messages==''">暂无消息</p>
+      </div>
+      <div v-show="showMsg" class="msg_content">
+        <edit-box placeholder="请输入消息内容" ref="msgContent" @on-enter="sendMsg"></edit-box>
+        <div class="send_msg">
+          <button class="send_btn b1 c fz14" @click="sendMsg">发送</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script type="es6">
-  import {Tab, TabItem,Swiper, SwiperItem} from 'vux'
+  import {Tab, TabItem} from 'vux'
   import {getUrl} from 'common/js/Urls'
   import request from 'common/js/request'
+  import editBox from 'components/edit-box/edit-box'
 
   export default {
     data() {
       return {
         index: 0,
-        list: ['处理经过', '消息面板'],
+        list: [{name:'处理经过',type:1}, {name:'消息面板',type:1}],
         opinions: "",
         messages: "",
         numberMsg:{
@@ -83,10 +96,10 @@
       }
     },
     components: {
+      editBox,
+
       Tab,
-      TabItem,
-      Swiper,
-      SwiperItem
+      TabItem
     },
     props: {
       id: {
@@ -100,6 +113,18 @@
       messagesUrl: {
         type: String,
         default: '',
+      },
+      showComments:{
+        type:Boolean,
+        default: false
+      },
+      showMsg:{
+        type:Boolean,
+        default: false
+      },
+      paramsMsg:{
+        type:Object,
+        default: null
       }
     },
     watch: {
@@ -129,6 +154,34 @@
           } else {
             this.messages = res.data.rows
           }
+        }, (error) => {
+          console.log(JSON.stringify('error===' + error))
+        })
+      },
+      getOpinionVal () {
+        if(this.showComments) return this.$refs.opinionsContent.getTextValue()
+        else  return ''
+      },
+      getMsgVal () {
+        if(this.showMsg) return this.$refs.msgContent.getTextValue()
+        else  return ''
+      },
+      refreshMsg() {
+        this.loadTasOpinions()
+        this.loadTasMessages()
+      },
+      sendMsg () {
+        if(this.$refs.msgContent.getTextValue() == '') {
+          this.$vux.toast.text("请填写消息内容", "bottom")
+          return
+        }
+        request.post(getUrl('messages'), Object.assign({},this.paramsMsg,{message:this.$refs.msgContent.getTextValue()})).then((res) => {
+           if(res.success){
+             this.$refs.msgContent.clearVal()
+             this.loadTasMessages()
+           }else {
+             this.$vux.toast.text("发送消息失败", "bottom")
+           }
         }, (error) => {
           console.log(JSON.stringify('error===' + error))
         })
