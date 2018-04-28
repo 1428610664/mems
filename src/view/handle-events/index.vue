@@ -50,7 +50,7 @@
             <x-input v-if="status == '99'" title="关闭方式" :readonly="true" v-model="closeType"></x-input>
 
             <div class="hr"></div>
-            <tabs-pan :id="rowId"></tabs-pan>
+            <tabs-pan :id="rowId" ref="tabspan" :showComments="tabObj.showComments" :showMsg="tabObj.showMsg" :paramsMsg="tabObj.paramsMsg"></tabs-pan>
 
           </group>
         </div>
@@ -102,6 +102,7 @@
           serverBtime:'', //服务开始时间
           serverEtime:'', //服务结束时间
           serverAtime:'', //服务影响时长
+          opinion: ''  //处理意见
         },
         rowKey: [
           {key:'severity',value:'0'},
@@ -120,6 +121,14 @@
           urgency:[{key:"2",value:"高"},{key:"3",value:"中"},{key:"4",value:"低"}],
           type:[{key:"1",value:"普通"},{key:"2",value:"故障事件（可用性）"},{key:"3",value:"问询"}],
           attributes:[{key:"1",value:"一般事件"},{key:"2",value:"容量事件"},{key:"3",value:"信息安全事件"}],
+        },
+        tabObj:{
+          paramsMsg:{
+            refId: '',
+            type:1
+          },
+          showComments:false,
+          showMsg:false,
         }
       }
     },
@@ -139,6 +148,8 @@
         let _userName = getUserInfo().user.name +"/" + userName, handler =this.handleEvents.handler
         let toUser = getUserInfo().toUser
         this.readonly = true
+        this.tabObj.showComments= false
+        this.tabObj.showMsg= false
         if(this.status == 99 || this.selectIndex == 2 ){
           return []
         }
@@ -155,8 +166,12 @@
           {TypeId: 36, FlowActionName: "响应", id: this.handleEvents.serial} //8
         ]
         if(role == '5' && (this.status == 0 || this.status == 1)){ //服务台 未受理 处理中
+          this.tabObj.showComments= true
+          this.tabObj.showMsg= true
           actions = [buttons[8],buttons[3]]
         }else if( role !=  '5' && ((handler && handler.indexOf(_userName) != -1 ) || (toUser && toUser.split(",").indexOf(userName) != -1))){
+          this.tabObj.showComments= true
+          this.tabObj.showMsg= true
           this.readonly = false
           switch (this.status + "") {
             case "0": //未处理：:
@@ -170,58 +185,12 @@
               break;
             default:
               this.readonly = true
+              this.tabObj.showComments= false
+              this.tabObj.showMsg= false
           }
         }else {
 
         }
-        // switch (this.selectIndex + ''){
-        //   case '0': //待处理 未响应
-        //    switch (role+""){
-        //      case "5": //服务台
-        //        if(this.handleEvents.handler == '' ){
-        //          actions = [buttons[8],buttons[3]]
-        //        }else {
-        //          actions = [buttons[8]]
-        //        }
-        //        break
-        //      case "2": //二线人工告警待处理
-        //        if(handler && handler.indexOf(_userName) == -1) return []
-        //        this.readonly = false
-        //        if(this.handleEvents["suppressEscl"] == "5"){  //误报： 取消误报 关单
-        //          actions =  [buttons[2],buttons[0]]
-        //        }else if(this.handleEvents["suppressEscl"] == "3"){ //已屏蔽：: 取消屏蔽 关单
-        //          actions = [buttons[5],buttons[0]]
-        //        }else{
-        //          switch (this.status + "") {
-        //            case "0": //未处理：:
-        //              if(this.handleEvents.sourceAgent == "user"){ //人工报障
-        //                  actions = [buttons[4],buttons[3]]  //受理 转派
-        //              }else{ //非人工报障
-        //                  actions = [buttons[4],buttons[3],buttons[7]] //受理 转派 屏蔽
-        //              }
-        //              break;
-        //            case "1": //处理中
-        //              if(this.handleEvents.sourceAgent == "user"){  //人工报障
-        //                  actions = [buttons[3],buttons[0]] //转派 关单
-        //              }else{
-        //                  actions = [buttons[3],buttons[7],buttons[0]] //转派 屏蔽 关单
-        //              }
-        //              break;
-        //            default:
-        //              this.readonly = true
-        //          }
-        //        }
-        //        break
-        //      default:
-        //    }
-        //     break
-        //    case '1': //已响应
-        //     if(role == 5 && this.handleEvents.handler == '' ){ //服务台 已响应 没有处理人 可以转派
-        //       actions = [buttons[3]]
-        //     }
-        //     break
-        // }
-
         return actions
       }
     },
@@ -233,6 +202,13 @@
         setHandleEvents: 'SET_HANDLE_EVENTS',
       }),
       footerEvent(action) {
+        //   console.log( this.$refs.tabssd.getOpinionVal())
+        if(this.$refs.tabspan.getOpinionVal() == ''){
+          this.$vux.toast.text("请填写处理意见", "bottom")
+          return
+        }else {
+          this.bindData.opinion = this.$refs.tabspan.getOpinionVal()
+        }
         this.submitEvent(action)
       },
       _initEvent(){
@@ -248,6 +224,7 @@
           this.lastOccurrence =  this.getFormatTime(this.handleEvents.lastOccurrence)
           this.sourceAgent =  this.getSourceAgent(this.handleEvents.sourceAgent)
           this.closeType =  this.eventCloseType(this.handleEvents)
+          this.tabObj.paramsMsg.refId = this.handleEvents.cid
         }else {
           this.$router.replace('/myEvents')
         }
