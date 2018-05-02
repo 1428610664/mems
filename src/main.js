@@ -10,9 +10,11 @@ import eruda from 'eruda'
 import router from './router'
 import 'common/styles/common.css'
 import  { ToastPlugin,ConfirmPlugin,LoadingPlugin  } from 'vux'
-
+import echarts from 'echarts'
 import VTree from 'components/vue-tree'
+
 Vue.use(VTree)
+Vue.prototype.$echarts = echarts
 
 Vue.use(VueRouter)
 Vue.use(ToastPlugin)

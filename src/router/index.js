@@ -107,6 +107,18 @@ export default new Router({
               component: (resolve) => require(['view/change-end'], resolve)
             }
           ]
+        },
+        {
+          path: '/eventStatistics',
+          component: (resolve) => require(['view/event-statistics'], resolve),
+        },
+        {
+          path: '/serviceStatistics',
+          component: (resolve) => require(['view/service-statistics'], resolve),
+        },
+        {
+          path: '/faultsStatistics',
+          component: (resolve) => require(['view/faults-statistics'], resolve),
         }
       ]
     }, {
