@@ -109,6 +109,7 @@
           action.params.status = 0
         }
         console.log(JSON.stringify(action.params))
+
         this.submitEvent(action)
       },
       init(){
@@ -123,14 +124,14 @@
         // rule解析
         let rule = JSON.parse(this.change.rule), ruleArr = []
         if(rule.ip.length > 0 ) ruleArr.push({type: 10, app: '', appData: [], ip: rule.ip[0].ip, title: '', summary: ''})
-        let app = rule.app
+        let app = JSON.parse(this.change.originalRule).app
         if(app.length > 0){
-          for(let item of app){
+          /*for(let item of app){
             ruleArr.push({type: 0, app: this._parseCheckData(item), appData: item, ip: '', title: '', summary: ''})
-          }
+          }*/
+          ruleArr.push({type: 0, app: this._parseCheckData(app), appData: app, ip: '', title: '', summary: ''})
         }
         this.rule = ruleArr
-
       },
       _parseCheckData(data){
         let objS = data, appName = "", appAggregate = [];

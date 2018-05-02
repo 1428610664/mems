@@ -122,8 +122,8 @@
       footerEvent(action) {
         console.log(JSON.stringify(action))
         if (action.TypeId == 0) {
-          //history.go(-1)
-          console.log("rule：" + JSON.stringify(this.$refs.rule.getData()))
+          history.go(-1)
+          // console.log("rule：" + JSON.stringify(this.$refs.rule.getData()))
           return
         }
         // 时间替换上
@@ -189,12 +189,12 @@
         if(rule.title && rule.title.length > 0 ) ruleArr.push({type: 20, app: '', ip: '', title: rule.title[0].title, summary: ''})
         if(rule.summary && rule.summary.length > 0 ) ruleArr.push({type: 30, app: '', ip: '', title: '', summary: rule.summary[0].summary})
 
-
-        let app = rule.app
+        let app = JSON.parse(this.maintain.originalRule).app
         if(app.length > 0){
-          for(let item of app){
+          /*for(let item of app){
             ruleArr.push({type: 0, app: this._parseCheckData(item), appData: item, ip: '', title: '', summary: ''})
-          }
+          }*/
+          ruleArr.push({type: 0, app: this._parseCheckData(app), appData: app, ip: '', title: '', summary: ''})
         }
         this.rule = ruleArr
       },
