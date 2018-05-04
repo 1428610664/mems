@@ -127,7 +127,7 @@
             case '3': // 待评价
               actions = [
                 {TypeId: 19, FlowActionName: "提交评价", id: this.$route.query.id},
-                {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},
+                /*{TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id},*/
               ]
               break
             default:

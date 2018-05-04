@@ -17,12 +17,12 @@
           </div>
         </div>
         <div class="line-wrapper">
-          <button class="login b1 c fz14 btn-active" @click="login">登录</button>
+          <button class="login b1 c fz14 btn-active" style="margin-top: 20px" @click="login">登录</button>
         </div>
-        <div class="line-wrapper clear">
+        <!--<div class="line-wrapper clear">
           <a href="javascript:void(0)" class="fl c4">忘记密码?</a>
           <a href="javascript:void(0)" class="fr c1">注册新账号</a>
-        </div>
+        </div>-->
       </div>
       <footer class="copyright c2 ct fz12" id="foot">Copyright ©广州科微软件有限公司</footer>
     </div>

@@ -48,6 +48,7 @@
               <!--</div>-->
             <!--</div>-->
             <x-input v-if="status == '99'" title="关闭方式" :readonly="true" v-model="closeType"></x-input>
+            <cell v-if="status == '99'" title="事件原因" :value="handleEvents.rootCause"></cell>
 
             <div class="hr"></div>
             <tabs-pan :id="rowId" ref="tabspan" :showComments="tabObj.showComments" :showMsg="tabObj.showMsg" :paramsMsg="tabObj.paramsMsg"></tabs-pan>
@@ -72,7 +73,7 @@
 
 <script>
 
-  import {XHeader, Group, Scroller, XTextarea, XInput, Selector,XSwitch} from 'vux'
+  import {XHeader, Group, Scroller, XTextarea, XInput, Selector,XSwitch, Cell} from 'vux'
   import commFooter from 'components/comm-footer'
   import appSelect from 'components/multi-select/app-select'
   import VConfirm from 'components/confirm'
@@ -299,7 +300,8 @@
       XTextarea,
       XInput,
       Selector,
-      XSwitch
+      XSwitch,
+      Cell
     }
   }
 </script>
