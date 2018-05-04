@@ -31,7 +31,7 @@ export function actionJson(no, id){
 
     //事件告警
     No23: ["/events", "提交"],				                 // 提交事件
-    No24: [`/events/${id}/shield`, "屏蔽"],				   // 屏蔽报障
+    No24: [`/events/${id}/shield`, "屏蔽", 1],				   // 屏蔽报障
     No25: [`/events/${id}/revert`, "取消屏蔽"],	     // 取消屏蔽
     No26: [`/events/${id}/turn`, "转派"],				   // 转派事件
     No27: [`/events/${id}`, "删除"],				           // 删除事件

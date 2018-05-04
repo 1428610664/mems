@@ -55,6 +55,15 @@
           </group>
         </div>
 
+      <v-confirm v-model="shieldModel"
+               :show-selector="true"
+               defaultValue="误报"
+               selectorTitle="屏蔽原因"
+               :selectorOptions='[ "误报", "未设置维护期"]'
+               title=" 屏蔽事件 "
+               @on-confirm="onShieldModelConfirm">
+      </v-confirm>
+
       <comm-footer :FlowActions="FlowActions" @event="footerEvent"></comm-footer>
       <router-view></router-view>
     </div>
@@ -66,6 +75,7 @@
   import {XHeader, Group, Scroller, XTextarea, XInput, Selector,XSwitch} from 'vux'
   import commFooter from 'components/comm-footer'
   import appSelect from 'components/multi-select/app-select'
+  import VConfirm from 'components/confirm'
   import datetime from 'components/datetime/index'
   import {getUrl} from 'common/js/Urls'
   import {eventsMixin} from "common/mixin/eventMixin"
@@ -78,6 +88,9 @@
     mixins: [eventsMixin],
     data() {
       return {
+        shieldModel: false,   // 屏蔽Model
+        shileModelAction : null,
+
         sysTypeTypeUrl: getUrl("appType"),
         sysTypeNameUrl: getUrl("appName"),
         sysTypeComponentUrl: getUrl("component"),
@@ -162,7 +175,7 @@
           {TypeId: 32, FlowActionName: "受理", id: this.handleEvents.serial}, //4
           {TypeId: 25, FlowActionName: "取消屏蔽", id: this.handleEvents.serial}, //5
           {TypeId: 29, FlowActionName: "误报", id: this.handleEvents.serial}, //6
-          {TypeId: 24, FlowActionName: "屏蔽", id: this.handleEvents.serial}, //7
+          {TypeId: 24, FlowActionName: "屏蔽", id: this.handleEvents.serial, params: {eventCause: ''}}, //7
           {TypeId: 36, FlowActionName: "响应", id: this.handleEvents.serial} //8
         ]
         if(role == '5' && (this.status == 0 || this.status == 1)){ //服务台 未受理 处理中
@@ -203,6 +216,11 @@
       }),
       footerEvent(action) {
         //   console.log( this.$refs.tabssd.getOpinionVal())
+        if(action.TypeId == 24){  // 点击屏蔽
+          this.shieldModel = true
+          this.shileModelAction = action
+          return
+        }
         if(this.$refs.tabspan.getOpinionVal() == ''){
           this.$vux.toast.text("请填写处理意见", "bottom")
           return
@@ -210,6 +228,11 @@
           this.bindData.opinion = this.$refs.tabspan.getOpinionVal()
         }
         this.submitEvent(action)
+      },
+      // 屏蔽弹窗确认
+      onShieldModelConfirm(value){
+        this.shileModelAction.params.eventCause = value
+        this.submitEvent(this.shileModelAction)
       },
       _initEvent(){
         if (this.handleEvents) {
@@ -268,6 +291,7 @@
       appSelect,
       datetime,
       tabsPan,
+      VConfirm,
 
       XHeader,
       Group,

@@ -185,6 +185,20 @@ export const eventsMixin = {
     submitEvent(action){
       let _this = this
       if(actionJson(action.TypeId, action.id)[2] == 1){ //不需要验证非空
+
+        if(action.TypeId == 24){
+          this.$vux.loading.show({text: '数据提交中...'})
+          request[action.type ? action.type : "post"](actionJson(action.TypeId, action.id)[0], (action.params ? action.params : {})).then((res) => {
+            this.$vux.loading.hide()
+            if(res.success)window.history.back()
+            this.$vux.toast.text(res.desc, "bottom")
+          }, (error) => {
+            this.$vux.loading.hide()
+            console.log("error ： "+JSON.stringify(error))
+          })
+          return
+        }
+
         this.$vux.confirm.show({
           title: '提示',
           content: '确认'+action.FlowActionName+'？',

@@ -46,7 +46,7 @@
         <div v-show="opinions!=''" v-for="row in opinions">
           <div class="m-t15 fz12">
             <span class="tab_user_name fz12">{{row.userName}}</span>
-            <span class="tab_time fz12">{{new Date(row.time.time).format("yyyy-MM-dd hh:mm:ss")}}</span>({{row.descs}})
+            <span class="tab_time fz12">{{new Date(row.time.time).format("yyyy-MM-dd hh:mm:ss")}}</span><span class="c4">&nbsp;&nbsp;({{row.descs}})</span>
             <div class="xheditor-con-div tab_summary fz12" v-html="row.content"></div>
           </div>
         </div>
