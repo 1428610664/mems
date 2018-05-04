@@ -111,6 +111,7 @@
           {key:'type',value:'1'},
           {key:'attributes',value:'1'}
           ],
+        content:"请填写意见",
 
         checkData: {
           urgency: {message: "请选择紧急度", check: "isEmpty"},

@@ -53,9 +53,10 @@
         <p class="fz12" v-show="opinions==''">暂无内容</p>
       </div>
       <div v-show="showComments">
-        <edit-box placeholder="请填写处理意见" ref="opinionsContent"></edit-box>
+        <html5-editor :height="120"  ref="opinionsContent"></html5-editor>
       </div>
     </div>
+
     <div v-show="index == 1">
       <div class="p_content">
         <div v-show="messages!=''" v-for="row in messages">
@@ -68,7 +69,8 @@
         <p class="fz12" v-show="messages==''">暂无消息</p>
       </div>
       <div v-show="showMsg" class="msg_content">
-        <edit-box placeholder="请输入消息内容" ref="msgContent" @on-enter="sendMsg"></edit-box>
+         <at-editor :height="120" ref="msgContent"></at-editor>
+        <!--<edit-box placeholder="请输入消息内容" ref="msgContent" @on-enter="sendMsg"></edit-box>-->
         <div class="send_msg">
           <button class="send_btn b1 c fz14" @click="sendMsg">发送</button>
         </div>
@@ -80,6 +82,8 @@
   import {Tab, TabItem} from 'vux'
   import {getUrl} from 'common/js/Urls'
   import request from 'common/js/request'
+  import html5Editor from 'components/html5-editor/index'
+  import atEditor from 'components/html5-editor/atEditor'
   import editBox from 'components/edit-box/edit-box'
 
   export default {
@@ -97,6 +101,8 @@
     },
     components: {
       editBox,
+      html5Editor,
+      atEditor,
 
       Tab,
       TabItem
@@ -159,11 +165,15 @@
         })
       },
       getOpinionVal () {
-        if(this.showComments) return this.$refs.opinionsContent.getTextValue()
+        if(this.showComments) return this.$refs.opinionsContent.getContentText()
         else  return ''
       },
       getMsgVal () {
-        if(this.showMsg) return this.$refs.msgContent.getTextValue()
+        if(this.showMsg) return this.$refs.msgContent.getContentText()
+        else  return ''
+      },
+      getAtUser () {
+        if(this.showMsg) return this.$refs.msgContent.getAtUser()
         else  return ''
       },
       refreshMsg() {
@@ -171,13 +181,13 @@
         this.loadTasMessages()
       },
       sendMsg () {
-        if(this.$refs.msgContent.getTextValue() == '') {
+        if(this.$refs.msgContent.getContentText() == '') {
           this.$vux.toast.text("请填写消息内容", "bottom")
           return
         }
-        request.post(getUrl('messages'), Object.assign({},this.paramsMsg,{message:this.$refs.msgContent.getTextValue()})).then((res) => {
+        request.post(getUrl('messages'), Object.assign({},this.paramsMsg,{message:this.$refs.msgContent.getContentText()})).then((res) => {
            if(res.success){
-             this.$refs.msgContent.clearVal()
+             this.$refs.msgContent.reset()
              this.loadTasMessages()
            }else {
              this.$vux.toast.text("发送消息失败", "bottom")
