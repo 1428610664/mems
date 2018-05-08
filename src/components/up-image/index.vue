@@ -6,8 +6,7 @@
       <input type="text" v-model="imageUrl" maxlength="255" placeholder="请输入地址">
       <!--<button type="button" @click="insertImageUrl">保存</button>-->
 
-      <input type="file" ref="file" style="display: none !important;" @change="process"
-             accept="image/png">
+      <input type="file" ref="file" style="display: none !important;" @change="process">
       <button type="button" @click="pick">上传</button>
     </div>
 
@@ -48,29 +47,20 @@
             complete: 0
           },
           config: {
-            // server: null,
-            // fieldName: 'image',
-            // compress: true,
-            // width: 1600,
-            // height: 1600,
-            // quality: 80,
             sizeLimit: 512 * 1024,// 512k
             upload: {
-                url: 'http://192.168.1.130/ems/xheditor/upload',
+                url: 'http://192.168.1.246/ems/xheditor/upload',
+              //  url: 'http://192.168.1.246/ems/xheditor/upload',
                 headers: {},
                 params: {},
                 fieldName: {}
-            },
-            compress: {
-              width: 1600,
-              height: 1600,
-              quality: 80
             },
             uploadHandler(responseText){
               const json = JSON.parse(responseText)
               return json.ok ? json.data : null
             }
-          }
+          },
+          swf:''
         }
       },
       props: {
@@ -88,8 +78,8 @@
           this.imageUrl = null
         },
         pick() {
-        	 this.$vux.toast.text("功能开发中", "bottom")
-//        this.$refs.file.click()
+         //this.$vux.toast.text("功能开发中", "bottom")
+          this.$refs.file.click()
         },
         setUploadError(msg){
           this.upload.status = 'error'
@@ -149,7 +139,9 @@
           //   return
           // }
           // 上传服务器
-          component.uploadToServer(file)
+
+      component.uploadToServer(file)
+         // component.uploadToSwf(file)
         },
         insertBase64(data) {
           this.$parent.$parent.execCommand('insertImage', data)
@@ -159,25 +151,9 @@
 
           const formData = new FormData()
           formData.append('filename', file)
-          formData.append('name', 'filedata')
-
-          if (typeof config.upload.params === 'object') {
-            Object.keys(config.upload.params).forEach((key) => {
-              const value = config.upload.params[key]
-              if (Array.isArray(value)) {
-                value.forEach((v) => {
-                  formData.append(key, v)
-                })
-              } else {
-                formData.append(key, value)
-              }
-            })
-          }
-          // this.ajax(formData)
-          // return
+          // formData.append('type', 'filedata')
 
           const xhr = new XMLHttpRequest()
-
           xhr.onprogress = (e) => {
             this.upload.status = 'progress'
             if (e.lengthComputable) {
@@ -216,7 +192,10 @@
             this.upload.status = 'abort'
           }
 
+
           xhr.open('POST', config.upload.url)
+          // xhr.setRequestHeader('Content-Type', 'application/octet-stream'); //二进制格式上传。 跨域会被拦截
+          // xhr.setRequestHeader('Content-Disposition', 'attachment; name="'+encodeURIComponent('filedata')+'"; filename="'+encodeURIComponent(file.name)+'"');
           if (typeof config.upload.headers === 'object') {
             Object.keys(config.upload.headers).forEach((k) => {
               xhr.setRequestHeader(k, config.upload.headers[k])
@@ -232,6 +211,10 @@
           }).then((res) => {
             console.log('111111111111')
           })
+        },
+        uploadToSwf(file){
+
+
         }
       }
     }

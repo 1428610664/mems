@@ -1,7 +1,6 @@
-import {getUrl} from 'common/js/Urls'
 import atUser from 'components/at-user'
-import upImage from 'components/up-image'
-import upFile from 'components/up-file'
+// import upImage from 'components/up-image'
+// import upFile from 'components/up-file'
 
 
 
@@ -113,43 +112,104 @@ export default {
             i18n: "linknew",
             show: true,
             init: function (editor) {
+            //  editor.toggleDashboard(editor.modules[0].dashboard)
             },
             //vue component
-            dashboard: {
-              template: '<up-file></up-file>',
-              data: function () {
-                return {}
-              },
-              components:{upFile},
-              methods: {
-              }
-            }
-          },
-          {
-            //custom module with dashboard.html
-            name: "imagenew",
-            icon: "fa fa-file-image-o",
-            i18n: "imagenew",
-            show: true,
-            init: function (editor) {
-            },
-            // handler: function (editor) {
-            //   console.log(editor)
-            //   return editor
-            // //  this.$refs.upImage.pick()
+            // dashboard: {
+            //   template: '<up-file ref="updateFile"></up-file>',
+            //   data: function () {
+            //     return {}
+            //   },
+            //   components:{upFile},
+            //   methods: {
+            //     updateFile () {
+            //       this.$refs.updateFile.pick()
+            //     }
+            //   }
             // },
-            //vue component
-            dashboard: {
-              template: '<up-image></up-image>',
-              data: function () {
-                return {
+            handler: function (editor) {
+              console.log(editor)
+               const  url ='http://192.168.1.130'
+               let damo = document.createElement("div") //创建上传附件damo
+               damo.innerHTML = '<input type="file">'
+               damo.childNodes[0].click() //触发附件上传功能
+               damo.childNodes[0].onchange = (event)=>{ //监听上传附件change后上传附件；
+                 if(damo.childNodes[0].files.length > 1){
+                   editor.$vux.toast.text("一次只能上传一个附件", "bottom")
+                   return
+                 }
+                const file = damo.childNodes[0].files[0]
+                if (file.size > 5000 * 1024) {
+                  editor.$vux.toast.text("文件超出大小限制", "bottom")
+                  return
                 }
-              },
-              components:{upImage},
-              methods: {
+
+                const formData = new FormData()
+                formData.append('filename', file)
+                // formData.append('type', 'filedata')
+
+                const xhr = new XMLHttpRequest()
+                 let percent = 0
+                xhr.onprogress = (e) => {
+                   editor.$vux.loading.show({
+                    text: '文件上传中...'
+                    })
+                    if (e.lengthComputable) {
+                      // const percentComplete = e.loaded / e.total
+                      // percent = (percentComplete * 100).toFixed(0)
+                      // editor.$vux.loading.show({
+                      //   text: '文件上传中，上传进度'+percent+'%'
+                      // })
+                    } else {
+                      editor.$vux.loading.hide()
+                    }
+                }
+
+                xhr.onload = () => {
+                  editor.$vux.loading.hide()
+                  if (xhr.status >= 300) {
+                    editor.$vux.toast.text("请求错误", "bottom")
+                    return
+                  }
+                  try {
+                    console.log(JSON.parse(xhr.responseText).msg.split("||")[0])
+                    const url_back =JSON.parse(xhr.responseText).msg.split("||")[0]
+                    const name_back =JSON.parse(xhr.responseText).msg.split("||")[1]
+                    if (url_back) {
+                      editor.execCommand("insertHTML", "<a href='"+url + url_back+"'>"+name_back+"</a>")
+                    }
+                  } catch (err) {
+                    editor.$vux.toast.text("上传失败", "bottom")
+                  }
+                }
+                xhr.onerror = () => {
+                  editor.$vux.loading.hide()
+                  editor.$vux.toast.text("请求错误", "bottom")
+                }
+                xhr.open('POST', url + "/ems/xheditor/upload");
+                xhr.send(formData)
               }
-            }
+               // damo = null
+            },
           },
+          // {
+          //   //custom module with dashboard.html
+          //   name: "imagenew",
+          //   icon: "fa fa-file-image-o",
+          //   i18n: "imagenew",
+          //   show: true,
+          //   //vue component
+          //   dashboard: {
+          //     template: '<up-image ref = "imageTing"></up-image>',
+          //     data: function () {
+          //       return {
+          //       }
+          //     },
+          //     components:{upImage},
+          //     methods: {
+          //     }
+          //   }
+          // },
           {
           //custom module with dashboard.html
           name: "atuser",

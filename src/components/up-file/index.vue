@@ -61,7 +61,7 @@
           this.upload.status = 'ready'
         },
         pick() {
-        this.$vux.toast.text("功能开发中", "bottom")
+        	 this.$vux.toast.text("功能开发中", "bottom")
 //        this.$refs.file.click()
         },
         setUploadError(msg){
@@ -135,6 +135,11 @@
           }
           xhr.send(formData)
         }
+      },
+      beforeCreate(){
+        this.$nextTick(()=>  {
+          // this.initSelect()
+        })
       }
     }
 </script>
