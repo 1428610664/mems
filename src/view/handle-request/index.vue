@@ -28,7 +28,7 @@
           <x-input title="处理评价" v-if="evaluateObj.isShow" :readonly="true" v-model="evaluate"></x-input>
 
           <div class="hr"></div>
-          <tabs-pan :id="rowId" :opinionUrl="opinionUrl"></tabs-pan>
+          <tabs-pan :id="rowId" :opinionUrl="opinionUrl"  ref="tabspan" :showComments="tabObj.showComments" :showMsg="tabObj.showMsg" :paramsMsg="tabObj.paramsMsg"></tabs-pan>
 
           <div v-if="evaluateObj.isEvaluate && status != 99">
             <evaluate-wrapper ref="evaluateWrapper"></evaluate-wrapper>
@@ -85,6 +85,14 @@
           appName: {message: "请选择所属系统", check: "isEmpty"},
         },
         checkNumberArray: [{key: "1", value: '是'}, {key: "2", value: '否'}],
+        tabObj:{
+          paramsMsg:{
+            refId: '',
+            type:3
+          },
+          showComments:false,
+          showMsg:false,
+        }
 
       }
     },
@@ -144,6 +152,12 @@
           // edti 不可编辑
           actions = []
         }
+        this.tabObj.showComments= false
+        this.tabObj.showMsg= false
+        if(actions.length!=0 || ( actions.length == 1 && actions[0].TypeId!= 8 )) {
+          this.tabObj.showComments= true
+          this.tabObj.showMsg= true
+        }
         return actions
       },
       /**
@@ -170,6 +184,13 @@
           let evaluate = this.$refs.evaluateWrapper.getEvaluate()
           if(!evaluate) return
           action.params = {evaluate: evaluate.evaluate, cacsi: evaluate.cacsi.key}
+        }else {
+          if(this.$refs.tabspan.getOpinionVal() == ''){
+            this.$vux.toast.text("请填写处理意见", "bottom")
+            return
+          }else {
+            this.bindData.opinion = this.$refs.tabspan.getOpinionVal()
+          }
         }
         this.submitEvent(action)
       },
@@ -185,6 +206,7 @@
           this.cacsi = this.getCacsi(this.handleRequest.cacsi)
           this.status = this.handleRequest.status
           this.evaluate = this.handleRequest.evaluate
+          this.tabObj.paramsMsg.refId =this.handleRequest.id
         } else {
           this.$router.replace('/serviceRequest')
         }

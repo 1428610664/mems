@@ -47,7 +47,7 @@
           <div class="m-t15 fz12">
             <span class="tab_user_name fz12">{{row.userName}}</span>
             <span class="tab_time fz12">{{new Date(row.time.time).format("yyyy-MM-dd hh:mm:ss")}}</span><span class="c4">&nbsp;&nbsp;({{row.descs}})</span>
-            <div class="xheditor-con-div tab_summary fz12" v-html="row.content"></div>
+            <div class="editor_summary tab_summary fz12" v-html="row.content"></div>
           </div>
         </div>
         <p class="fz12" v-show="opinions==''">暂无内容</p>
@@ -63,7 +63,7 @@
           <div class="m-t15 fz12">
             <span class="tab_user_name fz12">{{row.sendUser}}</span>
             <span class="tab_time fz12">{{new Date(row.sendTime.time).format("yyyy-MM-dd hh:mm:ss")}}</span>
-            <div class="xheditor-con-div tab_summary fz12" v-html="row.message"></div>
+            <div class="editor_messages tab_summary fz12" v-html="row.message"></div>
           </div>
         </div>
         <p class="fz12" v-show="messages==''">暂无消息</p>
@@ -81,6 +81,7 @@
 <script type="es6">
   import {Tab, TabItem} from 'vux'
   import {getUrl} from 'common/js/Urls'
+  import {down} from 'common/js/H5Utils'
   import request from 'common/js/request'
   import html5Editor from 'components/html5-editor/index'
   import atEditor from 'components/html5-editor/atEditor'
@@ -147,6 +148,9 @@
             this.opinions = ""
           } else {
             this.opinions = res.data.rows
+            this.$nextTick(()=>{
+              this.bindAClick(document.querySelectorAll('.tab_div .editor_summary a'))
+            })
           }
         }, (error) => {
           console.log(JSON.stringify('error===' + error))
@@ -159,6 +163,9 @@
             this.messages = ""
           } else {
             this.messages = res.data.rows
+            this.$nextTick(()=>{
+              this.bindAClick(document.querySelectorAll('.tab_div .editor_messages a'))
+            })
           }
         }, (error) => {
           console.log(JSON.stringify('error===' + error))
@@ -195,6 +202,31 @@
         }, (error) => {
           console.log(JSON.stringify('error===' + error))
         })
+      },
+      bindAClick (damo) {
+        if (damo != null && damo.length !== 0) {
+          damo.forEach((item)=>{
+            if((item.target && item.target == "_blank" )){
+              if(item.href && item.href.split("/ems/")[0] != process.env.API && item.href.split("/ems/")[1].split("/xheditor/")[0] == 'files' ){
+                item.href = process.env.API + "/ems/" + item.href.split("/ems/")[1]
+                const  _html = item.innerHTML
+                item.innerHTML =  "<i class=\"fa fa-download\" aria-hidden=\"true\"></i>&nbsp;" + item.innerHTML
+              }
+            }
+            item.onclick = ()=>{
+              if( item.href.split("/ems/")[1].split("/xheditor/")[0] == 'files' || (item.class && item.class =='file_link') || (item.target && item.target == "_blank" )){
+                // console.log(item.href.split("/ems/"))
+                // let _url =  item.href
+                // if(item.href.split("/ems/")[0] != process.env.API ){
+                //   _url = process.env.API + "/ems/" + item.href.split("/ems/")[1]
+                // }
+                console.log(item.href)
+                 down(item.href)
+              }
+              return false
+            }
+          })
+        }
       }
     },
     beforeCreate() {

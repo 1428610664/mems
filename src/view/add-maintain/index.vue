@@ -16,9 +16,13 @@
 
           <datetime v-model="bTime2" v-show="bindData.winType != '0'" format="YYYY-MM-DD" title="开始时间"></datetime>
           <datetime v-model="eTime2" v-show="bindData.winType != '0'" format="YYYY-MM-DD" title="结束时间"></datetime>
+          <div v-show="bindData.winType != '0'" class="hr"></div>
+          <hms-time v-show="bindData.winType != '0'" :value="bindData.loopStartTime" ref="loopStartTime" title="循环开始时间" @on-blur="verificationTime" @on-change="hmsTimeChange" ></hms-time>
+          <div v-show="bindData.winType != '0'" class="hr"></div>
+          <hms-time v-show="bindData.winType != '0'" :value="bindData.loopEndTime" ref="loopEndTime" title="循环结束时间" @on-blur="verificationTime" @on-change="hmsTimeChange"></hms-time>
 
-          <selector v-model="bindData.loopStartTime" v-show="bindData.winType != '0'" title="循环开始时间" :options="loopTimeArray()"></selector>
-          <selector v-model="bindData.loopEndTime" v-show="bindData.winType != '0'" title="循环结束时间" :options="loopTimeArray()"></selector>
+          <!--<selector v-model="bindData.loopStartTime" v-show="bindData.winType != '0'" title="循环开始时间" :options="loopTimeArray()"></selector>-->
+          <!--<selector v-model="bindData.loopEndTime" v-show="bindData.winType != '0'" title="循环结束时间" :options="loopTimeArray()"></selector>-->
 
           <x-textarea title="描述" v-model="bindData.desc" placeholder="请输入文字" :show-counter="false" :rows="5" :max="200"></x-textarea>
           <div class="hr"></div>
@@ -40,6 +44,7 @@
   import commFooter from 'components/comm-footer'
   import SelectDay from 'components/select-day'
   import datetime from 'components/datetime'
+  import hmsTime from 'components/hms-time'
   import Rule from 'components/rule'
   import {getUrl} from 'common/js/Urls'
   import {mapGetters} from 'vuex'
@@ -67,8 +72,8 @@
           rule: {},         // 规则,json格式
           desc: '',         // 描述
           type: 2,          // 类型 【1:变更白板】【2:维护期】
-          loopStartTime: false, // 循环开始时间
-          loopEndTime: false,   // 循环结束时间
+          loopStartTime: "", // 循环开始时间
+          loopEndTime: "",   // 循环结束时间
         },
         winTypeArray: [{key: "0", value: '非周期'}, {key: "10", value: '按天'}, {key: "20", value: '按周'}, {key: "30",value: '按月'}]
       }
@@ -218,6 +223,34 @@
         appAggregate=null
         objS=null
         return appName
+      },
+      verificationTime(val,title){
+        console.log("verificationTime",val)
+        if(title == '循环开始时间' )this.bindData.loopStartTime = val
+        if(title == '循环结束时间' )this.bindData.loopEndTime = val
+        if(this.bindData.loopStartTime == ''|| this.bindData.loopEndTime =='' ) return
+        let _sTime_h = (+this.bindData.loopStartTime.split(":")[0] ) * 60 * 60
+        let _sTime_m = (+this.bindData.loopStartTime.split(":")[1]) * 60
+        let _eTime_h = (+this.bindData.loopEndTime.split(":")[0]) * 60 * 60
+        let _eTime_m = (+this.bindData.loopEndTime.split(":")[1]) * 60
+        let _sTime = _sTime_h + _sTime_m
+        let _eTime = _eTime_h + _eTime_m
+        console.log("循环开始时间："+_sTime,"循环结束时间："+_eTime)
+        if(_sTime >= _eTime ){
+          if(title == '循环开始时间'){
+            this.bindData.loopStartTime = ''
+            this.$refs.loopStartTime.setVal()
+            this.$vux.toast.text(title + "不能大于结束时间", "center")
+          }else {
+            this.bindData.loopEndTime = ''
+            this.$refs.loopEndTime.setVal()
+            this.$vux.toast.text(title + "不能小于开始时间", "center")
+          }
+        }
+      },
+      hmsTimeChange ( value ,key) {
+        const  newKey = {"循环开始时间":"loopStartTime","循环结束时间":'loopEndTime'}
+        this.bindData[newKey[key]] = value
       }
     },
     components: {
@@ -225,6 +258,7 @@
       datetime,
       SelectDay,
       Rule,
+      hmsTime,
 
       XHeader,
       Group,

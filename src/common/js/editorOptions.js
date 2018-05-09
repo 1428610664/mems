@@ -129,7 +129,6 @@ export default {
             // },
             handler: function (editor) {
               console.log(editor)
-               const  url ='http://192.168.1.130'
                let damo = document.createElement("div") //创建上传附件damo
                damo.innerHTML = '<input type="file">'
                damo.childNodes[0].click() //触发附件上传功能
@@ -172,11 +171,10 @@ export default {
                     return
                   }
                   try {
-                    console.log(JSON.parse(xhr.responseText).msg.split("||")[0])
                     const url_back =JSON.parse(xhr.responseText).msg.split("||")[0]
                     const name_back =JSON.parse(xhr.responseText).msg.split("||")[1]
                     if (url_back) {
-                      editor.execCommand("insertHTML", "<a href='"+url + url_back+"'>"+name_back+"</a>")
+                      editor.execCommand("insertHTML", "<a href='"+process.env.API + url_back+"' class ='file_link'><i class=\"fa fa-download\" aria-hidden=\"true\"></i>&nbsp;"+name_back+"</a>")
                     }
                   } catch (err) {
                     editor.$vux.toast.text("上传失败", "bottom")
@@ -186,7 +184,7 @@ export default {
                   editor.$vux.loading.hide()
                   editor.$vux.toast.text("请求错误", "bottom")
                 }
-                xhr.open('POST', url + "/ems/xheditor/upload");
+                xhr.open('POST', process.env.API + "/ems/xheditor/upload");
                 xhr.send(formData)
               }
                // damo = null

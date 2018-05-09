@@ -4,7 +4,7 @@ import store from 'store/index'
 import * as types from 'store/mutation-types'
 
 
-axios.defaults.baseURL = 'http://192.168.1.130/ems'
+axios.defaults.baseURL = process.env.API + '/ems'
 const commonParams = {}
 const option = {}
 

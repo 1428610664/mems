@@ -126,7 +126,7 @@ export function pickAllFile(directorName, cb1, cb2, cb3){
 	})
 }
 
-function down(url){
+export function down(url){
 	var hzDown1 = new hzDown();
 	hzDown1.init(url,function(d,s){
 		if (s == 200) {
