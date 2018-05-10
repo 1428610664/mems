@@ -209,8 +209,8 @@
             if((item.target && item.target == "_blank" )){
               if(item.href && item.href.split("/ems/")[0] != process.env.API && item.href.split("/ems/")[1].split("/xheditor/")[0] == 'files' ){
                 item.href = process.env.API + "/ems/" + item.href.split("/ems/")[1]
-                const  _html = item.innerHTML
-                item.innerHTML =  "<i class=\"fa fa-download\" aria-hidden=\"true\"></i>&nbsp;" + item.innerHTML
+                // const  _html = item.innerHTML
+                // item.innerHTML =  "<i class=\"fa fa-download\" aria-hidden=\"true\"></i>&nbsp;" + item.innerHTML
               }
             }
             item.onclick = ()=>{
