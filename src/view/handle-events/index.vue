@@ -183,7 +183,7 @@
           this.tabObj.showComments= true
           this.tabObj.showMsg= true
           actions = [buttons[8],buttons[3]]
-        }else if( role !=  '5' && ((handler && handler.indexOf(_userName) != -1 ) || (toUser && toUser.split(",").indexOf(userName) != -1))){
+        }else if( role !=  '5' && ((handler && handler.indexOf(_userName) != -1 ) || (toUser && handler.indexOf(toUser) != -1))){
           this.tabObj.showComments= true
           this.tabObj.showMsg= true
           this.readonly = false

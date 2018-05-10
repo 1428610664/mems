@@ -163,7 +163,7 @@
               {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
               {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id}
             ]
-        }else if(this.status == 1 && (handler == _userName || (handler && handler.indexOf(_userName) !=-1))) { // 处理中
+        }else if(this.status == 1) { // 处理中
           this.tabObj.showComments= true
           this.tabObj.showMsg= true
             actions = [
