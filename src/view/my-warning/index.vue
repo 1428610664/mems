@@ -28,7 +28,8 @@
           <x-input v-show="evaluateObj.isShow" title="处理评价" :readonly="true" v-model="evaluate"></x-input>
           <div class="hr"></div>
           <!--<div class="tab_div_height">-->
-            <tabs-pan :id="rowId"></tabs-pan>
+          <tabs-pan :id="rowId" ref="tabspan" :showComments="tabObj.showComments" :showMsg="tabObj.showMsg" :paramsMsg="tabObj.paramsMsg"></tabs-pan>
+            <!--<tabs-pan :id="rowId"></tabs-pan>-->
           <!--</div>-->
           <div v-if="evaluateObj.isEvaluate && status == 3">
             <evaluate-wrapper ref="evaluateWrapper"></evaluate-wrapper>
@@ -92,7 +93,15 @@
           appName: {message: "请选择所属系统", check: "isEmpty"},
         },
 
-        checkNumberArray: [{key: "1", value: '是'}, {key: "2", value: '否'}]
+        checkNumberArray: [{key: "1", value: '是'}, {key: "2", value: '否'}],
+        tabObj:{
+          paramsMsg:{
+            refId: this.$route.query.id,
+            type:2
+          },
+          showComments:false,
+          showMsg:false,
+        }
       }
     },
     computed: {
@@ -108,6 +117,8 @@
         let createUser = this.handleWarning.createUser.split("/")[1]
         let userName = getUserInfo().user.userName, role = getUserInfo().user.role
         this.readonly = false
+        this.tabObj.showComments= false
+        this.tabObj.showMsg= false
         if(role != 4){ //普通用户报障详情
           this.readonly = true
           return []
@@ -116,9 +127,13 @@
           switch (this.status + "") {
             case '0': //未处理
               this.readonly = true
+              this.tabObj.showComments= true
+              this.tabObj.showMsg= true
               actions = [{TypeId: 16, FlowActionName: "取消报障", id: this.$route.query.id}]
               break
             case '2':  // 被驳回
+              this.tabObj.showComments= true
+              this.tabObj.showMsg= true
               actions = [
                 {TypeId: 16, FlowActionName: "取消报障", id: this.$route.query.id},
                 {TypeId: 12, FlowActionName: "再次提交", id: this.$route.query.id}
@@ -160,6 +175,14 @@
           let evaluate = this.$refs.evaluateWrapper.getEvaluate()
           if(!evaluate) return
           action.params = {evaluate: evaluate.evaluate, cacsi: evaluate.cacsi.key}
+        }
+        if(action.TypeId == 16){
+          if(this.$refs.tabspan.getOpinionVal() == ''){
+            this.$vux.toast.text("请填写处理意见", "bottom")
+            return
+          }else {
+            this.bindData.opinion = this.$refs.tabspan.getOpinionVal()
+          }
         }
         this.submitEvent(action)
       },
