@@ -30,7 +30,8 @@
     methods: {
       onTabClick( index ){
         this.currentIndex = index
-        this.$emit("onTabClick", index)
+        const arr = ["D","W",'M']
+        this.$emit("on-tab-click", arr[index])
       }
     }
   }

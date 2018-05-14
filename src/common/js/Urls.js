@@ -128,6 +128,21 @@ const requestUrl = {
   obtainConfig:{
     url: '/config/rule',
     pre: preUrl
+  },
+  //事件分类统计报表
+  eventType:{
+    url: '/serviceWall/eventType',
+    pre: preUrl
+  } ,
+  //报障分类统计报表
+  faultType:{
+    url: '/serviceWall/faultType',
+    pre: preUrl
+  },
+  //报障分类统计报表
+  serviceType:{
+    url: '/serviceWall/serviceType',
+    pre: preUrl
   }
 }
 

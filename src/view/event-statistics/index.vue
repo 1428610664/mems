@@ -8,16 +8,16 @@
 
       <div class="content-wrapper">
         <div v-show="selectIndex == 0">
-          <v-tab></v-tab>
-          <bar-shape></bar-shape>
+          <v-tab @on-tab-click="tabDataRefresh" ></v-tab>
+          <bar-shape :arrData='chartsData.status'></bar-shape>
           <div id="category" :style="{width: '100vw', height: '100vw'}"></div>
-          <table-chart></table-chart>
+          <table-chart :arrData="chartsData.severity"></table-chart>
         </div>
         <div v-show="selectIndex == 1">
-          <v-tab></v-tab>
-          <div id="top1" :style="{width: '100vw', height: '80vw'}"></div>
-          <div id="top2" :style="{width: '100vw', height: '80vw'}"></div>
-          <div id="top3" :style="{width: '100vw', height: '80vw'}"></div>
+          <v-tab @on-tab-click="tabDataRefresh" ></v-tab>
+          <div id="top1" :style="{width: '100vw', height: '90vw'}"></div>
+          <div id="top2" :style="{width: '100vw', height: '90vw'}"></div>
+          <div id="top3" :style="{width: '100vw', height: '90vw'}"></div>
         </div>
         <div  v-show="selectIndex == 2">
           <div class="clear">
@@ -39,6 +39,8 @@
   import VTab from 'components/tab'
   import TableChart from 'components/table-chart'
   import BarShape from 'components/bar-shape'
+  import {getUrl} from 'common/js/Urls'
+  import request from 'common/js/request'
 
   export default {
     name: "index",
@@ -48,34 +50,65 @@
         selectIndex: 0,
 
         categoryColor: ["#CC0033", "#FF0000", "#FFFF00", "#FF9933", "#00CC00"],
-        charts: {}
+        charts: {},
+        dataType:['D','D'],
+        chartsData:{
+          appName: {},
+          eventCause: {},
+          severity: {},
+          sourceAgent: {},
+          status: {}
+          },
       }
     },
     computed: {},
     created() {
       setTimeout(() => {
-        this.initTab1()
+        this._getEventData()
         window.addEventListener('resize',this._resize,false);
       }, 20)
     },
     methods: {
       onTabItemClick(index) {
         this.selectIndex = index
-        this["initTab" + (++index)]()
+        this._getEventData()
       },
       initTab1() {
+        console.log("initTab1")
         this.charts.categoryChart = this.$echarts.init(document.getElementById('category'))
-
+        const categoryColor= {1:'#CC0033',2:"#FF0000",3:'#FFFF00',4:'#FF9933',0:'#00CC00'}
+        let _color = []
+        const arrData = {1:'极高',2:'高',3:'中',4:'低',0:'未分类'}
+        let _data = []
+        for (let key in arrData){
+          const val = this.chartsData.severity[key] ? this.chartsData.severity[key]:0
+          if(val != 0){
+            _data.push({name:arrData[key],value:this.chartsData.severity[key] ? this.chartsData.severity[key]:0 })
+            _color.push(categoryColor[key])
+          }
+        }
+        if(_data.length == 0){
+          _data = [
+            {value:0,name:'极高',color:''},
+            {value:0,name:'高'},
+            {value:0,name:'中'},
+            {value:0,name:'低'},
+            {value:0,name:'未分类'}
+          ]
+          _color = this.categoryColor
+        }
         let option = {
           tooltip: {
             trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
+            formatter: "{b} : {c} ({d}%)"
           },
-          color: this.categoryColor,
+          color: _color,
           legend: {
             x: 'center',
             y: 'bottom',
-            data: ['极高', '高', '中', '低', '极低']
+            data:_data.map((item)=>{
+               return item.name
+            })
           },
           calculable: true,
           series: [
@@ -85,19 +118,14 @@
               radius: [30, 110],
               center: ['50%', '50%'],
               roseType: 'area',
-              data: [
-                {value: 10, name: '极高'},
-                {value: 5, name: '高'},
-                {value: 15, name: '中'},
-                {value: 25, name: '低'},
-                {value: 20, name: '极低'}
-              ]
+              data: _data
             }
           ]
         }
         this.charts.categoryChart.setOption(option)
       },
       initTab2() {
+        console.log("initTab2")
         this.charts.top1Chart = this.$echarts.init(document.getElementById('top1'))
         this.charts.top2Chart = this.$echarts.init(document.getElementById('top2'))
         this.charts.top3Chart = this.$echarts.init(document.getElementById('top3'))
@@ -105,13 +133,19 @@
           title: {
             text: '业务分布（Top5）'
           },
-          xAxis: {
+          grid: {
+            bottom:'40%',
+          },
+          yAxis: {
             type: 'value',
             boundaryGap: [0, 0.01]
           },
-          yAxis: {
+          xAxis: {
             type: 'category',
-            data: ['系统分类A', '系统分类B', '系统分类C', '系统分类D', '系统分类E']
+            axisLabel:{
+              rotate:45
+            },
+            data :this.getData('appName','key')
           },
           label: {
             normal: {
@@ -123,39 +157,47 @@
             {
               name: '2011年',
               type: 'bar',
-              data: [18203, 23489, 29034, 104970, 131744],
+            //  data: [18203, 23489, 29034, 104970, 131744],
+              data: this.getData('appName'),
               barWidth: 20
             },
           ]
         }
-        let option2 = {
-          title: {
-            text: '数据来源（Top5）'
-          },
-          xAxis: {
-            type: 'category',
-            data: ['鹰眼', 'RNA', 'VMWARE', 'Spark', '金证']
-          },
-          yAxis: {
-            type: 'value'
-          },
-          label: {
-            normal: {
-              show: true,
-              position: 'insideTop'
-            }
-          },
-          series: [{
-            data: [120, 200, 150, 80, 70],
-            type: 'bar',
-            barWidth: 20,
-          }]
-        }
         this.charts.top1Chart.setOption(option1)
-        this.charts.top2Chart.setOption(option2)
-        this.charts.top3Chart.setOption(option2)
+        // let option2 = {
+        //   title: {
+        //     text: '数据来源（Top5）'
+        //   },
+        //   xAxis: {
+        //     type: 'category',
+        //     data: ['鹰眼', 'RNA', 'VMWARE', 'Spark', '金证']
+        //   },
+        //   yAxis: {
+        //     type: 'value'
+        //   },
+        //   label: {
+        //     normal: {
+        //       show: true,
+        //       position: 'insideTop'
+        //     }
+        //   },
+        //   series: [{
+        //     data: [120, 200, 150, 80, 70],
+        //     type: 'bar',
+        //     barWidth: 20,
+        //   }]
+        // }
+        option1.title.text = '数据来源（Top5）'
+        option1.xAxis.data = this.getData('sourceAgent','key')
+        option1.series[0].data = this.getData('sourceAgent')
+        this.charts.top2Chart.setOption(option1)
+        option1.title.text = '事件原因（Top5）'
+        option1.xAxis.data = this.getData('eventCause','key')
+        option1.series[0].data = this.getData('eventCause')
+        this.charts.top3Chart.setOption(option1)
       },
       initTab3(){
+        console.log("initTab3")
         this.charts.kpiTree1 = this.$echarts.init(document.getElementById('kpiTree1'))
         this.charts.kpiTree2 = this.$echarts.init(document.getElementById('kpiTree2'))
         this.charts.kpiTree3 = this.$echarts.init(document.getElementById('kpiTree3'))
@@ -243,7 +285,59 @@
         for(let char in this.charts){
           this.charts[char].resize()
         }
+      },
+      _getEventData () {
+        if(this.selectIndex == 2){
+          this.initTab3()
+          return
+        }
+        let _num = this.selectIndex + 1
+        request.get(getUrl('eventType'),{dataType:this.dataType[this.selectIndex]}).then(res => {
+          if(res.success){
+            this.chartsData = res.data
+          }else {
+            this.chartsData={
+              appName: {},
+              eventCause: {},
+              severity: {},
+              sourceAgent: {},
+              status: {}
+            }
+          }
+          this["initTab" + _num ]()
+        }, error => {
+          this.chartsData={
+            appName: {},
+            eventCause: {},
+            severity: {},
+            sourceAgent: {},
+            status: {}
+          }
+          this["initTab" + _num ]()
+        })
+      },
+      tabDataRefresh(val){
+        this.dataType[this.selectIndex] = val
+        this._getEventData()
+      },
+      getData(key,type){
+        let newKey = []
+        let _data = []
+        let index = 1
+        for(let item in this.chartsData[key]){
+          if(index<6){
+            newKey.push(item)
+            _data.push(this.chartsData[key][item])
+          }
+          index ++
+        }
+        if(type == 'key'){
+          return newKey
+        }else {
+          return _data
+        }
       }
+
     },
     components: {
       XHeader,

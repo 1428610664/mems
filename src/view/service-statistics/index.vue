@@ -8,13 +8,13 @@
 
       <div class="content-wrapper">
         <div v-show="selectIndex == 0">
-          <v-tab></v-tab>
-          <bar-shape></bar-shape>
+          <v-tab @on-tab-click="tabDataRefresh" ></v-tab>
+          <bar-shape :arrData='chartsData.status'></bar-shape>
           <div id="category1" :style="{width: '100vw', height: '80vw'}"></div>
           <div id="category2" :style="{width: '100vw', height: '80vw'}"></div>
         </div>
         <div v-show="selectIndex == 1">
-          <v-tab></v-tab>
+          <v-tab @on-tab-click="tabDataRefresh" ></v-tab>
           <div id="top1" :style="{width: '100vw', height: '80vw'}"></div>
           <div id="top2" :style="{width: '100vw', height: '80vw'}"></div>
         </div>
@@ -33,6 +33,9 @@
   import VTab from 'components/tab'
   import BarShape from 'components/bar-shape'
 
+  import {getUrl} from 'common/js/Urls'
+  import request from 'common/js/request'
+
   export default {
     name: "index",
     data() {
@@ -40,20 +43,28 @@
         tab: ["分类统计", "Top统计", "KPI统计"],
         selectIndex: 0,
 
-        charts: {}
+        charts: {},
+        dataType:['D','D'],
+        chartsData: {
+          appName: {},
+          cacsi: {},
+          type: {},
+          depart: {},
+          status: {}
+        },
       }
     },
     computed: {},
     created() {
       setTimeout(() => {
-        this.initTab1()
+        this._requestData()
         window.addEventListener('resize',this._resize,false);
       }, 20)
     },
     methods: {
       onTabItemClick(index) {
         this.selectIndex = index
-        this["initTab" + (++index)]()
+        this._requestData()
       },
       initTab1() {
         this.charts.category1Chart = this.$echarts.init(document.getElementById('category1'))
@@ -67,24 +78,21 @@
           },
           tooltip : {
             trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
+            formatter: "{b} : {c} ({d}%)"
           },
           legend: {
             type: 'scroll',
             orient: 'vertical',
             x: 'right',
             top: '55',
-            data:['查数','其它']
+            data:this._getChartPie('type','key')
           },
           series: [
             {
               name:'访问来源',
               type:'pie',
               avoidLabelOverlap: false,
-              data:[
-                {value:335, name:'查数'},
-                {value:310, name:'其它'}
-              ]
+              data:this._getChartPie('type')
             }
           ]
         }
@@ -96,29 +104,25 @@
           },
           tooltip : {
             trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
+            formatter: "{b} : {c} ({d}%)"
           },
           legend: {
             type: 'scroll',
             orient: 'vertical',
             x: 'right',
             top: '55',
-            data:['满意', '一般', '不满意']
+            data:this._getChartPie('cacsi','key')
           },
           series: [
             {
               name:'访问来源',
               type:'pie',
               avoidLabelOverlap: false,
-              data:[{value:335, name:'满意'},{value:335, name:'一般'}, {value:310, name:'不满意'}]
+              data:this._getChartPie('cacsi')
             }
           ]
         }
         this.charts.category1Chart.setOption(option)
-        /*let option2 = option
-        option2.title.text = "满意度"
-        option2.series.data = [{value:335, name:'满意'},{value:335, name:'一般'}, {value:310, name:'不满意'}]
-        option2.legend.data = ['满意', '一般', '不满意']*/
         this.charts.category2Chart.setOption(option2)
       },
       initTab2() {
@@ -128,13 +132,19 @@
           title: {
             text: '业务分布（Top5）'
           },
-          xAxis: {
+          grid: {
+            bottom:'40%',
+          },
+          yAxis: {
             type: 'value',
             boundaryGap: [0, 0.01]
           },
-          yAxis: {
+          xAxis: {
             type: 'category',
-            data: ['系统分类A', '系统分类B', '系统分类C', '系统分类D', '系统分类E']
+            axisLabel:{
+              rotate:45
+            },
+            data: this.getData('appName','key')
           },
           label: {
             normal: {
@@ -146,36 +156,39 @@
             {
               name: '2011年',
               type: 'bar',
-              data: [18203, 23489, 29034, 104970, 131744],
+              data:this.getData('appName'),
               barWidth: 20
             },
           ]
         }
-        let option2 = {
-          title: {
-            text: '服务请求部门（Top5）'
-          },
-          xAxis: {
-            type: 'category',
-            data: ['鹰眼', 'RNA', 'VMWARE', 'Spark', '金证']
-          },
-          yAxis: {
-            type: 'value'
-          },
-          label: {
-            normal: {
-              show: true,
-              position: 'insideTop'
-            }
-          },
-          series: [{
-            data: [120, 200, 150, 80, 70],
-            type: 'bar',
-            barWidth: 20,
-          }]
-        }
+        // let option2 = {
+        //   title: {
+        //     text: '服务请求部门（Top5）'
+        //   },
+        //   xAxis: {
+        //     type: 'category',
+        //     data: this.getData('depart','key')
+        //   },
+        //   yAxis: {
+        //     type: 'value'
+        //   },
+        //   label: {
+        //     normal: {
+        //       show: true,
+        //       position: 'insideTop'
+        //     }
+        //   },
+        //   series: [{
+        //     data: this.getData('depart'),
+        //     type: 'bar',
+        //     barWidth: 20,
+        //   }]
+        // }
         this.charts.top1Chart.setOption(option1)
-        this.charts.top2Chart.setOption(option2)
+        option1.title.text = '服务请求部门（Top5）'
+        option1.xAxis.data = this.getData('depart','key')
+        option1.series[0].data = this.getData('depart')
+        this.charts.top2Chart.setOption(option1)
       },
       initTab3(){
         this.charts.kpiTree = this.$echarts.init(document.getElementById('kpiTree'))
@@ -240,6 +253,72 @@
       _resize(){
         for(let char in this.charts){
           this.charts[char].resize()
+        }
+      },
+      _requestData () {
+        if(this.selectIndex == 2){
+          this.initTab3()
+          return
+        }
+        let _num = this.selectIndex + 1
+        request.get(getUrl('serviceType'),{dataType:this.dataType[this.selectIndex]}).then(res => {
+          if(res.success){
+            this.chartsData = res.data
+          }else {
+            this.chartsData={appName: {}, cacsi: {}, type: {}, depart: {}, status: {}}
+          }
+          this["initTab" + _num ]()
+        }, error => {
+          this.chartsData={appName: {}, cacsi: {}, type: {}, depart: {}, status: {}}
+          this["initTab" + _num ]()
+        })
+      },
+      tabDataRefresh(val){
+        this.dataType[this.selectIndex] = val
+        this._requestData()
+      },
+      getData(key,type){
+        let newKey = []
+        let _data = []
+        let index = 1
+        for(let item in this.chartsData[key]){
+          if(index<6){
+            newKey.push(item)
+            _data.push(this.chartsData[key][item])
+          }
+          index ++
+        }
+        if(type == 'key'){
+          return newKey
+        }else {
+          return _data
+        }
+      },
+      _getChartPie(key ,type){
+        const _arrData ={
+          type:{1:'正常',2:'查数'},
+          cacsi:{30:'满意',20:'一般',10:'不满意'}
+        }
+        let newKey = []
+        let _data = []
+        let index = 1
+
+        for(let item in this.chartsData[key]){
+          if(index<6){
+            newKey.push(_arrData[key][item])
+            _data.push({value:this.chartsData[key][item],name:_arrData[key][item]})
+          }
+          index ++
+        }
+        if(_data.length == 0){
+          _data =   key == 'type'? [{value:0, name:'正常'}, {value:0, name:'查数'}] :[{value:0, name:'满意'},{value:0, name:'一般'}, {value:0, name:'不满意'}]
+          newKey =   key == 'type'? ['正常', '查数']:['满意', '一般', '不满意']
+        }
+
+        if(type == 'key'){
+          return newKey
+        }else {
+          return _data
         }
       }
     },

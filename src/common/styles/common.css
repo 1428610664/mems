@@ -19,6 +19,7 @@ textarea{overflow:auto;resize:none;vertical-align:top;}
 .clear:before,.clear:after{content:" ";display:table}
 .clear:after{clear:both}
 .clear{*zoom:1}
+.clearFix:after {content: '';display: block;clear: both;height: 0;}
 .hzline3{overflow:hidden;text-overflow:ellipsis;display: -webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;}
 .hzline2{overflow:hidden;text-overflow:ellipsis;display: -webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
 .hzline1{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
