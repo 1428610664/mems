@@ -92,7 +92,15 @@
               name:'访问来源',
               type:'pie',
               avoidLabelOverlap: false,
-              data:this._getChartPie('type')
+              data:this._getChartPie('type'),
+              label: {
+                normal: {
+                  show: true,
+                  position: 'inner',
+                  color:'#000',
+                  formatter:" {c} ({d}%)"
+                },
+              }
             }
           ]
         }
@@ -118,7 +126,15 @@
               name:'访问来源',
               type:'pie',
               avoidLabelOverlap: false,
-              data:this._getChartPie('cacsi')
+              data:this._getChartPie('cacsi'),
+              label: {
+                normal: {
+                  show: true,
+                  position: 'inner',
+                  color:'#000',
+                  formatter:" {c} ({d}%)"
+                },
+              }
             }
           ]
         }
@@ -283,8 +299,8 @@
         let index = 1
         for(let item in this.chartsData[key]){
           if(index<6){
-            newKey.push(item)
-            _data.push(this.chartsData[key][item])
+            newKey.push(this.chartsData[key][item].key)
+            _data.push(this.chartsData[key][item].value)
           }
           index ++
         }
@@ -305,8 +321,13 @@
 
         for(let item in this.chartsData[key]){
           if(index<6){
-            newKey.push(_arrData[key][item])
-            _data.push({value:this.chartsData[key][item],name:_arrData[key][item]})
+            if(this.chartsData[key][item].key){
+              newKey.push(_arrData[key][this.chartsData[key][item].key])
+              _data.push({value:this.chartsData[key][item].value,name:_arrData[key][this.chartsData[key][item].key]})
+            }else {
+              newKey.push(_arrData[key][item])
+              _data.push({value:this.chartsData[key][item],name:_arrData[key][item]})
+            }
           }
           index ++
         }

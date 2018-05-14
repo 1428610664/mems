@@ -52,6 +52,7 @@
           name: {message: "请输入标题", check: "isEmpty"},
           summary: {message: "请输入内容", check: "isEmpty"},
           appType: {message: "请选择系统分类", check: "isEmpty"},
+          faultTime: {message: "请选择报障时间", check: "isEmpty"},
           appName: {message: "请选择所属系统", check: "isEmpty"},
         },
       }

@@ -74,7 +74,6 @@
         this._getEventData()
       },
       initTab1() {
-        console.log("initTab1")
         this.charts.categoryChart = this.$echarts.init(document.getElementById('category'))
         const categoryColor= {1:'#CC0033',2:"#FF0000",3:'#FFFF00',4:'#FF9933',0:'#00CC00'}
         let _color = []
@@ -115,10 +114,18 @@
             {
               name: '面积模式',
               type: 'pie',
-              radius: [30, 110],
+              radius: [30, 120],
               center: ['50%', '50%'],
               roseType: 'area',
-              data: _data
+              data: _data,
+              label: {
+                normal: {
+                  show: true,
+                  position: 'inner',
+                  color:'#000',
+                  formatter:" {c} ({d}%)"
+                },
+              }
             }
           ]
         }
@@ -326,8 +333,8 @@
         let index = 1
         for(let item in this.chartsData[key]){
           if(index<6){
-            newKey.push(item)
-            _data.push(this.chartsData[key][item])
+            newKey.push(this.chartsData[key][item].key)
+            _data.push(this.chartsData[key][item].value)
           }
           index ++
         }

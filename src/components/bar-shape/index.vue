@@ -14,9 +14,9 @@
       </div>
     </div>
     <div class="bar-wrapper">
-      <div class="bar" :style="barStyle[0]">{{arrData[0]? arrData[0] : 0}}</div>
-      <div class="bar" :style="barStyle[1]">{{arrData[1]? arrData[1] : 0}}</div>
-      <div class="bar" :style="barStyle[2]">{{arrData[99]? arrData[99] : 0}}</div>
+      <div class="bar" :style="barStyle[0]">{{arrData[0]? arrData[0] : ''}}</div>
+      <div class="bar" :style="barStyle[1]">{{arrData[1]? arrData[1] : ''}}</div>
+      <div class="bar" :style="barStyle[2]">{{arrData[99]? arrData[99] : ''}}</div>
       <div class="clearFix"></div>
     </div>
 
