@@ -59,6 +59,16 @@
           sourceAgent: {},
           status: {}
           },
+        kpiData:{
+          process: {},
+          cosle: {},
+          cosleRate: 0,
+          missing: {},
+          distortRate: 0,
+          missingRate: 0,
+          distort: {},
+          processRate: 0
+        }
       }
     },
     computed: {},
@@ -74,6 +84,7 @@
         this._getEventData()
       },
       initTab1() {
+        console.log("initTab1")
         this.charts.categoryChart = this.$echarts.init(document.getElementById('category'))
         const categoryColor= {1:'#CC0033',2:"#FF0000",3:'#FFFF00',4:'#FF9933',0:'#00CC00'}
         let _color = []
@@ -171,29 +182,6 @@
           ]
         }
         this.charts.top1Chart.setOption(option1)
-        // let option2 = {
-        //   title: {
-        //     text: '数据来源（Top5）'
-        //   },
-        //   xAxis: {
-        //     type: 'category',
-        //     data: ['鹰眼', 'RNA', 'VMWARE', 'Spark', '金证']
-        //   },
-        //   yAxis: {
-        //     type: 'value'
-        //   },
-        //   label: {
-        //     normal: {
-        //       show: true,
-        //       position: 'insideTop'
-        //     }
-        //   },
-        //   series: [{
-        //     data: [120, 200, 150, 80, 70],
-        //     type: 'bar',
-        //     barWidth: 20,
-        //   }]
-        // }
         option1.title.text = '数据来源（Top5）'
         option1.xAxis.data = this.getData('sourceAgent','key')
         option1.series[0].data = this.getData('sourceAgent')
@@ -210,26 +198,33 @@
         this.charts.kpiTree3 = this.$echarts.init(document.getElementById('kpiTree3'))
         this.charts.kpiTree4 = this.$echarts.init(document.getElementById('kpiTree4'))
         this.charts.kpiLineTree = this.$echarts.init(document.getElementById('kpiLineTree'))
-
         let kpiOption = {
           tooltip : {
-            formatter: "{a} <br/>{b} : {c}%",
-            textStyle: {fontSize: 6}
+            formatter: "{b} : {c}%",
           },
           series: [
             {
               name: '业务指标',
               type: 'gauge',
-              radius : '88%',
-              center: ['50%', '56%'],
-              detail: {formatter:'{value}%'},
-              data: [{value: 50, name: '完成率'}],
+              radius : '95%',
+              splitNumber:4,
+              detail: {
+                formatter:'{value}%',
+                fontSize:18
+              },
+              data: [{value: this.kpiData.processRate, name: '响应率'}],
               pointer: {width: 3, length: "60%"},
               title: {offsetCenter: [0, "80%"]},
             }
           ]
         }
-
+        this.charts.kpiTree1.setOption(kpiOption)
+        kpiOption.series[0].data = [{value: this.kpiData.cosleRate, name: '关闭率'}]
+        this.charts.kpiTree2.setOption(kpiOption)
+        kpiOption.series[0].data = [{value: this.kpiData.distortRate, name: '误报率'}]
+        this.charts.kpiTree3.setOption(kpiOption)
+        kpiOption.series[0].data = [{value: this.kpiData.missingRate, name: '漏报率'}]
+        this.charts.kpiTree4.setOption(kpiOption)
         let kpiLineOption = {
           title: {
             text: 'KPI(7天)'
@@ -250,7 +245,7 @@
           xAxis: {
             type: 'category',
             boundaryGap: false,
-            data: ['周一','周二','周三','周四','周五','周六','周日']
+            data:this.getKpiData('process','key')
           },
           yAxis: {
             type: 'value'
@@ -260,32 +255,28 @@
               name:'误报率',
               type:'line',
               stack: '总量',
-              data:[120, 132, 101, 134, 90, 230, 210]
+              data:this.getKpiData('distort')
             },
             {
               name:'漏报率',
               type:'line',
               stack: '总量',
-              data:[220, 182, 191, 234, 290, 330, 310]
+              data:this.getKpiData('missing')
             },
             {
               name:'响应率',
               type:'line',
               stack: '总量',
-              data:[150, 232, 201, 154, 190, 330, 410]
+              data:this.getKpiData('process')
             },
             {
               name:'关闭率',
               type:'line',
               stack: '总量',
-              data:[320, 332, 301, 334, 390, 330, 320]
+              data:this.getKpiData('cosle')
             }
           ]
         }
-        this.charts.kpiTree1.setOption(kpiOption)
-        this.charts.kpiTree2.setOption(kpiOption)
-        this.charts.kpiTree3.setOption(kpiOption)
-        this.charts.kpiTree4.setOption(kpiOption)
         this.charts.kpiLineTree.setOption(kpiLineOption)
       },
       _resize(){
@@ -294,14 +285,49 @@
         }
       },
       _getEventData () {
-        if(this.selectIndex == 2){
-          this.initTab3()
-          return
-        }
         let _num = this.selectIndex + 1
-        request.get(getUrl('eventType'),{dataType:this.dataType[this.selectIndex]}).then(res => {
+        request.get(getUrl(this.selectIndex == 2 ? 'eventKpi':'eventType'),this.selectIndex == 2 ? {}:{dataType:this.dataType[this.selectIndex]}).then(res => {
           if(res.success){
-            this.chartsData = res.data
+            if(this.selectIndex == 2){
+              this.kpiData=res.data
+            }else {
+              this.chartsData=res.data
+            }
+          }else {
+            if(this.selectIndex == 2){
+              this.kpiData={
+                process: {},
+                cosle: {},
+                cosleRate: 0,
+                missing: {},
+                distortRate: 0,
+                missingRate: 0,
+                distort: {},
+                processRate: 0
+              }
+            }else {
+              this.chartsData={
+                appName: {},
+                eventCause: {},
+                severity: {},
+                sourceAgent: {},
+                status: {}
+              }
+            }
+          }
+          this["initTab" + _num ]()
+        }, error => {
+          if(this.selectIndex == 2){
+            this.kpiData={
+              process: {},
+              cosle: {},
+              cosleRate: 0,
+                missing: {},
+              distortRate: 0,
+                missingRate: 0,
+                distort: {},
+              processRate: 0
+            }
           }else {
             this.chartsData={
               appName: {},
@@ -310,15 +336,6 @@
               sourceAgent: {},
               status: {}
             }
-          }
-          this["initTab" + _num ]()
-        }, error => {
-          this.chartsData={
-            appName: {},
-            eventCause: {},
-            severity: {},
-            sourceAgent: {},
-            status: {}
           }
           this["initTab" + _num ]()
         })
@@ -343,8 +360,22 @@
         }else {
           return _data
         }
-      }
-
+      },
+      getKpiData(key,type){
+        let newKey = []
+        let _data = []
+        let index = 1
+        for(let item in this.kpiData[key]){
+          newKey.push(item)
+          _data.push(this.kpiData[key][item])
+          index ++
+        }
+        if(type == 'key'){
+          return newKey
+        }else {
+          return _data
+        }
+      },
     },
     components: {
       XHeader,

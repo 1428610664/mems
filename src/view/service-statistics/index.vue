@@ -52,6 +52,10 @@
           depart: {},
           status: {}
         },
+        kpiData:{
+          cosle: {},
+          cosleRate: 0
+        }
       }
     },
     computed: {},
@@ -177,29 +181,6 @@
             },
           ]
         }
-        // let option2 = {
-        //   title: {
-        //     text: '服务请求部门（Top5）'
-        //   },
-        //   xAxis: {
-        //     type: 'category',
-        //     data: this.getData('depart','key')
-        //   },
-        //   yAxis: {
-        //     type: 'value'
-        //   },
-        //   label: {
-        //     normal: {
-        //       show: true,
-        //       position: 'insideTop'
-        //     }
-        //   },
-        //   series: [{
-        //     data: this.getData('depart'),
-        //     type: 'bar',
-        //     barWidth: 20,
-        //   }]
-        // }
         this.charts.top1Chart.setOption(option1)
         option1.title.text = '服务请求部门（Top5）'
         option1.xAxis.data = this.getData('depart','key')
@@ -212,17 +193,19 @@
 
         let kpiOption = {
           tooltip : {
-            formatter: "{a} <br/>{b} : {c}%",
-            textStyle: {fontSize: 6}
+            formatter: "{b} : {c}%",
           },
           series: [
             {
               name: '业务指标',
               type: 'gauge',
-              radius : '88%',
-              center: ['50%', '56%'],
-              detail: {formatter:'{value}%'},
-              data: [{value: 50, name: '关闭率'}],
+              radius : '95%',
+              splitNumber:4,
+              detail: {
+                formatter:'{value}%',
+                fontSize:18
+              },
+              data: [{value: this.kpiData.cosleRate, name: '关闭率'}],
               pointer: {width: 3, length: "60%"},
               title: {offsetCenter: [0, "80%"]},
             }
@@ -249,7 +232,7 @@
           xAxis: {
             type: 'category',
             boundaryGap: false,
-            data: ['周一','周二','周三','周四','周五','周六','周日']
+            data: this.getKpiData('cosle','key')
           },
           yAxis: {
             type: 'value'
@@ -259,7 +242,7 @@
               name:'关闭率',
               type:'line',
               stack: '总量',
-              data:[320, 332, 301, 334, 390, 330, 320]
+              data:this.getKpiData('cosle')
             }
           ]
         }
@@ -272,20 +255,28 @@
         }
       },
       _requestData () {
-        if(this.selectIndex == 2){
-          this.initTab3()
-          return
-        }
         let _num = this.selectIndex + 1
-        request.get(getUrl('serviceType'),{dataType:this.dataType[this.selectIndex]}).then(res => {
+        request.get(getUrl(this.selectIndex == 2 ?  'serviceKpi':'serviceType'),this.selectIndex == 2 ?  {} : {dataType:this.dataType[this.selectIndex]}).then(res => {
           if(res.success){
-            this.chartsData = res.data
+            if(this.selectIndex == 2){
+              this.kpiData = res.data
+            }else {
+              this.chartsData = res.data
+            }
           }else {
-            this.chartsData={appName: {}, cacsi: {}, type: {}, depart: {}, status: {}}
+            if(this.selectIndex == 2){
+              this.kpiData = {cosle: {}, cosleRate: 0}
+            }else {
+              this.chartsData={appName: {}, cacsi: {}, type: {}, depart: {}, status: {}}
+            }
           }
           this["initTab" + _num ]()
         }, error => {
-          this.chartsData={appName: {}, cacsi: {}, type: {}, depart: {}, status: {}}
+          if(this.selectIndex == 2){
+            this.kpiData = {cosle: {}, cosleRate: 0}
+          }else {
+            this.chartsData={appName: {}, cacsi: {}, type: {}, depart: {}, status: {}}
+          }
           this["initTab" + _num ]()
         })
       },
@@ -302,6 +293,21 @@
             newKey.push(this.chartsData[key][item].key)
             _data.push(this.chartsData[key][item].value)
           }
+          index ++
+        }
+        if(type == 'key'){
+          return newKey
+        }else {
+          return _data
+        }
+      },
+      getKpiData(key,type){
+        let newKey = []
+        let _data = []
+        let index = 1
+        for(let item in this.kpiData[key]){
+          newKey.push(item)
+          _data.push(this.kpiData[key][item])
           index ++
         }
         if(type == 'key'){

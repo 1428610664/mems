@@ -139,9 +139,24 @@ const requestUrl = {
     url: '/serviceWall/faultType',
     pre: preUrl
   },
-  //报障分类统计报表
+  //服务请求分类统计报表
   serviceType:{
     url: '/serviceWall/serviceType',
+    pre: preUrl
+  },
+  //事件kpi
+  eventKpi:{
+    url: '/serviceWall/eventKpi',
+    pre: preUrl
+  },
+  //报障kpi
+  faultKpi:{
+    url: '/serviceWall/faultKpi',
+    pre: preUrl
+  },
+  //请求kpi
+  serviceKpi:{
+    url: '/serviceWall/serviceKpi',
     pre: preUrl
   }
 }
