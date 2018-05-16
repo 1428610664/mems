@@ -18,7 +18,7 @@
 <script>
 
   import RuleItem from 'components/rule-item'
-  import checkTree from 'components/check-tree'
+  import checkTree from 'components/check-tree/all-tree'
   import utils from 'common/js/utils'
 
   export default {

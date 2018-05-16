@@ -10,7 +10,10 @@
             <search-box @query="searchTree" :placeholder="placeholder"></search-box>
           </div>
         <div class="check_item" :style="style">
-          <v-tree ref="zTree" :data='treeData' :multiple='multiple' :halfcheck='halfcheck'  @async-load-nodes='asyncLoadNodes'/>
+          <v-tree ref="zTree" :data='treeData' :multiple='multiple' :halfcheck='halfcheck'/>
+        </div>
+        <div class="check_page">
+          <i-page :total = 'treeAllData.total' limit="100" @change="pageChange"></i-page>
         </div>
         <div class="check_button">
           <x-button @click.native="onConfirm" plain type="primary">确认</x-button>
@@ -26,6 +29,7 @@
   import request from 'common/js/request'
   import {getUrl} from 'common/js/Urls'
   import SearchBox from 'components/search-box/search-box'
+  import iPage from 'components/page/index'
 
   export default {
     data() {
@@ -34,10 +38,11 @@
         rows: [],
         checkValue: [],
         treeData:[{ title: 'root', expanded: true, children: [] }],   // 树显示数据
-        treeAllData: [],    // 一次性加载全部数据
+        treeAllData: {},    // 一次性加载全部数据
         style:{
           height: 'inherit'
         },
+        keyWord:'',
         dropDown: false
       }
     },
@@ -75,30 +80,27 @@
       })
     },
     methods: {
-      checkTreeShow() {
-        this.dropDown = true
-        this.style.height =  window.screen.height * 0.8 -117 + "px"
-      },
       searchTree(val) {
-          this.$refs.zTree.searchNodes(val)
+          //this.$refs.zTree.searchNodes(val)
+        this.keyWord = val
+        this.getTreeData()
       },
-      getTreeData() {
-        request.get(getUrl("findTree"), {}).then(res => {
-          this.treeAllData = res.children
-          this.initTreeDta()
+      getTreeData(page) {
+        request.get(getUrl("findTree"), {keyWord:this.keyWord ? this.keyWord :'',offset:page  ? (+page-1)*100: 0 ,limit:100}).then(res => {
+          this.treeAllData = res.data
+          this.initTreeData()
         }, error =>{
           console.log('error===' + error)
         })
       },
-      /*setCheckValue(v){
+      setCheckValue(v){
         if(v)this.$refs.zTree.setAppTypeChecked(v)
-      },*/
+      },
       showTreeModel(index, value){
         this.index = index
         this.dropDown = true
-        this.style.height =  window.screen.height * 0.8 -117 + "px"
-        //this.checkValue = value
-        this._setTreeAppType()
+        this.style.height =  window.screen.height * 0.8 -177 + "px"
+        this.getTreeData()
       },
       onConfirm() {
         this.dropDown = false
@@ -106,73 +108,36 @@
         this.$emit('on-confirm', this.$refs.zTree.getNodesRule(), this.index)
       },
 
-      async asyncLoadNodes(node){
-        let titles = this._getParentsTitles(node)
-        let children = this._getCurrentNodeChildren(titles)
-        this._setTreeNode(node, children)
-      },
       /**
        * 初始化tree
        */
-      initTreeDta(sellectTree){
-        this._setTreeAppType()
-      },
-      _setTreeAppType(selectNode){
+      initTreeData(){
         let appType = []
-        for(let i = 0, ilen = this.treeAllData.length; i< ilen; i++){
-          appType.push({title: this.treeAllData[i].title, type: this.treeAllData[i].type, async: true})
-        }
+        const row = JSON.parse(this.treeAllData.rows).children
+        console.log(row)
+        row.forEach((item) =>{
+          if(item.children && item.children.length > 0 ){
+            appType.push({title: item.title, type:item.type,children: this.getChildrenData(item.children)})
+          }else {
+            appType.push({title: item.title, type:item.type})
+          }
+        })
         this.treeData[0].children = appType
       },
-      /**
-       * 为节点设置children数据
-       * @param node
-       * @param children
-       * @returns {*[]}
-       * @private
-       */
-      _setTreeNode(node, children){
-        children.forEach((el, i) => {
-          if (!node.hasOwnProperty('children')) {
-            this.$set(node, 'children', [])
+      getChildrenData (children) {
+        let appType = []
+        children.forEach((item)=> {
+          if(item.children && item.children.length > 0 ){
+            if(item.type == 'component'){
+              appType.push({title: item.title, type:item.type,children:this._parseIp(item.children)})
+            }else {
+              appType.push({title: item.title, type:item.type,children:this.getChildrenData(item.children)})
+            }
+          }else {
+            appType.push({title: item.title, type:item.type})
           }
-          node.children.push({title: el.title, type: el.type, async: el.children ? true : false})
         })
-      },
-      /**
-       * 获取节点的title及所有父级title
-        * @param node
-       * @returns {*[]}
-       * @private
-       */
-      _getParentsTitles(node){
-        let titleArr = []
-        function findeParen(n){
-          if(n.parent){
-            titleArr.push(n.title)
-            findeParen(n.parent)
-          }
-        }
-        findeParen(node)
-        return titleArr.reverse()
-      },
-      /**
-       * 根据title获取当前节点下的Children数据
-       * @param titles
-       * @returns {Array}
-       * @private
-       */
-      _getCurrentNodeChildren(titles){
-        let treeData = this.treeAllData
-        for(let item of titles){
-          let index = this._findIndex(item, treeData)
-          if(treeData[index].children && treeData[index].children.length > 0 && treeData[index].children[0].cluster) {
-            treeData = this._parseIp(treeData[index].children)
-          }else{
-            treeData = treeData[index].children
-          }
-        }
-        return treeData
+        return appType
       },
       /*
         解析组件下的服务器ip
@@ -202,9 +167,13 @@
           return item.title == title
         })
       },
+      pageChange(page){
+        this.getTreeData(page)
+      }
     },
     components: {
       SearchBox,
+      iPage,
 
       XInput,
       Checklist,
@@ -222,8 +191,6 @@
 <style scoped>
   .check_button{padding:15px; height:45px; }
   .check_item{overflow: auto;background-color: #ffffff;}
-
-  .search-wrapper {
-    padding: 5px 3%;
-  }
+  .check_page{max-height: 60px;}
+  .search-wrapper {padding: 5px 3%;}
 </style>
