@@ -80,7 +80,7 @@
           Parms = [{status: '0,1,2,3,100',createUser: getUserInfo().user.userName+(toUser ? ","+toUser: "")}, {status: '4,99',createUser: getUserInfo().user.userName+(toUser ? ","+toUser: "")}]
         }else {
           // 其它用户tab切换附加参数
-          Parms = [{status: '0,1,2,3',handler: getUserInfo().user.userName +(toUser ? ","+toUser: "")}, {status: '>4',passUser: getUserInfo().user.userName, sort: "changeTime", order: "desc"}, {isAll: true}]
+          Parms = [{status: '0,1,2,3',handler: getUserInfo().user.userName +(toUser ? ","+toUser: "")}, {status: '>=1',passUser: getUserInfo().user.userName, sort: "changeTime", order: "desc"}, {isAll: true}]
         }
         return Parms
       }

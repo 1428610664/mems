@@ -154,6 +154,7 @@ export default {
           _objNameNub.push({
             title: s.colony,
             type:'colony',
+            expanded:true,
             children: itemNub
           }); //集群
         });

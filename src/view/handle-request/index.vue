@@ -22,7 +22,16 @@
           <app-select title="所属系统" :readonly="isEdit" :url="sysTypeNameUrl" :search="true" v-model="bindData.appName"
                       :param="sysTypeParam"></app-select>
           <x-input title="提交时间" :readonly="true" v-model="createTime"></x-input>
-          <x-input title="当前处理人" :readonly="true" v-model="handler"></x-input>
+          <!--<x-input title="当前处理人" :readonly="true" v-model="handler"></x-input>-->
+          <div class="hr"></div>
+          <div class="hz-cell">
+            <div class="weui-cell__hd">
+              <span class="label c4 in-line">当前处理人</span>
+            </div>
+            <div class="weui-cell__bd">
+              <span class="in-line" :title="handler">{{handler}}</span>
+            </div>
+          </div>
           <x-input title="提交人" :readonly="true" v-model="createUser"></x-input>
           <x-input title="满意度" v-if="evaluateObj.isShow" :readonly="true" v-model="cacsi"></x-input>
           <x-input title="处理评价" v-if="evaluateObj.isShow" :readonly="true" v-model="evaluate"></x-input>
