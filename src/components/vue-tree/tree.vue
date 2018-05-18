@@ -434,7 +434,12 @@
           if(!item.children) continue
           for (const node of item.children){
             if (node.checked === true) { //所属系统选中（即所属系统下的所有选中）
-              res.push(Object.assign({}, {appName:node.title,objName:'',appType:item.title,clu:{},ips:'',opt:'包含'}))
+
+              if(node.children && node.children.length){
+                res = res.concat(this.getNodesComponent(node.children,{appName:node.title,appType:item.title}))
+              }else {
+                 res.push(Object.assign({}, {appName:node.title,objName:'',appType:item.title,clu:{},ips:'',opt:'包含'}))
+              }
             }else{
               if(node.children && node.children.length){
                 res =  res.concat(this.getNodesComponent(node.children,{appName:node.title,appType:item.title}))
@@ -451,7 +456,7 @@
           if (node.checked === true) { //选中组件（选中所有的集群和组件）
             if(node.children && node.children.length){
               let _obj = this.getNodesColony(node.children)
-              res.push(Object.assign({},obj, {objName:node.title,clu:_obj.clu,ips:_obj.ips,opt:'包含'}))
+              res.push(Object.assign({},obj, {objName:node.title,clu:_obj.clu,ips:_obj.ips.join(','),opt:'包含'}))
             }else {
               res.push(Object.assign({},obj, {objName:node.title,clu:{},ips:'',opt:'包含'}))
             }
@@ -459,7 +464,7 @@
             if(node.children && node.children.length){
               let _obj = this.getNodesColony(node.children)
               if(_obj.checked === true){
-                res.push(Object.assign({},obj, {objName:node.title,clu:_obj.clu,ips:_obj.ips,opt:'包含'}))
+                res.push(Object.assign({},obj, {objName:node.title,clu:_obj.clu,ips:_obj.ips.join(","),opt:'包含'}))
               }
             }
           }
@@ -468,7 +473,7 @@
       },
       //获取集群
       getNodesColony (data) {
-        let _obj = {clu:{},ips:'',checked:false}
+        let _obj = {clu:{},ips:[],checked:false}
         //  getNodesIps
         for (const node of data) {
           if(node.checked === true){
@@ -476,10 +481,10 @@
             if(node.children && node.children.length){
               let res = this.getNodesIps(node.children)
               _obj.clu[node.title] = res.join(",")
-              _obj.ips =  _obj.ips ? res.join(",") : _obj.ips+ "," + res.join(",")
+              _obj.ips = _obj.ips.concat(res)
             }else {
               _obj.clu[node.title] = ''
-              _obj.ips = ''
+              _obj.ips = []
             }
           }else {
             if(node.children && node.children.length){
@@ -487,7 +492,7 @@
               if(res.length != 0 ){
                 _obj.checked = true
                 _obj.clu[node.title] = res.join(",")
-                _obj.ips = _obj.ips ? res.join(",") : _obj.ips + "," + res.join(",")
+                _obj.ips = _obj.ips.concat(res)
               }
             }
           }
@@ -511,8 +516,9 @@
        * @param value
        */
       setAppTypeChecked (value){
-         let data = this.data
-        for (const item of data) {
+         this.$emit('nodeChecked', this.data[0], false)
+         let data = this.data[0].children
+         for (const item of data) {
           for (const node of item.children){
             for (const selectedItem of value) {
               if(selectedItem.appType == item.title && selectedItem.appName == node.title){

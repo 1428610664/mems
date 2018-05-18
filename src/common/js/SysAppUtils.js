@@ -136,7 +136,8 @@ export default {
               newIps = ip.split(",");
               newIps.forEach(function(ip) {
                 itemNub.push({
-                  title: ip
+                  title: ip,
+                  type:'ip'
                 }); //ips
               });
             })
@@ -144,18 +145,22 @@ export default {
             newIps = s.ips.split(",");
             newIps.forEach(function(ip) {
               itemNub.push({
-                title: ip
+                title: ip,
+                type:'ip'
               }); //ips
             });
           }
 
           _objNameNub.push({
             title: s.colony,
+            type:'colony',
             children: itemNub
           }); //集群
         });
         numId.push({
           title: v.objName,
+          type:'component',
+          expanded:true,
           children: _objNameNub
         }); //组件
       }
@@ -163,6 +168,8 @@ export default {
     var aaa = [];
     aaa.push(JSON.stringify({
       title: row.appName,
+      expanded:true,
+      type:'appName',
       children: numId
     }));
     return aaa;
