@@ -148,6 +148,7 @@
         let createUser = this.handleWarning.createUser.split("/")[1], handler = this.handleWarning.handler
         let userName = getUserInfo().user.userName, role = getUserInfo().user.role
         let _userName =getUserInfo().user.name + '/' +userName
+        let toUser = getUserInfo().toUser
         this.readonly = false
         this.tabObj.showComments= false
         this.tabObj.showMsg= false
@@ -170,6 +171,9 @@
               {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
             //  {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id}
             ]
+          if(handler.indexOf(userName) !=-1 || (toUser && handler.indexOf(toUser) != -1)){
+            actions.push({TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id})
+          }
         }else{
           this.readonly = true
           actions = []
