@@ -168,7 +168,7 @@
           this.tabObj.showComments= true
           this.tabObj.showMsg= true
             actions = [
-              {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id},
+              {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id}
             //  {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id}
             ]
           if(handler.indexOf(userName) !=-1 || (toUser && handler.indexOf(toUser) != -1)){

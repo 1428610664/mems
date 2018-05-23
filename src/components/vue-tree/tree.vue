@@ -519,19 +519,21 @@
          this.$emit('nodeChecked', this.data[0], false)
          let data = this.data[0].children
          for (const item of data) {
-          for (const node of item.children){
-            for (const selectedItem of value) {
-              if(selectedItem.appType == item.title && selectedItem.appName == node.title){
-                if(selectedItem.objName == ''){
-                  this.$emit('nodeChecked', node, true)
-                  break
-                }else if(node.children && node.children.length && selectedItem.objName != '' ){
-                  this.setComponentChecked(node.children,value,{appName:node.title,appType:item.title})
-                  break
-                }
-              }
-            }
-          }
+           if(item.children){
+             for (const node of item.children){
+               for (const selectedItem of value) {
+                 if(selectedItem.appType == item.title && selectedItem.appName == node.title){
+                   if(selectedItem.objName == ''){
+                     this.$emit('nodeChecked', node, true)
+                     break
+                   }else if(node.children && node.children.length && selectedItem.objName != '' ){
+                     this.setComponentChecked(node.children,value,{appName:node.title,appType:item.title})
+                     break
+                   }
+                 }
+               }
+             }
+           }
         }
       },
       /**设置组件默认选中

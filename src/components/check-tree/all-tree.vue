@@ -135,6 +135,7 @@
         })
         this.treeData[0].children = appType
         this.$nextTick(()=>{
+          console.log('设置默认值')
           this.$refs.zTree.setAppTypeChecked(this.checkValue)
         })
       },

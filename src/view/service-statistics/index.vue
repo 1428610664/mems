@@ -241,7 +241,7 @@
             {
               name:'关闭率',
               type:'line',
-              stack: '总量',
+             // stack: '总量',
               data:this.getKpiData('cosle')
             }
           ]

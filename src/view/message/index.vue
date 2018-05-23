@@ -48,7 +48,7 @@
           pageNo: 1,
           pageSize: 10,
           totalCount: 0,
-          params: {keyWord: ''}
+          params: {name: ''}
         },
       }
     },
@@ -68,7 +68,7 @@
         if (this.selectIndex == index) return
         this.$vux.loading.show({text: '加载中...'})
         this.selectIndex = index
-        this.refresh.params.keyWord = ''
+        this.refresh.params.name = ''
         this.getList(false, true)
       },
       onItemClick(row) {
@@ -76,12 +76,12 @@
         this.$router.push({path: '/messageDetails',query:{id: row.id, type: row.type,status: row.msgStatus}})
       },
       searchQuery(v) {
-        this.refresh.params.keyWord = v
+        this.refresh.params.name = v
         this.getList(false, true)
       },
       pullRefresh() {
         setTimeout(() => {
-          this.refresh.params.keyWord = ''
+          this.refresh.params.name = ''
           this.getList(true, true)
         }, 800)
       },
