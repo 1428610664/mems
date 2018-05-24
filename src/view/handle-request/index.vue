@@ -5,9 +5,15 @@
       <div class="wrapper-content" :class="FlowActions.length ? '' : 'bom'">
         <group label-width="5em" label-margin-right="2em" label-align="right">
           <x-input title="请求标题" :readonly="isEdit" placeholder="请输入文字" v-model="bindData.name"></x-input>
-          <x-textarea title="请求描述" :readonly="isEdit" v-model="bindData.summary" placeholder="请输入文字"
+         <!-- <x-textarea title="请求描述" :readonly="isEdit" v-model="bindData.summary" placeholder="请输入文字"
                       :show-counter="false" :rows="5"
-                      :max="200"></x-textarea>
+                      :max="200"></x-textarea>-->
+          <div class="weui-cell vux-x-textarea">
+            <div class="weui-cell__hd">
+              <label class="weui-label" style="width: 5em; text-align: right; margin-right: 2em;">请求描述</label>
+            </div>
+            <div class="weui-cell__bd" v-html="bindData.summary"></div>
+          </div>
           <x-input title="请求编号" :readonly="true" placeholder="请输入文字" v-model="serial"></x-input>
           <div class="hr"></div>
           <div class="hz-cell">
