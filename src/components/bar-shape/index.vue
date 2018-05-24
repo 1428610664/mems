@@ -14,10 +14,13 @@
       </div>
     </div>
     <div class="bar-wrapper">
-      <div class="bar" :style="barStyle[0]">{{arrData[0]? arrData[0] : ''}}</div>
+      <!--<div class="bar" :style="barStyle[0]">{{arrData[0]? arrData[0] : ''}}</div>
       <div class="bar" :style="barStyle[1]">{{arrData[1]? arrData[1] : ''}}</div>
       <div class="bar" :style="barStyle[2]">{{arrData[99]? arrData[99] : ''}}</div>
-      <div class="clearFix"></div>
+      <div class="clearFix"></div>-->
+      <div class="bar">{{arrData[0]? arrData[0] : '0'}}</div>
+      <div class="bar">{{arrData[1]? arrData[1] : '0'}}</div>
+      <div class="bar">{{arrData[99]? arrData[99] : '0'}}</div>
     </div>
 
   </div>
@@ -83,6 +86,7 @@
   }
   .bar-wrapper{
     padding: 0 20px;
+    display: flex;
   }
 
   .bar-txt{
@@ -90,7 +94,7 @@
     text-align: center;
   }
   .bar{
-    float: left;
+    flex: 1;
     text-align: center;
   }
 
@@ -100,7 +104,7 @@
 
   .c-red{color: red}
   .c-green{color: green}
-  .c-yellow{color: yellow}
+  .c-yellow{color: #000}
   .bar-wrapper .bar:nth-child(1){
     background: red;
   }
@@ -108,7 +112,7 @@
     background: green;
   }
   .bar-wrapper .bar:nth-child(3){
-    background: yellow;
+    background:  #c1c1c1;
   }
 
 </style>
