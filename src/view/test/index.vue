@@ -3,6 +3,9 @@
     <div class="test-wrapper ">
       <x-header :left-options="{backText: ''}">公告通知</x-header>
 
+
+
+
       <group title="请求方式">
         <cell title="get" is-link @click.native="get"></cell>
         <cell title="post" is-link @click.native="post"></cell>
