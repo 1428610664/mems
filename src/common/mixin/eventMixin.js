@@ -72,7 +72,7 @@ export const  handleRequestMixin = {
           content: '确认'+action.FlowActionName+'？',
           onConfirm () {
             _this.$vux.loading.show({text: '数据提交中...'})
-            request[action.type ? action.type : "post"](actionJson(action.TypeId, action.id)[0], (action.params ? action.params : {})).then((res) => {
+            request[action.type ? action.type : "post"](actionJson(action.TypeId, action.id)[0], (action.params ? action.params : {opinion: _this.bindData.opinion})).then((res) => {
               _this.$vux.loading.hide()
               if(res.success)window.history.back()
               _this.$vux.toast.text(res.desc, "bottom")
@@ -85,7 +85,7 @@ export const  handleRequestMixin = {
       }else{
         _this.$vux.toast.text(action.FlowActionName, "bottom")
         if(action.TypeId == 3){ // 转派
-          this.$router.push({path: "/turnSend",query:{id: this.$route.query.id, type: "request"}})
+          this.$router.push({path: "/turnSend",query:{id: this.$route.query.id, type: "request", opinion: _this.bindData.opinion}})
           return
         }
         if(!this._checkData()) return

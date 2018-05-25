@@ -8,6 +8,7 @@
          <!-- <x-textarea title="请求描述" :readonly="isEdit" v-model="bindData.summary" placeholder="请输入文字"
                       :show-counter="false" :rows="5"
                       :max="200"></x-textarea>-->
+
           <div class="weui-cell vux-x-textarea">
             <div class="weui-cell__hd">
               <label class="weui-label" style="width: 5em; text-align: right; margin-right: 2em;">请求描述</label>
@@ -169,7 +170,7 @@
         }
         this.tabObj.showComments= false
         this.tabObj.showMsg= false
-        if(actions.length!=0 || ( actions.length == 1 && actions[0].TypeId!= 8 )) {
+        if(this.status != 3 && (actions.length!=0 || ( actions.length == 1 && actions[0].TypeId!= 8 ))) {
           this.tabObj.showComments= true
           this.tabObj.showMsg= true
         }

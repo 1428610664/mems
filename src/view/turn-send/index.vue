@@ -25,7 +25,7 @@
     methods: {
       actionEvent(action, userNames){
         this.$vux.loading.show({text: '数据提交中...'})
-        request.post(actionJson(this.$route.query.type == "request" ? 3 : 14, this.$route.query.id)[0], {users: userNames.join(",")}).then(res => {
+        request.post(actionJson(3, this.$route.query.id)[0], {users: userNames.join(","), opinion: this.$route.query.opinion}).then(res => {
           this.$vux.loading.hide()
           this.$vux.toast.text(res.desc, "bottom")
           if(res.success){

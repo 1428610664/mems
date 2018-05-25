@@ -2,7 +2,7 @@
   <transition name="move">
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">事件告警详情</x-header>
-        <div class="wrapper-content">
+        <div class="wrapper-content" :class="FlowActions.length ? '' : 'bom'">
           <group label-width="4.5em" label-margin-right="2em" label-align="right">
             <x-input title="事件标题" v-model="handleEvents.name" :readonly="true"></x-input>
            <!-- <x-textarea title="事件内容" v-model="handleEvents.summary" :show-counter="false" :rows="5"
@@ -348,5 +348,8 @@
     width: 70px;
     text-align: center;
     border-radius: 10px;
+  }
+  .wrapper-content.bom{
+    bottom: 0px;
   }
 </style>
