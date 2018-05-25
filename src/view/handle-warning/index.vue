@@ -171,9 +171,9 @@
               {TypeId: 14, FlowActionName: "转派", id: this.$route.query.id}
             //  {TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id}
             ]
-          if(handler.indexOf(userName) !=-1 || (toUser && handler.indexOf(toUser) != -1)){
+          if( handler &&(handler.indexOf(userName) !=-1 || (toUser && handler.indexOf(toUser) != -1))){
             actions.push({TypeId: 22, FlowActionName: "转问询", id: this.$route.query.id})
-          }
+           }
         }else{
           this.readonly = true
           actions = []
