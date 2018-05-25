@@ -5,8 +5,14 @@
         <div class="wrapper-content">
           <group label-width="4.5em" label-margin-right="2em" label-align="right">
             <x-input title="事件标题" v-model="handleEvents.name" :readonly="true"></x-input>
-            <x-textarea title="事件内容" v-model="handleEvents.summary" :show-counter="false" :rows="5"
-                        :max="200" :readonly="true"></x-textarea>
+           <!-- <x-textarea title="事件内容" v-model="handleEvents.summary" :show-counter="false" :rows="5"
+                        :max="200" :readonly="true"></x-textarea>-->
+            <div class="weui-cell vux-x-textarea">
+              <div class="weui-cell__hd">
+                <label class="weui-label" style="width: 5em; text-align: right; margin-right: 2em;">请求描述</label>
+              </div>
+              <div class="weui-cell__bd" v-html="handleEvents.summary"></div>
+            </div>
             <x-input title="事件编号" :readonly="true" v-model="handleEvents.serial"></x-input>
             <x-input title="主机名" :readonly="true" v-model="handleEvents.hostName"></x-input>
             <x-input title="主机IP" :readonly="true" v-model="handleEvents.ip"></x-input>

@@ -6,8 +6,15 @@
         <div class="wrapper-content">
           <group label-width="4.5em" label-margin-right="2em" label-align="right">
             <x-input title="报障标题" v-model="bindData.name" :readonly="true"></x-input>
-            <x-textarea title="报障内容" v-model="bindData.summary" :show-counter="false" :rows="5"
-                        :max="200" :readonly="true"></x-textarea>
+            <!--<x-textarea title="报障内容" v-model="bindData.summary" :show-counter="false" :rows="5"
+                        :max="200" :readonly="true"></x-textarea>-->
+            <div class="weui-cell vux-x-textarea">
+              <div class="weui-cell__hd">
+                <label class="weui-label" style="width: 5em; text-align: right; margin-right: 2em;">请求描述</label>
+              </div>
+              <div class="weui-cell__bd" v-html="bindData.summary"></div>
+            </div>
+
             <div class="hr"></div>
             <div class="hz-cell">
               <span class="label c4">状态</span>

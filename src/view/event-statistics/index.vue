@@ -210,7 +210,8 @@
               splitNumber:4,
               detail: {
                 formatter:'{value}%',
-                fontSize:18
+                fontSize:18,
+                backgroundColor: '#ddd',
               },
               data: [{value: this.kpiData.processRate, name: '响应率'}],
               pointer: {width: 3, length: "60%"},
@@ -232,6 +233,7 @@
           tooltip: {
             trigger: 'axis'
           },
+          color: ["#4F81BD", "#C0504D","#9BBB59","#8064A2"],
           legend: {
             data:['误报率','漏报率','响应率','关闭率'],
             top: 32
@@ -255,24 +257,28 @@
               name:'误报率',
               type:'line',
               //stack: '总量',
+              itemStyle : {normal : {lineStyle:{color:'#4F81BD'}}},
               data:this.getKpiData('distort')
             },
             {
               name:'漏报率',
               type:'line',
               // stack: '总量',
+              itemStyle : {normal : {lineStyle:{color:'#C0504D'}}},
               data:this.getKpiData('missing')
             },
             {
               name:'响应率',
               type:'line',
               //stack: '总量',
+              itemStyle : {normal : {lineStyle:{color:'#9BBB59'}}},
               data:this.getKpiData('process')
             },
             {
               name:'关闭率',
               type:'line',
            //   stack: '总量',
+              itemStyle : {normal : {lineStyle:{color:'#8064A2'}}},
               data:this.getKpiData('cosle')
             }
           ]
