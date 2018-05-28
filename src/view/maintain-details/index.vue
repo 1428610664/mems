@@ -6,9 +6,9 @@
       <div class="wrapper-content" :class="FlowActions.length ? '' : 'bom'">
         <group label-width="5em" label-margin-right="2em" label-align="right">
 
-          <x-input title="维护期名称" :readonly="true" v-model="bindData.cname"></x-input>
-          <x-textarea title="描述" v-model="bindData.cdesc" :show-counter="false" :rows="1" autosize :readonly="true"></x-textarea>
-          <x-input title="维护期单号" :readonly="true" v-model="bindData.cid"></x-input>
+          <x-input title="维护期名称" :readonly="true" v-model="bindData.name"></x-input>
+          <x-textarea title="描述" v-model="bindData.descs" :show-counter="false" :rows="1" autosize :readonly="true"></x-textarea>
+          <x-input title="维护期单号" :readonly="true" v-model="bindData.id"></x-input>
           <div class="hr"></div>
           <div class="hz-cell"><span class="label c4">状态</span><span :class="getStateType(bindData.status).class">{{getStateType(bindData.status).title}}</span></div>
           <x-input title="创建时间" :readonly="true" v-model="bindData.createTime"></x-input>
@@ -65,9 +65,9 @@
           summary: '',            // 事件描述
         },
         bindData: {
-          cname: '',             // 维护期名称
-          cdesc: '',             // 内容
-          cid: '',               // 单号
+          name: '',             // 维护期名称
+          descs: '',             // 内容
+          id: '',               // 单号
           status: '',           // 状态
           createTime: '',      // 创建时间
           createUser: '',      // 创建人
@@ -93,12 +93,12 @@
         if (this.bindData.status == 0) {
           actions = [// 修改、删除、禁用
             {TypeId: -1, FlowActionName: "修改", id: this.$route.query.id},
-            {TypeId: 51, FlowActionName: "删除", id: this.$route.query.id, type: "delete"},
-            {TypeId: 50, FlowActionName: "禁用", id: this.$route.query.id, params: {status: 4}}
+            {TypeId: 54, FlowActionName: "删除", id: this.$route.query.id, type: "delete"},
+            {TypeId: 53, FlowActionName: "禁用", id: this.$route.query.id, params: {status: 4, id: this.$route.query.id}}
           ]
         }else if(this.bindData.status == 1){
           actions = [
-            {TypeId: 50, FlowActionName: "禁用", id: this.$route.query.id, params: {status: 4}}
+            {TypeId: 53, FlowActionName: "禁用", id: this.$route.query.id, params: {status: 4, id: this.$route.query.id}}
           ]
         }
         return actions

@@ -5,7 +5,7 @@
       <div class="wrapper-content">
         <group label-width="4.5em" label-margin-right="2em" label-align="right">
 
-          <x-input title="名称" placeholder="请输入文字" v-model="bindData.cname"></x-input>
+          <x-input title="名称" placeholder="请输入文字" v-model="bindData.name"></x-input>
           <selector v-model="bindData.winType" title="维护周期" :options="winTypeArray"></selector>
 
           <x-input :value="_paseWeek(bindData.daysOfWeek)" :readonly="true" title="日期" v-show="bindData.winType == '20'" is-link @click.native="$refs.selectDay.show()"></x-input>
@@ -24,7 +24,7 @@
           <!--<selector v-model="bindData.loopStartTime" v-show="bindData.winType != '0'" title="循环开始时间" :options="loopTimeArray()"></selector>-->
           <!--<selector v-model="bindData.loopEndTime" v-show="bindData.winType != '0'" title="循环结束时间" :options="loopTimeArray()"></selector>-->
 
-          <x-textarea title="描述" v-model="bindData.desc" placeholder="请输入文字" :show-counter="false" :rows="5" :max="200"></x-textarea>
+          <x-textarea title="描述" v-model="bindData.descs" placeholder="请输入文字" :show-counter="false" :rows="5" :max="200"></x-textarea>
           <div class="hr"></div>
 
           <rule ref="rule" :rule="rule"></rule>
@@ -63,14 +63,14 @@
 
         rule: [{type: 0, app: '', ip: '', title: '', summary: ''}],
         bindData: {
-          cname: '',       // 维护期名称
+          name: '',       // 维护期名称
           winType: '0',    // 周期维护期【0:非周期维护期】【10:按天维护】【20:按周维护】【30:按月维护】
           daysOfWeek: '', // 日期【周】
           daysOfMonth: '', // 日期【月】
           bTime: '',       // 开始时间
           eTime: '',       // 结束时间
           rule: {},         // 规则,json格式
-          desc: '',         // 描述
+          descs: '',         // 描述
           type: 2,          // 类型 【1:变更白板】【2:维护期】
           loopStartTime: "", // 循环开始时间
           loopEndTime: "",   // 循环结束时间
@@ -91,19 +91,19 @@
       FlowActions() {
         let actions = [
           {TypeId: 0, FlowActionName: "关闭"},
-          {TypeId: 52, FlowActionName: "保存", id: this.$route.query.id, params: {type: 2}}
+          {TypeId: 53, FlowActionName: "保存", id: this.$route.query.id, params: {}}
         ]
         if (this.$route.query.id) {
           actions = [
             {TypeId: 0, FlowActionName: "关闭"},
-            {TypeId: 50, FlowActionName: "保存", id: this.$route.query.id, params: {type: 2, cid: this.$route.query.id}}
+            {TypeId: 53, FlowActionName: "保存", id: this.$route.query.id, params: {id: this.$route.query.id}}
           ]
         }
         return actions
       },
       checkData(){
         let check = {
-          cname: {message: "请输入标题", check: "isEmpty"},
+          name: {message: "请输入标题", check: "isEmpty"},
           bTime: {message: "请选择开始时间", check: "isEmpty"},
           eTime: {message: "请选择结束时间", check: "isEmpty"},
         }
@@ -182,7 +182,7 @@
           this.bindData[k] = this.maintain[k]
         }
         // 其它属性赋值
-        this.bindData.desc = this.maintain.cdesc
+        this.bindData.descs = this.maintain.descs
         this.bTime1 = new Date(this.maintain.beginTime.time).format("yyyy-MM-dd hh:mm:ss")
         this.eTime1 = new Date(this.maintain.endTime.time).format("yyyy-MM-dd hh:mm:ss")
         this.bTime2 = new Date(this.maintain.beginTime.time).format("yyyy-MM-dd")

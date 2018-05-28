@@ -120,6 +120,11 @@ const requestUrl = {
     pre: preUrl
   },
   // 维护期
+  mps: {
+    url: "/mps",
+    pre: preUrl
+  },
+  // 变更
   changes: {
     url: "/changes",
     pre: preUrl

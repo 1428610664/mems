@@ -6,9 +6,9 @@
       <div class="wrapper-content" :class="FlowActions.length ? '' : 'bom'">
         <group label-width="5em" label-margin-right="2em" label-align="right">
 
-          <x-input title="变更名称" :readonly="true" v-model="bindData.cname"></x-input>
-          <x-textarea title="描述"  :readonly="true" v-model="bindData.cdesc" :show-counter="false" :rows="1" autosize></x-textarea>
-          <x-input title="变更单号" :readonly="true" v-model="bindData.cid"></x-input>
+          <x-input title="变更名称" :readonly="true" v-model="bindData.name"></x-input>
+          <x-textarea title="描述"  :readonly="true" v-model="bindData.descs" :show-counter="false" :rows="1" autosize></x-textarea>
+          <x-input title="变更单号" :readonly="true" v-model="bindData.id"></x-input>
           <div class="hr"></div>
           <div class="hz-cell"><span class="label c4">状态</span><span :class="getStateType(bindData.status).class">{{getStateType(bindData.status).title}}</span></div>
           <x-input title="创建时间" :readonly="true" v-model="bindData.createTime"></x-input>
@@ -59,9 +59,9 @@
           ip: [],                  // ip地址
         },
         bindData: {
-          cname: '',             // 变更名称
-          cdesc: '',             // 内容
-          cid: '',               // 单号
+          name: '',             // 变更名称
+          descs: '',             // 内容
+          id: '',               // 单号
           status: '',           // 状态
           createTime: '',      // 创建时间
           createUser: '',      // 创建人

@@ -62,7 +62,7 @@
     computed: {
       getTabParms() {
         let toUser = getUserInfo().toUser
-        let Parms = [{type: 1,createUser: getUserInfo().user.userName+(toUser ? ","+toUser: ""),sort: "createTime",order: "desc"}, {type: 1,sort: "createTime",order: "desc"}]
+        let Parms = [{createUser: getUserInfo().user.userName+(toUser ? ","+toUser: ""),sort: "createTime",order: "desc"}, {sort: "createTime",order: "desc"}]
         return Parms
       }
     },
@@ -138,13 +138,13 @@
       _parseDate(res) {
         let data = []
         res.forEach((v, i) => {
-          data.push({id: v.cid, name: v.cname, time: v.beginTime.time, status: v.status, cType: v.type})
+          data.push({id: v.id, name: v.name, time: v.beginTime.time, status: v.status})
         })
         return data
       },
       _findIndex(id, data){
         return data.findIndex((item) => {
-          return item.cid == id
+          return item.id == id
         })
       }
     },

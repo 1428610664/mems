@@ -44,7 +44,7 @@
       FlowActions() {
         let actions = [
           {TypeId: -1, FlowActionName: "关闭"},
-          {TypeId: 50, FlowActionName: "确定", id: this.$route.query.id, params: {status: 3,type: 1}}
+          {TypeId: 52, FlowActionName: "确定", id: this.$route.query.id, params: {status: 3, id: this.$route.query.id}}
           ]
         return actions
       }
