@@ -59,9 +59,9 @@
     },
     activated() {
       //this.$refs.scroll.refresh()
-      if(!this.isInit) return
+      /*if(!this.isInit) return
       this.getList(false, true)
-      this.$refs.scroll.scrollTo(0, 0, 200, "")
+      this.$refs.scroll.scrollTo(0, 0, 200, "")*/
     },
     watch: {
       '$route' (to, from) {

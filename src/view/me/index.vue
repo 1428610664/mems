@@ -99,13 +99,14 @@
   }
 
   .my-content{
-    position: fixed;
+    /*position: fixed;
     top: 46px;
     bottom: 50px;
     left: 0;
     z-index: 15;
     width: 100%;
-    overflow: auto;
+    overflow: auto;*/
+    /*margin: 46px 0 50px;*/
   }
 
   .recommend-content {
