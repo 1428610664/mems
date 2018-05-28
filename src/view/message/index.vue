@@ -63,6 +63,14 @@
       this.getList(false, true)
       this.$refs.scroll.scrollTo(0, 0, 200, "")
     },
+    watch: {
+      '$route' (to, from) {
+        if(to.path == "/message"){
+          this.refresh.params.keyWord = ''
+          this.getList(false, true)
+        }
+      }
+    },
     methods: {
       onTabItemClick(index) {
         if (this.selectIndex == index) return

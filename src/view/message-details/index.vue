@@ -50,12 +50,16 @@
     data() {
       return {
         content: [],
-
+        timer: null,
         LoadingState: 2
       }
     },
     created() {
       setTimeout(this.getMessage, 800)
+      this.timer = setInterval(this.getMessage, 2000)
+    },
+    destroyed(){
+      if(this.timer) clearInterval(this.timer);
     },
     methods: {
       searchQuery(v) {
