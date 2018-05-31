@@ -6,14 +6,14 @@
       <div class="wrapper-content">
         <group label-width="5em" label-margin-right="2em" label-align="right">
 
-          <x-input title="变更名称" v-model="bindData.cname"></x-input>
+          <x-input title="变更名称" v-model="bindData.name"></x-input>
           <datetime v-model="bindData.bTime" :end-date="bindData.eTime" format="YYYY-MM-DD HH:mm:ss" title="开始时间"></datetime>
           <datetime v-model="bindData.eTime" :start-date="bindData.bTime" format="YYYY-MM-DD HH:mm:ss" title="结束时间"></datetime>
 
           <div class="hr"></div>
           <user-select :url="userUrl" title="通知用户" v-model="bindData.owner" :search="true"></user-select>
 
-          <x-textarea v-model="bindData.desc" :show-counter="false" :rows="1" autosize></x-textarea>
+          <x-textarea v-model="bindData.descs" :show-counter="false" :rows="1" autosize></x-textarea>
 
           <div class="hr"></div>
           <rule ref="rule" :rule="rule" :isChange="true"></rule>
@@ -45,14 +45,14 @@
         userUrl: getUrl("users"),
         rule: [{type: 0, app: '', appData: [], ip: '', title: '', summary: ''}],
         bindData: {
-          cname: '',           // 变更名称
+          name: '',           // 变更名称
           bTime: '',       // 开始时间
           eTime: '',       // 结束时间
           owner: '',           // 通知用户
-          desc: '一、变更内容\n\n二、变更影响范围\n\n三、变更步骤\n\n四、验证方法\n\n五、回退方案\n',    // 内容
+          descs: '一、变更内容\n\n二、变更影响范围\n\n三、变更步骤\n\n四、验证方法\n\n五、回退方案\n',    // 内容
         },
         checkData: {
-          cname: {message: "请输入变更名称", check: "isEmpty"},
+          name: {message: "请输入变更名称", check: "isEmpty"},
           bTime: {message: "请选择开始时间", check: "isEmpty"},
           eTime: {message: "请选择结束时间", check: "isEmpty"},
           owner: {message: "请选择通知用户", check: "isEmpty"},
@@ -70,13 +70,13 @@
       FlowActions() {
         let actions = [
           {TypeId: -1, FlowActionName: "关闭"},
-          {TypeId: 52, FlowActionName: "保存", id: this.$route.query.id, params: {type: 1}}
+          {TypeId: 52, FlowActionName: "保存", id: this.$route.query.id, params: {}}
         ]
         // 修改变更
         if(this.isModify){
           actions = [
             {TypeId: -1, FlowActionName: "关闭"},
-            {TypeId: 50, FlowActionName: "保存", id: this.$route.query.id, params: {type: 1, cid: this.$route.query.id}}
+            {TypeId: 52, FlowActionName: "保存", id: this.$route.query.id, params: {id: this.$route.query.id}}
           ]
         }
 
@@ -95,7 +95,7 @@
         }
 
         if(!this._checkData()) return
-        if(this._trim(this.bindData.desc).length == 32){
+        if(this._trim(this.bindData.descs).length == 32){
           this.$vux.toast.text("请填写变更内容", "bottom")
           return
         }

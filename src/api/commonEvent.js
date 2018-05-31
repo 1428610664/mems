@@ -50,10 +50,10 @@ export function actionJson(no, id){
     No35: [`/events/${id}/tags`, "标记"],    	         // 标记事件
 
     // 维护期、变更
-    No50: [`/changes/${id}/update`, "更新"],        // 更新
-    No51: [`/changes/${id}`, "删除"],                // 删除
-    No52: [`/changes`, "添加"],                       // 添加
-
+    No51: [`/changes/${id}`, "删除"],                // 变更删除
+    No52: [`/changes`, "添加"],                      // 变更更新
+    No53: [`/mps`, "添加"],                           // 维护期添加更新
+    No54: [`/mps/${id}`, "删除"],                     // 维护期删除
 
   }
   return urlJson["No"+no]

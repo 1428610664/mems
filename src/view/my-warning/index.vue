@@ -4,7 +4,7 @@
     <div class="wrapper b">
       <x-header :left-options="{backText: ''}">处理人工报障</x-header>
       <!--<scroller lock-x scrollbarY height="-91">-->
-      <div class="wrapper-content">
+      <div class="wrapper-content"  :class="FlowActions.length ? '' : 'bom'">
         <group label-width="4.5em" label-margin-right="2em" label-align="right">
           <x-input title="报障标题" placeholder="请输入文字" v-model="bindData.name" :readonly="readonly"></x-input>
           <x-textarea title="报障内容" v-model="bindData.summary" placeholder="请输入文字" :show-counter="false" :rows="5"
@@ -257,4 +257,7 @@
     /*padding-bottom: 0px;*/
   /*}*/
   /*.tab_div_height{ height: 230px;}*/
+  .wrapper-content.bom{
+    bottom: 0px;
+  }
 </style>

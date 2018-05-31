@@ -64,7 +64,7 @@
     computed: {
       getTabParms() {
         let toUser = getUserInfo().toUser
-        let Parms = [{type: 2,createUser: getUserInfo().user.userName+(toUser ? ","+toUser: ""),sort: "createTime",order: "desc"}, {type: 2,sort: "createTime",order: "desc"}]
+        let Parms = [{createUser: getUserInfo().user.userName+(toUser ? ","+toUser: ""),sort: "createTime",order: "desc"}, {sort: "createTime",order: "desc"}]
         return Parms
       }
     },
@@ -96,6 +96,7 @@
         this.getList(false, true)
       },
       onItemClick(row) {
+        console.log("--row----"+JSON.stringify(row))
         this.setMaintain(this.content[this._findIndex(row.id, this.content)])
         this.$router.push({path: "/maintainDetails",query:{id: row.id}})
       },
@@ -111,7 +112,7 @@
           this.refresh.pageSize = 10
         }
         let param = {offset: (this.refresh.pageNo - 1) * this.refresh.pageSize, limit: this.refresh.pageSize}
-        request.get(getUrl("changes"), Object.assign({}, this.refresh.params, param)).then(data => {
+        request.get(getUrl("mps"), Object.assign({}, this.refresh.params, param)).then(data => {
           if (data.data) {
             this.refresh.isPullLoaded = false
             this.refresh.totalCount = data.data.total
@@ -139,13 +140,14 @@
       _parseDate(res) {
         let data = []
         res.forEach((v, i) => {
-          data.push({id: v.cid, name: v.cname, time: v.beginTime.time, status: v.status, cType: v.type})
+          if(i == 0) console.log("------------"+JSON.stringify(v))
+          data.push({id: v.id, name: v.name, time: v.beginTime.time, status: v.status})
         })
         return data
       },
       _findIndex(id, data){
         return data.findIndex((item) => {
-          return item.cid == id
+          return item.id == id
         })
       }
     },

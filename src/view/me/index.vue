@@ -1,6 +1,6 @@
 <template>
 
-  <div class="content">
+  <div class="my-content">
     <div class="my-head ct">
       <div class="portrait"><img v-lazy="loadImg" width="100%" height="100%"/></div>
       <p class="name fz14 c" v-if="user"><span id="dept-dame">{{user.user.name}}</span> / <span class="c" id="username">{{user.user.userName}}</span></p>
@@ -98,14 +98,15 @@
     z-index: -1;
   }
 
-  .content {
-    position: fixed;
+  .my-content{
+    /*position: fixed;
     top: 46px;
     bottom: 50px;
     left: 0;
     z-index: 15;
     width: 100%;
-    overflow: auto;
+    overflow: auto;*/
+    /*margin: 46px 0 50px;*/
   }
 
   .recommend-content {
