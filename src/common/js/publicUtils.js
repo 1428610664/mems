@@ -350,6 +350,46 @@ export default {
         default: return ""
       }
     }
-
+    /**
+     * 将string中转义去指定html标签入口
+     * @param val
+     * @returns {*|string}
+     */
+    Vue.prototype.getFormatText = function (val) {
+      let _damo = document.createElement("div");
+      _damo.innerHTML = val;
+       let _text = '';
+      _text = this.getFormatEachNodes(_damo.childNodes);
+      return _text;
+    }
+    /**
+     * 将damo中除img\p\a\br外的html标签转义
+     * @param val
+     * @returns {*|string}
+     */
+    Vue.prototype.getFormatEachNodes = function (nodes) {
+      let _text = ''
+      nodes.forEach((item) =>{
+        if(item.nodeName == 'INPUT' || item.nodeName == 'HR'){
+          _text += item.outerHTML.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }else if(item.nodeName != '#text'
+          && item.nodeName != 'A'
+          && item.nodeName != 'BR'
+          && item.nodeName != 'P'
+          && item.nodeName != 'IMG'){
+          let _aa = "" + item.outerHTML;
+          _text += '&lt' + _aa.split('>')[0].split('<')[1] + '&gt';
+          if(item.childNodes && item.childNodes.length) {
+            _text += this.getFormatEachNodes(item.childNodes);
+          }
+          _text += '&lt/' + item.localName + '&gt'
+        }else if( item.nodeName == '#text'){
+          _text += item.textContent;
+        }else {
+          _text += item.outerHTML;
+        }
+      })
+      return _text
+    }
   }
 }

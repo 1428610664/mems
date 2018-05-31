@@ -12,14 +12,14 @@
           <template v-if="!_isMeMsg(item)">
             <div class="user-info posct c3"><span>{{item.sendUser.split("/")[0]}}<br>{{item.sendUser.split("/")[1]}}</span></div>
             <div class="msg">
-              <div class="msg-content" v-html="item.message"></div>
+              <div class="msg-content" v-html="getFormatText(item.message)"></div>
               <div class="msg-time c3 mt"><span class="iconfont icon-time fz12"></span> {{new Date(item.sendTime.time).format("yyyy-MM-dd hh:mm:ss")}}</div>
             </div>
           </template>
 
           <template v-if="_isMeMsg(item)">
             <div class="msg">
-              <div style="text-align: right;"><div class="msg-content" v-html="item.message"></div></div>
+              <div style="text-align: right;"><div class="msg-content" v-html="getFormatText(item.message)"></div></div>
               <div class="msg-time c3 mt"><span class="iconfont icon-time fz12"></span> {{new Date(item.sendTime.time).format("yyyy-MM-dd hh:mm:ss")}}</div>
             </div>
             <div class="user-info posct c3">

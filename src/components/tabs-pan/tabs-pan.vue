@@ -47,7 +47,7 @@
           <div class="m-t15 fz12">
             <span class="tab_user_name fz12">{{row.userName}}</span>
             <span class="tab_time fz12">{{new Date(row.time.time).format("yyyy-MM-dd hh:mm:ss")}}</span><span class="c4">&nbsp;&nbsp;({{row.descs}})</span>
-            <div class="editor_summary tab_summary fz12" v-html="row.content"></div>
+            <div class="editor_summary tab_summary fz12" v-html="getFormatText(row.content)"></div>
           </div>
         </div>
         <p class="fz12" v-show="opinions==''">暂无内容</p>
@@ -63,7 +63,7 @@
           <div class="m-t15 fz12">
             <span class="tab_user_name fz12">{{row.sendUser}}</span>
             <span class="tab_time fz12">{{new Date(row.sendTime.time).format("yyyy-MM-dd hh:mm:ss")}}</span>
-            <div class="editor_messages tab_summary fz12" v-html="row.message"></div>
+            <div class="editor_messages tab_summary fz12" v-html="getFormatText(row.message)"></div>
           </div>
         </div>
         <p class="fz12" v-show="messages==''">暂无消息</p>
