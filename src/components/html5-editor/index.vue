@@ -107,9 +107,10 @@
 </script>
 
 <style>
-  @import 'https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css';
+/*  @import 'https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css';*/
   /*.vue-html5-editor>.toolbar{ position: inherit !important;}*/
   .vue-html5-editor>.toolbar{ z-index: 1 !important;}
+  .vue-html5-editor>.toolbar>ul>li .icon{ width: inherit;height: inherit}
   .vue-html5-editor .toolbar>ul{ background-color: #eee !important; position: relative;height: 37px;}
   .vue-html5-editor .toolbar>ul li:last-child{position: absolute; right: 2px}
 </style>

@@ -108,7 +108,7 @@ export default {
           {
             //custom module with dashboard.html
             name: "linknew",
-            icon: "fa fa-chain",
+            icon: "iconfont icon-fujian",
             i18n: "linknew",
             show: true,
             init: function (editor) {
@@ -174,7 +174,7 @@ export default {
                     const url_back =JSON.parse(xhr.responseText).msg.split("||")[0]
                     const name_back =JSON.parse(xhr.responseText).msg.split("||")[1]
                     if (url_back) {
-                      editor.execCommand("insertHTML", "<a href='"+process.env.API + url_back+"' class ='file_link'><i class=\"fa fa-download\" aria-hidden=\"true\"></i>&nbsp;"+name_back+"</a>")
+                      editor.execCommand("insertHTML", "<a href='"+process.env.API + url_back+"' class ='file_link'><i class=\"iconfont icon-clouddownload-o\" aria-hidden=\"true\"></i>&nbsp;"+name_back+"</a>")
                     }
                   } catch (err) {
                     editor.$vux.toast.text("上传失败", "bottom")
@@ -190,28 +190,10 @@ export default {
                // damo = null
             },
           },
-          // {
-          //   //custom module with dashboard.html
-          //   name: "imagenew",
-          //   icon: "fa fa-file-image-o",
-          //   i18n: "imagenew",
-          //   show: true,
-          //   //vue component
-          //   dashboard: {
-          //     template: '<up-image ref = "imageTing"></up-image>',
-          //     data: function () {
-          //       return {
-          //       }
-          //     },
-          //     components:{upImage},
-          //     methods: {
-          //     }
-          //   }
-          // },
           {
           //custom module with dashboard.html
           name: "atuser",
-          icon: "fa fa-at",
+          icon: "iconfont icon-at",
           i18n: "atuser",
           show: true,
           init: function (editor) {
